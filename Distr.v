@@ -1,4 +1,3 @@
-
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders
                HoTTClasses.implementations.sierpinsky.
@@ -117,11 +116,10 @@ Record D (A:hSet) : Type :=
    mu_modular : modular mu; 
    mu_empty_op : empty_op mu;
    mu_mon : mon_opens mu;
-   mu_prob : Rlle (mu (fun x => SierTop)) (RlP_1);
-   mu_cont : scott_continuous mu
+   mu_prob : Rlle (mu (fun x => SierTop)) (RlP_1)
 }.
 
-Hint Resolve mu_modular mu_prob mu_cont mu_empty_op mu_mon.
+Hint Resolve mu_modular mu_prob mu_empty_op mu_mon.
 
 (** *** Properties of measures *)
 
