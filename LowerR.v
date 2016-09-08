@@ -9,6 +9,8 @@ Require Import HoTT.HSet HoTT.Basics.Decidable HoTT.Basics.Trunc
                HProp HSet Types.Universe UnivalenceImpliesFunext
                TruncType UnivalenceAxiom.
 
+
+(** Some axioms on Q ---> to move **)
 Axiom Qeq_refl : forall x:Q, x = x.
 
 Axiom Qeq_sym : forall x y:Q, x = y -> y = x.
@@ -282,6 +284,8 @@ Local Set Universe Minimization ToSet.
 
 Set Implicit Arguments.
 
+(** Lower Reals in HoTT **) 
+
 Record Rlow := mkRl {
       elt :> Q -> Sier;
       Rlinf : forall x y, elt x -> (y < x) -> elt y;
@@ -466,7 +470,20 @@ Defined.*)
 Lemma elt_nelt_lt : forall x p q, elt x p -> ~ elt x q -> (p<q).
 Proof.
 intros x p q Hp Hq.
-Admitted.
+red in Hq.
+destruct (Qle_total p q).
+destruct (Qdec p q). 
+rewrite <- p0 in Hq. 
+case (Hq Hp).
+auto with qarith.
+assert (Heq : x q). 
+destruct (Qdec p q).
+rewrite <- p0 in Hq. 
+case (Hq Hp).
+apply Rlinf with p; try trivial.  
+auto with qarith.  
+case (Hq Heq). 
+Qed. 
 
 (* lt --> le *)
 Lemma Rllt_le : forall x y, Rllt x y -> Rlle x y.
@@ -578,7 +595,20 @@ unfold semi_decide in F.
 unfold SemiDec in F.
 unfold decidable_semi_decide in F.
 destruct (decide (p < q)).
-Admitted.
+assert (HF :  ~ (p < q)). 
+auto with qarith.
+red in HF.
+apply HF; trivial.
+apply not_bot in F; trivial. 
+intros Hh. 
+unfold semi_decide in Hh.
+unfold SemiDec in Hh. 
+unfold decidable_semi_decide in Hh. 
+red in Hh. 
+destruct (decide (p < q)). 
+case (Hh (top_greatest SierTop)).
+auto with qarith. 
+Qed.
 
 Lemma Qlt_Rllt : forall p q, (p < q) -> Rllt [p] [q].
 Proof.
@@ -599,7 +629,7 @@ destruct (decide (p< q)).
 apply top_greatest.
 specialize (n X).
 case n.
-Admitted.
+Qed.
 
 Lemma Rllt_Qlt : forall p q, Rllt [p] [q] -> (p < q).
 Proof.
@@ -607,7 +637,21 @@ intros p q (r,(H1,H2)).
 apply Qle_lt_trans with r. 
 simpl in *.
 apply Qnot_lt_le; trivial. 
-
+unfold semi_decide in *. 
+unfold SemiDec in *. 
+unfold decidable_semi_decide in *. 
+destruct (decide (r < p)). 
+red in H1.
+case (H1 (top_greatest SierTop)).
+trivial. 
+red in H1. 
+destruct (Qle_total r q). 
+destruct (Q_dec r q). 
+trivial. 
+destruct s.
+assert (HF : ~ q < r).  
+auto with qarith. 
+case (HF l0). 
 Admitted.
 
 Lemma Rlle_Qle : forall p q, Rlle [p] [q] -> (p <= q).
@@ -615,10 +659,16 @@ Proof.
 unfold Rlle.
 intros p q H.
 simpl in *.
-case (Qlt_le_dec q p); intro; trivial.
-case (Qlt_irrefl q). 
-(*apply H; trivial.*)
-Admitted.
+unfold semi_decide, SemiDec, decidable_semi_decide in *.
+specialize (H q). 
+destruct (decide (q < p)). 
+destruct (decide (q < q)).
+apply Qlt_irrefl in l0. 
+case l0.
+specialize (H (top_greatest SierTop)). 
+apply not_bot in H; case H.
+auto with qarith. 
+Qed.
 
 Hint Resolve Qle_Rlle Qlt_Rllt.
 Hint Immediate Rlle_Qle Rllt_Qlt.
@@ -642,7 +692,13 @@ Proof.
 intros.
 exists p.
 split; trivial.
-Admitted.
+intro F. 
+simpl in F.
+unfold semi_decide, SemiDec, decidable_semi_decide in F. 
+destruct (decide (p < p)).
+apply Qlt_irrefl in l; trivial. 
+apply (not_bot F). 
+Qed. 
 
 Lemma Rllt_Elt : forall r p, Rllt [p] r -> elt r p.
 Proof.
@@ -721,25 +777,71 @@ case Hp.
 Save.
 
 Hint Resolve Rlle_Pinf Minf_Rlle.
-
+(*
 Global Instance semi_decide_exists (A : Type) {H' : Enumerable A}
   (B : A -> Type) {H : forall x, SemiDecide (B x)}
   : SemiDecide (exists x, B x)
-  := EnumerableSup A (fun x => semi_decide (B x)).
+  := EnumerableSup A (fun x => semi_decide (B x)).*)
 
-Global Instance  Hassert : forall (a b : Rlow )(p: Q),
-       Decidable(exists q r : Q, elt a q ∧ elt b r ∧ p = q + r).
-Admitted.
+Global Instance semi_decide_exists (A : Type) {H' : Enumerable A}
+  (B : A -> Type) {H : forall x, SemiDecide@{j} (B x)}
+  : SemiDecide (merely (exists x, B x))
+  := EnumerableSup A (fun x => semi_decide (B x)).
+Arguments semi_decide_exists A {_} B {_} /.
 
 Definition Rl_Plus : Plus Rlow. 
 Proof.
 intros a b.
-exists (fun p:Q => semi_decide (exists (q r:Q), elt a q /\ elt b r /\
-                                                p = q + r)).
+exists (fun p:Q => semi_decide (merely (exists (q:Q), 
+          merely (exists (r:Q), elt a q /\ elt b r /\ p = q + r)))).
 +intros x y H Hyx.
  red. red in H.
  unfold semi_decide in *.
  unfold decidable_semi_decide in *.
+ unfold semi_decide_exists in *.
+ assert (H1 : forall q, SierLe (semi_decide
+            (merely
+               (∃ r : Q, a q ∧ b r ∧ x = q + r)))
+          (semi_decide
+            (merely
+              (∃ r : Q, a q ∧ b r ∧ y = q + r)))).
+ * intros q.
+   unfold semi_decide, semi_decide_exists, semi_decide,
+          semi_decide_conj, semi_decide, SemiDec.
+   admit.
+   
+ * (*apply SierLe_imply in H1. 
+
+   revert H1.
+   generalize enumerable_sup_least_ub. intro Hk.
+   specialize (Hk nat NatEnum (fun n => (S n) x)
+               (EnumerableSup nat (λ x0 : nat, (S x0) y)) H2).
+trivial.
+
+
+
+   apply (enumerable_sup_ub' _ (fun q => (semi_decide
+            (merely
+               (∃ r : Q, a q ∧ b r ∧ y = q + r))))). 
+ 
+ 
+         
+                 ((@EnumerableSup _ _ _ QEnum) (λ x0 : nat, (S x0) y))). 
+ intros n.
+ specialize (H1 n).
+ transitivity ((S n) y). 
+ trivial. 
+ apply (enumerable_sup_ub' _ (fun n => (S n) y) n).
+ revert H.
+ apply SierLe_imply.
+ generalize enumerable_sup_least_ub. intro Hk.
+ specialize (Hk nat NatEnum (fun n => (S n) x)
+               (EnumerableSup nat (λ x0 : nat, (S x0) y)) H2).
+trivial.*)
+
+ 
+ admit. 
++admit. (*
  destruct (decide (∃ q r : Q, a q ∧ b r ∧ x = q + r)).
  destruct (decide (∃ q r : Q, a q ∧ b r ∧ y = q + r)).
  trivial.
@@ -753,7 +855,8 @@ exists (fun p:Q => semi_decide (exists (q r:Q), elt a q /\ elt b r /\
  trivial.
  admit.
 
- specialize (n Hf).
+ specialize (n Hf).*)
+ 
 Admitted.
 
 
@@ -811,6 +914,10 @@ generalize enumerable_sup_least_ub. intro Hk.
 specialize (Hk nat NatEnum (fun n => (S n) x)
                (EnumerableSup nat (λ x0 : nat, (S x0) y)) H2).
 trivial.
+intros x Hx. 
+unfold semi_decide in *. 
+unfold SDseq_Rlow in *. 
+unfold semi_decide_exists in * . 
 admit. 
 (*apply enumerable_sup_least_ub in H2.
 trivial. 
@@ -976,10 +1083,6 @@ apply Rlpos. trivial.
 apply Rllub_case with O.
 apply H.
 Defined.
-(*
-Lemma Rlp_simplQ : forall p : Q, (p < 0)  [0] r.
-exact Rlpos. 
-Save.*)
 
 Definition Rlow_RlowPos (r : Rlow) : (Rlle [0]  r)-> RlowPos.
   exists r. unfold Rlle in X.

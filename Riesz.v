@@ -8,7 +8,7 @@ Require Import HoTT.HSet HoTT.Basics.Trunc HProp HSet Types.Universe
                FunextVarieties. 
 Require Import LowerR Dedekind Distr.
 
-Set Implicit Arguments.
+Set Implicit Arguments. 
 
 Record CutPos := mkCp{
          ct :> Cut;
@@ -322,8 +322,17 @@ Hypothesis HR : Regularity A.
 Lemma Meet_MF_OS_mon  : forall (f : MF A) (U V : OpenSub A),
                  OSLe U V -> fLe (Meet_MF_OS HR f U) (Meet_MF_OS HR f V). 
 Proof.
-intros f U V HUV. 
-admit.
+intros f U V HUV x.
+unfold LeCp.
+unfold Meet_MF_OS.   
+simpl.
+generalize HR. intro R. 
+unfold Regularity in R. 
+destruct (R U) as (p1u,p2u).
+destruct (R V) as (p1v,p2v). 
+unfold MFO_eq in *.  
+unfold 
+red. 
 
 Admitted.
 
