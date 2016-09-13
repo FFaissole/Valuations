@@ -1,3 +1,5 @@
+Add Rec LoadPath "/Users/faissole/Desktop/HoTT/HoTTClasses/theories".
+
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders
                HoTTClasses.implementations.sierpinsky.
@@ -147,6 +149,24 @@ auto.
 Save.
 
 Hint Resolve mu_one.
+
+(* UNIT *)
+(*
+Definition munit (A:hSet) (x:A) : Mes A.
+Proof.
+refine (fun O : OpenSub A => O x). 
+Admitted. 
+
+(* STAR *)
+Definition mstar : forall (A B:hSet), Mes A -> (A -> Mes B) -> Mes B.
+intros A B a F; exists (fun f: OpenSub B => a ((fun x => (F x f)))).
+red; intros.
+apply (fmonotonic a); intro z; simpl.
+apply (fmonotonic (F z)); trivial.
+Defined.
+*)
+
+
 (*
 (** *** Distributions and operations *)
 

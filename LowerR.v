@@ -272,7 +272,7 @@ Hint Resolve mid_l.
 Axiom mid_r : forall p q, (p < q) -> (mid p q < q).
 
 Hint Resolve mid_r.
-
+Axiom Q00 : 0 < 1. 
 Axiom Q11 : (0 < 1 + 1).
 Axiom QD : forall x p:Q, Decidable (x < p).
 Axiom QA2 : forall x p:Q, x < p → x + p < p * (1 + 1).
@@ -888,49 +888,61 @@ specialize (S n).
 refine (S q).
 Defined.
 
+Axiom ch : forall (x : Q) (S : nat -> Rlow), semi_decide (∃ n : nat, (S n) x) -> merely
+        (∃ y : Q,
+        semi_decide (∃ n : nat, (S n) y) ∧ x < y). 
+
+
 Definition Rllub : (nat -> Rlow) -> Rlow. 
 intros S.
 exists (fun q => semi_decide (exists n, (elt (S n) q))).  
-intros x y H H0.
-unfold semi_decide in *.
-unfold SDseq_Rlow in *.
-unfold semi_decide_exists in *.
-unfold semi_decide in *.
-assert (H1 : forall n, SierLe ((S n) x) ((S n) y)).
-intros n.
-apply imply_le.
-intros Hx.
-apply Rlinf with x; trivial.
-assert (H2 : forall n, SierLe ((S n) x)
-                 ((@EnumerableSup _ _ _ NatEnum) (λ x0 : nat, (S x0) y))). 
-intros n.
-specialize (H1 n).
-transitivity ((S n) y). 
-trivial. 
-apply (enumerable_sup_ub' _ (fun n => (S n) y) n).
-revert H.
-apply SierLe_imply.
-generalize enumerable_sup_least_ub. intro Hk.
-specialize (Hk nat NatEnum (fun n => (S n) x)
++ intros x y H H0.
+  unfold semi_decide in *.
+  unfold SDseq_Rlow in *.
+  unfold semi_decide_exists in *.
+  unfold semi_decide in *.
+  assert (H1 : forall n, SierLe ((S n) x) ((S n) y)).
+  intros n.
+  apply imply_le.
+  intros Hx.
+  apply Rlinf with x; trivial.
+  assert (H2 : forall n, SierLe ((S n) x)
+                 ((@EnumerableSup _ _ NatEnum) (λ x0 : nat, (S x0) y))). 
+  intros n.
+  specialize (H1 n).
+  transitivity ((S n) y). 
+  trivial. 
+  apply (enumerable_sup_ub' _ (fun n => (S n) y) n).
+  revert H.
+  apply SierLe_imply.
+  generalize enumerable_sup_least_ub. intro Hk.
+  specialize (Hk nat NatEnum (fun n => (S n) x)
                (EnumerableSup nat (λ x0 : nat, (S x0) y)) H2).
-trivial.
-intros x Hx. 
-unfold semi_decide in *. 
-unfold SDseq_Rlow in *. 
-unfold semi_decide_exists in * . 
-admit. 
-(*apply enumerable_sup_least_ub in H2.
-trivial. 
-Unfold EnumerableSup in *.
-admit. admit. *)
-Admitted.
+  trivial.
++ intros x Hx.
+  apply ch. 
+  trivial. 
+Defined.
 
 Lemma Rllub_case 
   : forall (fr : nat -> Rlow) n p, elt (fr n) p -> elt (Rllub fr) p.
 Proof.
 intros fr n p H.
 red.
-Admitted.
+unfold Rllub.
+simpl.
+unfold semi_decide. 
+unfold SDseq_Rlow. 
+unfold semi_decide_exists.
+revert H. 
+apply SierLe_imply.
+transitivity (semi_decide ((fr n) p)). 
+unfold semi_decide, semi_decide_sier; reflexivity.
+generalize (enumerable_sup_ub'). 
+intro HGEn. 
+specialize (HGEn nat NatEnum (λ x : nat, semi_decide ((fr x) p)) n). 
+simpl in HGEn; trivial.
+Defined. 
 
 Lemma Rllub_lub : forall (fr : nat -> Rlow) n, Rlle (fr n) (Rllub fr).
 Proof.
@@ -940,8 +952,7 @@ Save.
 Lemma Rllub_le 
   : forall (fr : nat -> Rlow) r, (forall n, Rlle (fr n)  r) -> Rlle (Rllub fr) r.
 Proof.
-  intros fr r.
-  intros Hp.
+  intros fr r Hr.     
 Admitted.
 
 Lemma Rllub_mon : forall (fr fk : nat -> Rlow), (forall n, Rlle (fr n) (fk n))
@@ -971,7 +982,12 @@ intros p Hp.
 simpl in Hp.
 unfold semi_decide, SemiDec in Hp.
 unfold decidable_semi_decide in Hp.
-Admitted.
+destruct (decide (p < 0)). 
+destruct r. 
+simpl.
+apply Rlpos0; trivial.
+case (not_bot Hp). 
+Qed. 
 
 Definition toRL : RlowPos -> Rlow.
 intros (p,Hpos). exists p; apply p.
