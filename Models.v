@@ -58,8 +58,7 @@ Fixpoint nth (n:nat) (l:list bool) {struct l} : option bool :=
       | S m, cons x t => nth m t
     end.
 
-Definition bars_aux (l : list bool) (a : nat -> option bool) (n : nat) :=
-                a n = nth n l. 
+Definition bars_aux (l : list bool) (a : nat -> option bool) (n : nat) := a n = nth n l. 
 
 (*
 Inductive bars (a : (nat -> option bool)) : (list (list bool)) -> Prop :=

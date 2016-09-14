@@ -9,7 +9,7 @@ Require Import HoTT.HSet HoTT.Basics.Trunc HProp HSet
                TruncType UnivalenceAxiom Types.Sigma
                FunextVarieties. 
 
-Require Import LowerR Distr.
+Require Import Qaxioms LowerR Distr.
 
 Set Implicit Arguments.
 
@@ -104,4 +104,28 @@ destruct CutO as (CO,HPCO).
 Admitted.
 
 Lemma LeCp_0_Right (A : hSet) : RightIdentity PlusCp CutO.
-Admitted. 
+Admitted.
+
+Lemma LeMinus_Pos (A : hSet) : forall x y : Cut,
+    x <= y -> 0 <= y - x.
+Admitted.
+
+
+Global Instance dedek_lt_semi_decide : forall x q, SemiDecide (QCut q < x)
+  := fun x q => lower x q.
+
+Definition dedekind_Sier : CutPos -> Sier. 
+intros c. 
+refine (dedek_lt_semi_decide c 0).   
+Defined. 
+
+Lemma dedekind_Sier_order_pres : forall c d : CutPos,
+     CutLe c d -> SierLe (dedekind_Sier c) (dedekind_Sier d). 
+Proof.
+intros c d H. 
+unfold CutLe in H. 
+unfold dedekind_Sier.
+unfold dedek_lt_semi_decide. 
+specialize (H 0).
+apply imply_le; trivial.   
+Qed.
