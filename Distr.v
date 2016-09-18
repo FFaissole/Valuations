@@ -39,11 +39,6 @@ Proof.
   refine (forall x:A, SierLe (O1 x) (O2 x)).
 Defined.
 
-Definition OSEq (A : hSet) : (OpenSub A) -> (OpenSub A) -> Type.
-Proof.
-intros U V.
-refine (OSLe U V /\ OSLe V U).
-Defined. 
 
 Lemma Osle_intro : forall (A:hSet) (f g : OpenSub A), (forall x, SierLe (f x) (g x))
                                                        -> OSLe f g.
@@ -55,6 +50,50 @@ Lemma Osle_intro2 : forall (A : hSet) (f g : OpenSub A), (OSLe f g)
                                      -> (forall x, SierLe (f x) (g x)).
 intros. auto.
 Save.
+
+Lemma Osle_intro3  : forall (A : hSet) (x:A) (f g : OpenSub A), (OSLe f g)
+                                                                -> SierLe (f x) (g x).
+auto.
+Qed.
+
+Lemma OSLe_trans (A : hSet) : forall U V W : OpenSub A,
+           OSLe U V -> OSLe V W -> OSLe U W. 
+Proof. 
+intros U V W H1 H2. 
+intros x. 
+specialize (H1 x).
+specialize (H2 x). 
+transitivity (V x); trivial. 
+Qed.
+
+Definition OSEq (A : hSet) : (OpenSub A) -> (OpenSub A) -> Type.
+Proof.
+intros U V.
+refine (OSLe U V /\ OSLe V U).
+Defined.
+
+Lemma OSEq_trans (A : hSet) : forall U V W :OpenSub A,  OSEq U V -> OSEq V W -> OSEq U W.
+Proof.
+intros U V W (H1,H2) (H3,H4).  
+unfold OSEq in *.
+split.
+apply Osle_intro.
+intros z.
+apply imply_le. intro Hu.
+apply (Osle_intro3 z) in H1; try trivial.
+apply SierLe_imply in H1; try trivial.
+apply (Osle_intro3 z) in H3; try trivial.
+apply SierLe_imply in H3; try trivial.
+trivial.
+apply Osle_intro.
+intros z.
+apply imply_le. intro Hw.
+apply (Osle_intro3 z) in H2; try trivial.
+apply SierLe_imply in H2; try trivial.
+apply (Osle_intro3 z) in H4; try trivial.
+apply SierLe_imply in H4; try trivial.
+Qed.
+
 
 Definition SierEq (A : hSet) : Sier -> Sier -> Type.
 intros S S'.
@@ -149,55 +188,3 @@ auto.
 Save.
 
 Hint Resolve mu_one.
-
-(* UNIT *)
-(*
-Definition munit (A:hSet) (x:A) : Mes A.
-Proof.
-refine (fun O : OpenSub A => O x). 
-Admitted. 
-
-(* STAR *)
-Definition mstar : forall (A B:hSet), Mes A -> (A -> Mes B) -> Mes B.
-intros A B a F; exists (fun f: OpenSub B => a ((fun x => (F x f)))).
-red; intros.
-apply (fmonotonic a); intro z; simpl.
-apply (fmonotonic (F z)); trivial.
-Defined.
-*)
-
-
-(*
-(** *** Distributions and operations *)
-
-Lemma mu_add : forall (A:Type) (m: distr A) (f g : MF A),
-       mu m (fplus f g) == (mu m f) + (mu m g).
-apply mu_stable_add.
-Save.
-Hint Resolve mu_stable_add.
-
-Lemma mu_mull : forall (A:Type) (m: distr A) (k : RlowPos) (f : MF A),
-               mu m (fmult k f) == k * (mu m f).
-apply mu_stable_mull.    
-Save.
-
-Lemma mu_add_zero : forall (A:Type) (m: distr A) f g,
-    mu m f == RlP_0 -> mu m g == RlP_0 -> mu m (fplus f g) == RlP_0.
-intros. rewrite mu_add. simpl in H. simpl. rewrite H.
-simpl in H0; rewrite H0. apply QRl_Plus.
-Save.
-
-Hint Resolve mu_add_zero.
-
-Lemma mu_stable_pos : forall (A:Type) (m: distr A) f, (0 <= f)%O -> 0 <= mu m f.
-auto.
-Save.
-*)
-
-
-
- 
-
-
-
-

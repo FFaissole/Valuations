@@ -33,25 +33,42 @@ simple refine (Build_Recursors _ _ _ _ _ _ _ _ _ _ _ _);simpl.
 + intros ss pp xx IH; apply sup_le_r. apply IH.  
 Defined. 
 
-(*
-Lemma dominance_correct : forall (p : Type) (s : Sier),
-          (IsTop s -> p) -> IsTop (Dominance s p) <-> (IsTop s /\ p). 
-Admitted. *)
-
-Lemma Phao_mon : forall (f : Sier -> Sier), (forall x y, x <= y -> f x <= f y)
-                                           -> Phao f.  
+Definition IncreasingSeq_f (f : Sier -> Sier)
+                  (H : forall x y, x <= y -> f x <= f y)
+                  (u : IncreasingSequence Sier) : IncreasingSequence Sier.
 Proof.
-intros f Hf. 
+exists (fun n => f (u n)). 
+intros n. 
+apply H; apply u. 
+Defined.
+
+Lemma IncreasingSeq_f_simpl : forall (f : Sier -> Sier) 
+    (H : forall x y, x <= y -> f x <= f y), forall n u, IncreasingSeq_f f H u n = f (u n).
+Proof. 
+intros f H n u. 
+unfold IncreasingSeq_f. 
+reflexivity. 
+Qed.
+
+Definition scott_mon_sier (f : Sier -> Sier) (H : forall x y, x <= y-> f x <= f y) :=
+  forall (u : IncreasingSequence Sier),
+    f (sup Unit u) = (sup Unit ((IncreasingSeq_f f H u))).
+
+Lemma Phao_mon : forall (f : Sier -> Sier) (Hm : forall x y, x <= y -> f x <= f y),
+          (scott_mon_sier f Hm)  -> Phao f.  
+Proof.
+intros f Hf Hm. 
 unfold Phao.   
 intros u.
 split; intros H.
 revert H.
 revert u. 
 apply (partial_ind0 _ (fun s  =>  _ -> _)).
-+ intros [] Hx. 
-  specialize (Hf SierBot SierTop). 
++ intros [] Hx.
+  pose (HfO := Hf). 
+  specialize (HfO SierBot SierTop). 
   assert (Hf' : SierBot <= SierTop). 
-  apply top_greatest. specialize (Hf Hf'). clear Hf'. 
+  apply top_greatest. specialize (HfO Hf'). clear Hf'. 
   assert (Hf2 : f SierBot <= eta Unit tt).   
   apply top_greatest. 
   assert (Hff : f SierBot <= (f SierTop ⊓ eta Unit tt)). 
@@ -71,6 +88,14 @@ apply (partial_ind0 _ (fun s  =>  _ -> _)).
   apply tr. right.         
   trivial.     
 + intros g H0 H1. 
+  unfold scott_mon_sier in Hm. 
+  specialize (Hm g).
+  rewrite Hm in H1. 
+  apply top_le_join. apply tr.     
+  left.
+  apply top_le_meet.
+  split. 
+  admit. 
   admit. 
 Admitted.
 
@@ -98,10 +123,16 @@ Fixpoint nth (n:nat) (l:list bool) {struct l} : option bool :=
 Definition bars_aux (l : list bool) (a : nat -> option bool)
                    := exists (n:nat), a n = nth n l. 
 
-Inductive bars (a : (nat -> option bool)) : (list (list bool)) -> Prop :=
+Inductive bars (a : (nat -> option bool)) : (list (list bool)) -> Type :=
       | bars_empty : bars a nil
       | bars_head : forall c, bars_aux c a -> bars a (cons c nil)
-      | bars_tail : forall c l, bars a l -> bars a (cons c l). 
+      | bars_tail : forall c l, bars a l -> bars a (cons c l).
+
+Definition subovert (a : nat -> option bool) l (x : bars a l) : Type. 
+induction x. 
++ refine True.
+Admitted. 
+
 
 
 

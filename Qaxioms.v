@@ -280,3 +280,12 @@ Axiom QA4 : forall p:Q, p < p + 1.
 
 Axiom QA5 : forall p:Q, p < 0 -> p < (p/2).
 Axiom QA6 : forall p:Q, p < 0 -> (p / 2) < 0. 
+
+Definition n_Q_m : nat -> Q -> Q.
+intros n q. 
+refine (Qmult (pos (pos_of_nat n)) q). 
+Defined. 
+
+Definition on : Q -> nat -> Q.
+intros n q. 
+Admitted. 
