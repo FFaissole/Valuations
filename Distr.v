@@ -11,7 +11,6 @@ Require Import LowerR.
 
 Set Implicit Arguments.
 
-
 Section OpenSubs. 
 
 Context {A : hSet}.
@@ -30,6 +29,13 @@ Defined.
 Definition equiv_OS : OS -> OS -> Type := fun x y => Osle x y /\ Osle y x.  
 
 Definition OpenSub@{} := @quotient _ equiv_OS  _.
+
+
+Definition OS_rec@{i} {T : Type@{i} } {sT : IsHSet T}
+  : forall (dclass : OS -> T)
+  (dequiv : forall x y, equiv_OS x y -> dclass x = dclass y),
+  OpenSub -> T
+:= quotient_rec _.
 
 Definition OS_rec2 {T:Type } {sT : IsHSet T}
   : forall (dclass : OS -> OS -> T)
@@ -149,9 +155,29 @@ Proof.
 intros x1 x2 x3 x4 (H1,H2) (H3,H4). 
 red. red in H1, H2, H3, H4.  
 unfold os_j in *. 
-split. 
-red.
-Admitted. 
+split; red.
+intros x.
+transitivity ((SierJoin (x1 x) (x4 x))).
+apply SierJoin_is_join.
+apply SierJoin_is_join.
+transitivity (x4 x). 
+apply H3. 
+apply SierJoin_is_join.
+apply SierJoin_preserve_le_l. 
+apply H1. 
+intros x. 
+transitivity ((SierJoin (x1 x) (x4 x))).
+apply SierJoin_is_join.
+transitivity (x1 x).
+apply H2. 
+apply SierJoin_is_join. 
+apply SierJoin_is_join.
+apply SierJoin_is_join.
+apply SierJoin_is_join.
+transitivity (x3 x). 
+apply H4. 
+apply SierJoin_is_join.
+Qed. 
 
 Global Instance OS_join@{} : Join OpenSub.
 Proof.
@@ -179,101 +205,30 @@ intros x1 x2 H12 x3 x4 H34; apply OS_path.
 eapply os_m_pres;trivial.
 Defined.
 
+Instance os_zero : Zero OS := fun x : A => ⊥.
 
-
-Definition EmptySpaceO : OpenSub := fun x : A => ⊥.
-
-Definition FullSpaceO : OpenSub := fun x : A => ⊤.
-
-
-
-
-Lemma Osle_intro : forall (f g : OpenSub),
-    (forall x, SierLe (f x) (g x)) -> OSLe f g.
-Proof. 
-intros; intro x; trivial.
-Save.
-Hint Resolve Osle_intro.
-
-Lemma Osle_intro2 : forall (f g : OpenSub), (OSLe f g)
-                                     -> (forall x, SierLe (f x) (g x)).
-intros. auto.
-Save.
-
-Lemma Osle_intro3  : forall (x:A) (f g : OpenSub), (OSLe f g)
-                                               -> SierLe (f x) (g x).
-auto.
-Qed.
-
-Lemma OSLe_trans : forall U V W : OpenSub,
-           OSLe U V -> OSLe V W -> OSLe U W. 
-Proof. 
-intros U V W H1 H2. 
-intros x. 
-specialize (H1 x).
-specialize (H2 x). 
-transitivity (V x); trivial. 
-Qed.
-
-
-
-
-Lemma Osle_eq : forall U V, OSLe U V -> U = V. 
-Proof. 
-intros U V H. 
-auto. 
-
-Definition OSEq : OpenSub -> OpenSub -> Type.
+Global Instance OS_empty@{} : Zero OpenSub.
 Proof.
-intros U V.
-refine (OSLe U V /\ OSLe V U).
+refine (' os_zero).
 Defined.
 
-Lemma OSEq_trans : forall U V W :OpenSub,  OSEq U V -> OSEq V W -> OSEq U W.
+Instance os_full : One OS := fun x : A => ⊤.
+
+Global Instance OS_full@{} : One OpenSub.
+Proof. refine (' os_full). Defined.
+
+Definition os_lub (f : nat -> OS) : OS.
 Proof.
-intros U V W (H1,H2) (H3,H4).  
-unfold OSEq in *.
-split.
-apply Osle_intro.
-intros z.
-apply imply_le. intro Hu.
-apply (Osle_intro3 z) in H1; try trivial.
-apply SierLe_imply in H1; try trivial.
-apply (Osle_intro3 z) in H3; try trivial.
-apply SierLe_imply in H3; try trivial.
-trivial.
-apply Osle_intro.
-intros z.
-apply imply_le. intro Hw.
-apply (Osle_intro3 z) in H2; try trivial.
-apply SierLe_imply in H2; try trivial.
-apply (Osle_intro3 z) in H4; try trivial.
-apply SierLe_imply in H4; try trivial.
-Qed.
-
-
-Definition SierEq : Sier -> Sier -> Type.
-intros S S'.
-refine (SierLe S S' /\  SierLe S' S).
-Defined.
-
-Lemma Oseq_intro : forall (A:hSet) (f g : OpenSub A), (forall x:A, SierEq A (f x) (g x))
-                                                      -> OSEq f g.
-intros A f g H.
-unfold SierEq in H.
-split; apply Osle_intro;
-intros x.
-apply (fst (H x)).
-apply (snd (H x)).
-Save.
-Hint Resolve Oseq_intro.
-
-Definition Oslub (A:hSet) (f : nat -> OpenSub A) : OpenSub A.
-Proof.
-unfold OpenSub.
 intro x.  
 refine (CountableSup (fun n => f n x)).   
-Defined. 
+Defined.
+(*
+Definition seq_OS_OpenSub : (nat -> OS) -> (nat -> OpenSub) :=
+       fun f => (fun n => ' (f n)). 
+
+Definition Os_lub (f : nat -> OpenSub) : OpenSub.
+Proof. 
+refine ((os_lub f)). 
 
 Lemma Oslub_simpl : forall (A:hSet) (f:nat -> OpenSub A) (x:A), 
                            (Oslub f) x = CountableSup (fun n => f n x).
@@ -284,37 +239,34 @@ Lemma Oslub_def : forall (A:hSet)(f:nat -> OpenSub A),
                            (Oslub f) = fun x => CountableSup (fun n => f n x).
 intros.
 trivial.
-Save.
+Save.*)
 
-Definition Mes (A : hSet) : Type := (OpenSub A) -> RlowPos.
+Definition Mes : Type := OpenSub -> RlowPos.
 
-Definition empty_op (A : hSet) (m : Mes A) := 
-       Rleq (m (EmptySpaceO A)) RlP_0.
+Definition empty_op (m : Mes) := 
+       Rleq (m OS_empty) RlP_0.
 
-Definition modular (A : hSet) (m : Mes A) :=
-   forall (U V : OpenSub A), Rleq (RlP_plus (m U) (m V)) 
-                                  (RlP_plus (m (JoinOpen U V)) (m (MeetOpen U V))).
+Definition modular (m : Mes) :=
+   forall (U V : OpenSub), Rleq (RlP_plus (m U) (m V)) 
+                                  (RlP_plus (m (OS_join U V)) (m (OS_meet U V))).
 
-Definition seq_open_mes (A : hSet) (m : Mes A) :
-        (nat -> OpenSub A) -> (nat -> RlowPos).
+Definition seq_open_mes (m : Mes) :
+        (nat -> OpenSub) -> (nat -> RlowPos).
 intros L n. 
 specialize (L n).
 specialize (m L).
 refine m.
 Defined.
 
-Definition scott_continuous (A : hSet) (m : Mes A) :=
-   forall (u : nat -> OpenSub A), Rlle (m (Oslub u)) (Rllub (seq_open_mes m u)). 
+Definition mon_opens (m : Mes) :=
+   forall (U V : OpenSub), OSe U V -> Rlle (m U) (m V).
 
-Definition mon_opens (A : hSet) (m : Mes A) :=
-   forall (U V : OpenSub A), OSLe U V -> Rlle (m U) (m V).
-
-Record D (A:hSet) : Type :=
-  {mu : Mes A;
+Record D : Type :=
+  {mu : Mes;
    mu_modular : modular mu; 
    mu_empty_op : empty_op mu;
    mu_mon : mon_opens mu;
-   mu_prob : Rlle (mu (fun x => SierTop)) (RlP_1)
+   mu_prob : Rlle (mu OS_full) (RlP_1)
 }.
 
 Hint Resolve mu_modular mu_prob mu_empty_op mu_mon.
@@ -322,26 +274,23 @@ Hint Resolve mu_modular mu_prob mu_empty_op mu_mon.
 (** *** Properties of measures *)
 
 (* mu is monotonic *) 
-Lemma mu_monotonic : forall (A : hSet) (m : D A), mon_opens (mu m).
-auto.
-Save.
+Lemma mu_monotonic : forall (m : D), mon_opens (mu m).
+Proof. auto. Qed.
 Hint Resolve mu_monotonic.
-Implicit Arguments mu_monotonic [A].
 
 (* eq stable *) 
-Lemma mu_stable_eq : forall (A : hSet) (m: D A) (U V : OpenSub A),
-    OSEq U V -> Rleq (mu m U) (mu m V).
-intros A m U V (Hl1,Hl2).
-split. 
-apply mu_monotonic; trivial.
-apply mu_monotonic; trivial.
-Save.
+Lemma mu_stable_eq : forall (m: D) (U V : OpenSub),
+    U = V -> Rleq (mu m U) (mu m V).
+Proof. 
+intros m U V H.
+rewrite H. 
+split; auto.   
+Qed.
+
 Hint Resolve mu_stable_eq.
-Implicit Arguments mu_stable_eq [A].
 
 (* mu m (fone A) <= 1%RlPos *)
-Lemma mu_one : forall (A: hSet) (m: D A), Rlle (mu m (FullSpaceO A))  RlP_1.
-auto.
-Save.
+Lemma mu_one : forall (m: D), Rlle (mu m OS_full)  RlP_1.
+Proof. auto. Qed. 
 
 Hint Resolve mu_one.
