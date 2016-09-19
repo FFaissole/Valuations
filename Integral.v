@@ -1,4 +1,4 @@
-Add Rec LoadPath "/Users/faissole/Desktop/HoTT/HoTTClasses/theories".
+
 
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders
