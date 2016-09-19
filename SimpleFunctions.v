@@ -68,17 +68,13 @@ Defined.
 
 Fixpoint sum_subdiv (A : hSet) (a b : Q) (δ : nat) (f : MF A) (m : D A)
                     (s : sv a b) : Rlow := match s with 
-       | sub0 => RlP_0
+       | sub0 => [a]
        | subn q Hq sub0 => Rl_Q_Mult q (mu m (MF_Open (fminus f (rat_f _ q))))
        | subn q Hq (subn p Hp l)  => Rl_Plus
                            (Rl_Q_Mult q (mu m (MeetOpen (MF_Open (fminus f (rat_f _ q)))
                                                         (MF_Open (fminus (rat_f _ p) f)))))
                           (sum_subdiv A a b δ f m l) end. 
-
-
-
-
-  
+(*
 Section Deltas. 
 
 Variable A : hSet.
@@ -99,14 +95,5 @@ Definition sub_rat_opens (n : nat) (Hn : n <= p) (f : MF A) (m : Mes A) :=
 
 End Deltas. 
 
-Definition LowerIntMes (A : hSet) (p : nat) (m : nat) (a b : Q) (Hab : Qlt a b)
-                       (Hpp : 0 < p) (Hmp : m <= p) : RlowPos. 
-Admitted.
-
-
-(*
-Fixpoint Lower_IntMes (A : hSet) (p : nat) (m : nat) 
-                      (Hab : a < b) (Hpp : 0 < p) (Hmp : m <= p) := 
-                         | Lower_IntMes ()   *)      
-      
- 
+*)
+     
