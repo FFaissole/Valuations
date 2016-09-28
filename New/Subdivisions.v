@@ -11,7 +11,7 @@ Require Import HoTT.HSet HoTT.Basics.Trunc HProp HSet
                TruncType UnivalenceAxiom Types.Sigma
                FunextVarieties Spaces.Nat. 
 
-Require Import Qaxioms LowerR Dedekind_pos Distr Integral Riesz2.
+Require Import Qaxioms Duilq Distr IntPos RieszTh.
 
 Close Scope nat_scope. 
 
