@@ -10,7 +10,7 @@ Require Import HoTT.HSet HoTT.Basics.Trunc HProp HSet
                TruncType UnivalenceAxiom Types.Sigma
                FunextVarieties. 
 
-Require Import Qaxioms LowerR Distr Dedekind_pos.
+Require Import Qaxioms Duilq Distr.
 
 Set Implicit Arguments.  
 
