@@ -31,7 +31,7 @@ Require Import HoTT.HSet HoTT.Basics.Trunc HProp HSet
                Types.Paths.
 Local Open Scope path_scope. 
 
-Require Export Qaxioms Duilq Distr2 IntPos2.
+Require Export Qaxioms Duilq Distr IntPos.
 
 Section Bags_equiv.
 
