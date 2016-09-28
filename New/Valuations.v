@@ -1,4 +1,4 @@
-(** Open Subspaces of an hSet A  **)
+(** Open Subspaces and Valuations  **)
 
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders
