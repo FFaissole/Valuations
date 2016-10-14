@@ -10,7 +10,7 @@ Require Import HoTT.HSet HoTT.Basics.Trunc HProp HSet
                TruncType UnivalenceAxiom Types.Sigma
                FunextVarieties. 
 
-Require Import Qaxioms Duilq Distr.
+Require Import Qaxioms RoundedClosed Valuations.
 
 Set Implicit Arguments.  
 
