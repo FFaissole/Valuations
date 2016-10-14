@@ -8,7 +8,7 @@ Require Import HoTT.HSet HoTT.Basics.Trunc HProp HSet
                Types.Universe UnivalenceImpliesFunext
                TruncType UnivalenceAxiom hit.quotient
                Basics.FunextVarieties FunextAxiom.  
-Require Import Duilq.
+Require Import RoundedClosed.
 
 Set Implicit Arguments.
 
