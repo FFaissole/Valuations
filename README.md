@@ -11,6 +11,12 @@ You need the following dependencies:
 - HoTT branch with IR: https://github.com/SkySkimmer/HoTT/tree/with-IR must be present on your system, built with Coq with IR
 - HoTTClasses: https://github.com/SkySkimmer/HoTTClasses
 
+Install the dependencies and run the following commands:
+
+cd Valuations
+make
+
+
 #Description of the files: 
 
 - RoundedClosed.v: general construction of rounded up/down closed subset of a set, base of the lower and upper reals construction. 
