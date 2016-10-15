@@ -1,4 +1,3 @@
-Add Rec LoadPath "/Users/faissole/Desktop/HoTT/HoTTClasses/theories".
 
 (*** Some definitions for models, axioms, further work ***)
 
