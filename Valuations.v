@@ -101,7 +101,10 @@ split.
     apply H1. apply H2.
 Defined.
 
-(** Semigroup structure of OS *)
+(** Semigroup structure of OS : 
+  associative magma : set S with an operation 
+  op : SxS -> S s.a. forall a b c, a op (b op c) = (a op b) op c
+*)
 Global Instance os_semi_group : SemiGroup OS. 
 Proof. 
 split. 
