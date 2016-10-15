@@ -1,3 +1,4 @@
+Add Rec LoadPath "/Users/faissole/Desktop/HoTT/HoTTClasses/theories".
 
 (*** Some definitions for models, axioms, further work ***)
 
@@ -15,6 +16,7 @@ Require Import RoundedClosed Valuations.
 
 Set Implicit Arguments.  
 
+(** Desired properties of models *)
 (* Phoa's principle *)
 Definition Phoa (f : Sier -> Sier) := forall (u : Sier), 
     (f u) <-> join (meet (f SierTop) u) (f SierBot).
@@ -37,7 +39,8 @@ simple refine (Build_Recursors _ _ _ _ _ _ _ _ _ _ _ _);simpl.
 Defined. 
 
 
-(* to move ==> some continuity auxiliar definitions *)
+(* to move ==> some continuity auxiliar definitions 
+ --> to prove the Phoa's principle under some properties *)
 Definition IncreasingSeq_f (f : Sier -> Sier)
                   (H : forall x y, x <= y -> f x <= f y)
                   (u : IncreasingSequence Sier) : IncreasingSequence Sier.
@@ -55,22 +58,19 @@ unfold IncreasingSeq_f.
 reflexivity. 
 Qed.
 
-Definition scott_mon_sier (f : Sier -> Sier) (H : forall x y, x <= y-> f x <= f y) :=
-  forall (u : IncreasingSequence Sier),
-     (sup Unit ((IncreasingSeq_f f H u))) = f (sup Unit u).
 
-
-(* Definition of N with point at infinity*)
+(** Definition of the one-point compactification of N*)
 Record No := mkNo{
                  u :> nat -> bool;
                  Hno : forall n, u n = false -> u (n+1) = false    
             }.
 
-(* infinity *)
+(* infinity point*)
 Definition infNo : No. 
 exists (fun n => true); auto.    
 Defined. 
 
+(** Definition of axioms *)
 (* WSO principle *)
 Definition WSO := forall (O : No -> Sier), O (infNo)
     -> exists un : No, (O un) /\ (exists p, (un p) = false).  

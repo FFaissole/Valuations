@@ -1,3 +1,4 @@
+Add Rec LoadPath "/Users/faissole/Desktop/HoTT/HoTTClasses/theories".
 
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders
@@ -184,18 +185,12 @@ Hint Resolve I_def I_add I_prob.
 Lemma Ieq_ext (f g : mf) (It : IntPos) :
          (forall x, (f x) = (g x)) -> (I It f) = (I It g). 
 Proof.
-intros Hx. 
-assert (H1 : (I It f) <= (I It g)). 
-apply I_mon.
-intros y.
-rewrite (Hx y). 
-reflexivity. 
-assert (H2 : (I It g) <= (I It f)).
-apply I_mon; trivial. 
-intros y. 
-rewrite (Hx y).  
-reflexivity.
-apply (antisymmetry Rllepos); trivial.  
+intros HH.
+destruct It. simpl. 
+assert (Hfg : f = g).
+apply path_forall.
+intros x; trivial.
+rewrite Hfg; reflexivity.
 Qed.
 
 End Integrals. 

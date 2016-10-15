@@ -1,4 +1,6 @@
 
+Add Rec LoadPath "/Users/faissole/Desktop/HoTT/HoTTClasses/theories".
+
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders
                HoTTClasses.implementations.sierpinsky
@@ -113,7 +115,7 @@ Proof.
 Admitted.
 
 Definition IntP := @IntPos A _ _. 
-Definition VP := @D A _ _.
+Definition VP := @Val A _ _.
 
 
 (* First part of theorem : mu(I) *)
@@ -145,12 +147,18 @@ Qed.
 
 Section Bags_equiv.
 
+(** Coquand-Spitters, Vickers build the set of simple functions to define the integral from a measure; they both use the Tarski's free monoid quotiented by a modularity law. 
+
+Here we provide the construction of the free monoid using bag equivalence (see Danielson : http://www.cse.chalmers.se/~nad/publications/danielsson-bag-equivalence.pdf)
+*)
+
+  
 Variable T : Type.
-                                                          
+    (*                                                      
 Definition equiv_rel (A B : Type) :=
   exists (to : A -> B) (from : B -> A),
     (forall x, from (to x) = x) /\ (forall y, to (from y) = y). 
-
+*)
 
 Fixpoint Any (l : list T) (P : T -> Type) : Type := match l with
               | nil => False
@@ -161,34 +169,19 @@ Variable EqT : T -> T -> Type.
 
 Definition App (l: list T) (s : T) := (Any l (EqT s)).
 
-Definition eq_bag := fun l1 l2 => forall r:T, equiv_rel (App l1 r) (App l2 r).
-
-Global Instance eq_bag_ishProp : ∀ x y : list T, IsHProp (eq_bag x y).
-Proof.
-intros x y.
-apply hprop_allpath.
-intros s s'.
-apply path_forall. 
-intros z.
-destruct (s z) as (H,H0). 
-unfold App in *. 
-destruct H0 as (L,H0). 
-destruct H0 as (H1,H2). 
-destruct (s' z) as (J,J0). 
-unfold App in *. 
-destruct J0 as (M,J0). 
-destruct J0 as (J1,J2). 
-unfold eq_bag in *.   
-assert (Hrr : forall r, IsHProp (equiv_rel (App x r) (App y r))).
-admit. 
-Admitted.
+Definition eq_bag := fun l1 l2 => forall r:T, (App l1 r) <~> (App l2 r).
 
 End Bags_equiv.
+
+(** TODO : add the modularity law to build the modular monoid*)
+(** TODO2 : rationalization of the modular monoid *)
+
 
 Context {Tjoin : Join A}.
 Context {Tmeet : Meet A}.
 Context {Tlatt : Lattice A}. 
 
+(** Some definitions to manipulate subdivisions : it is usefull ?*)
 Definition equiv_mod := forall (x y:A) l, cons x (cons y l)
                                          = cons (Tmeet x y) (cons (Tjoin x y) l).
 

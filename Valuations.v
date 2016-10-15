@@ -1,3 +1,4 @@
+Add Rec LoadPath "/Users/faissole/Desktop/HoTT/HoTTClasses/theories".
 
 (** Open Subspaces of an hSet A  **)
 
@@ -215,7 +216,7 @@ Defined.
 (** * Valuations on set A *)
 Section Valuations.  
 
-(** Space of valuations on A *) 
+(** Space of measures on A *) 
 Definition Mes : Type := OS -> RlowPos.
 
 (* Definition of the properties *)
@@ -237,8 +238,8 @@ Defined.
 Definition mon_opens (m : Mes) :=
    forall (U V : OS), U ⊆ V -> (m U) <= (m V).
 
-(*Space of distributions*)
-Record D : Type :=
+(*Space of valuations on A *)
+Record Val : Type :=
   {mu :> Mes;
    mu_modular : modular mu; 
    mu_empty_op : empty_op mu;
@@ -251,13 +252,13 @@ Hint Resolve mu_modular mu_prob mu_empty_op mu_mon.
 (** *** Properties of measures *)
 
 (* mu is monotonic *) 
-Lemma mu_monotonic : forall (m : D), mon_opens m.
+Lemma mu_monotonic : forall (m : Val), mon_opens m.
 Proof. auto. Qed.
 Hint Resolve mu_monotonic.
 
 (* eq stable *)
 
-Lemma mu_stable_eq : forall (m: D) (U V : OS),
+Lemma mu_stable_eq : forall (m: Val) (U V : OS),
     U = V -> (mu m U) = (mu m V).
 Proof. 
 intros m U V H2.
@@ -266,12 +267,6 @@ split; auto.
 Qed.
 
 Hint Resolve mu_stable_eq.
-
-(* mu m (fone A) <= 1%RlPos *)
-Lemma mu_one : forall (m: D), (mu m Ω) <=  RlP_1.
-Proof. auto. Qed. 
-
-Hint Resolve mu_one.
 
 End Valuations. 
 
