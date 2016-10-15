@@ -1,4 +1,3 @@
-Add Rec LoadPath "/Users/faissole/Desktop/HoTT/HoTTClasses/theories".
 
 (** Open Subspaces of an hSet A  **)
 
