@@ -19,14 +19,14 @@ Install the dependencies and run the following commands:
 
 #Description of the files: 
 
-- RoundedClosed.v: general construction of rounded up/down closed subset of a set, base of the lower and upper reals construction. 
+- RoundedClosed.v: general construction of rounded up/down closed subset of a set, base of the lower and upper reals construction (this file is supposed to be completed)
 - Model.v: some axioms and results needed for synthetic topology.
 - Monad.v: a little definition of a monad (Kleisli's approach) based on the HoTT's category theory.
 - Valuations.v: formalization of open subsets and valuations (probability distributions but on open subsets). 
-- LowerIntPos.v: integrable functions and lower integrals. 
-- Riesz.v: formalization of a constructive Riesz representation theorem.
-- FreeMonoid.v: definition of simple functions by Tarski's free monoid, beginning of 
-  formalization of subdivisions (WIP)
+- LowerIntpos.v: integrable functions and lower integrals. 
+- Riesz.v: formalization of a constructive Riesz representation theorem, towards with the
+           definition of simple functions by Tarski's free monoid, and subdivisions (WIP).
+
 
 
 
