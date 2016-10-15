@@ -13,8 +13,8 @@ You need the following dependencies:
 
 Install the dependencies and run the following commands:
 
-cd Valuations
-make
+- cd Valuations
+- make
 
 
 #Description of the files: 
