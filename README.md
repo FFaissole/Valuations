@@ -24,7 +24,7 @@ Install the dependencies and run the following commands:
 - Monad.v: a little definition of a monad (Kleisli's approach) based on the HoTT's category theory.
 - Valuations.v: formalization of open subsets and valuations (probability distributions but on open subsets). 
 - LowerIntpos.v: integrable functions and lower integrals. 
-- Riesz.v: formalization of a constructive Riesz representation theorem, towards with the
+- Riesz.v: formalization of a constructive Riesz representation theorem, with the
            definition of simple functions by Tarski's free monoid, and subdivisions (WIP).
 
 
