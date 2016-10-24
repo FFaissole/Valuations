@@ -21,7 +21,18 @@ Definition Phoa (f : Sier -> Sier) := forall (u : Sier),
     (f u) <-> join (meet (f SierTop) u) (f SierBot).
 
 (* Proof of the dominance *)
-Definition Dominance : forall (s : Sier) (p : Type), Sier.  
+Section Dominance_def. 
+
+Variable Sigma : Type.
+Variable isTop : Sigma -> Type.   
+
+Definition is_dominance := forall (u : Sigma) (p : Type),
+       (isTop u -> exists s, isTop s = p) ->
+       (exists a, isTop a <-> (isTop u /\ p)).
+
+End Dominance_def. 
+
+Definition Dominance_build : forall (s : Sier) (p : Type), Sier.  
 Proof.
 intros s p.   
 revert s; apply (partial_rec Unit _ le).   
@@ -36,6 +47,20 @@ simple refine (Build_Recursors _ _ _ _ _ _ _ _ _ _ _ _);simpl.
 + intros ss pp xx IH;apply (sup_le_l _ _ _ IH). 
 + intros ss pp xx IH; apply sup_le_r. apply IH.  
 Defined. 
+
+Lemma Dominance_Sier : is_dominance IsTop.
+Proof. 
+intros u p Hup.
+exists (Dominance_build u p).
+split; intros D.
++ split.  admit. 
+          admit. 
++ destruct D as (v,l).
+  apply Hup in v. 
+  destruct v as (s,Hs).
+  clear Hup. 
+Admitted. 
+
 
 
 (* to move ==> some continuity auxiliar definitions 
@@ -92,6 +117,8 @@ Inductive bars (a : (nat -> option bool)) : (list (list bool)) -> Type :=
       | bars_empty : bars a nil
       | bars_head : forall c, bars_aux c a -> bars a (cons c nil)
       | bars_tail : forall c l, bars a l -> bars a (cons c l).
+
+
 
 
 
