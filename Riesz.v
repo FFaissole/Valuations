@@ -167,7 +167,8 @@ Variable EqT : T -> T -> Type.
 
 Definition App (l: list T) (s : T) := (Any l (EqT s)).
 
-Definition eq_bag := fun l1 l2 => forall r:T, (App l1 r) <~> (App l2 r).
+Definition eq_bag := fun l1 l2 => (forall r:T, (App l1 r)) <~>
+                                  (forall r:T, (App l2 r)).
 
 End Bags_equiv.
 
@@ -216,7 +217,14 @@ Definition is_le_simples (l m : list (@OS A)) := forall (n : nat)
 
 Definition is_eq_simples l m := is_le_simples l m.
 
-Definition free_mon : Type := @quotient _ (eq_bag is_le_simples) _.
+Lemma isHProp_equiv_bag : ∀ x y : list (list OS), IsHProp (eq_bag is_le_simples x y). 
+Proof. 
+intros x y. 
+unfold eq_bag. 
+Admitted.
+
+Definition free_mon : Type := @quotient _ (eq_bag is_le_simples)
+                           isHProp_equiv_bag. 
 
 Close Scope nat_scope. 
 
