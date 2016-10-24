@@ -1,5 +1,3 @@
-
-
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders
                HoTTClasses.implementations.sierpinsky
@@ -33,6 +31,7 @@ subset on a type *)
 Local Set Universe Minimization ToSet.
 
 Section GeneralIlq.
+  
 (** Very general construction : A is any type, 
 APred is the predicate of any subspace of A *)
   
@@ -96,7 +95,7 @@ Qed.
 
 Lemma RC_eq0 : forall a b : RC, elt a = elt b -> a = b. 
 Proof.  
-intros (a,Ha) (b,Hb); simpl; intros E; destruct E; apply ap.
+intros (a,Ha) (b,Hb); simpl; intros E. destruct E. apply ap.
 apply path_ishprop. 
 Qed. 
 
@@ -123,7 +122,7 @@ destruct (RC_le_or_lt r q) as [E3|E3].
 - apply rounded. apply tr. exists r; auto.
 Qed. 
 
-Lemma RC_orders : forall (c : RC) (q r : A), elt c q -> ~ elt c r -> Rlt q r.
+Lemma RC_ordlt : forall (c : RC) (q r : A), elt c q -> ~ elt c r -> Rlt q r.
 Proof.
 intros c q r E1 E2.
 destruct (RC_le_or_lt r q) as [E|E];trivial.
@@ -166,7 +165,7 @@ repeat split.
   revert E';apply (Trunc_ind _);intros [r [E3 E4]].
   apply tr;exists q. split. 
   + apply RC_le with r;  trivial.
-    assert (H' : Rlt q r). apply RC_orders with b; trivial.
+    assert (H' : Rlt q r). apply RC_ordlt with b; trivial.
     destruct (Hdt q r); trivial. 
     apply FR in r0. case (r0 H'). 
   + trivial.
@@ -175,16 +174,15 @@ Qed.
 Notation "a <= b" := (RCLe_l a b). 
 
 Lemma RC_stable : forall r p q, elt r p -> (p=q) -> elt r q.
-intros r p q Hp He.
-apply RC_le with p; trivial.
-rewrite He.
-reflexivity.
+intros r p q Hp He;
+apply RC_le with p; trivial;
+rewrite He; reflexivity.
 Save.
 
 Lemma RC_mon : forall (x y : RC) (p q :A),
     (Rle q p) -> x <= y -> elt x p -> elt y q.
-intros x y p q Hpq Hxy Hx.
-apply RC_le with p; try assumption. auto. 
+intros x y p q Hpq Hxy Hx;
+apply RC_le with p; try assumption; auto. 
 Save.
 
 End contents. 
@@ -265,22 +263,16 @@ Context `{Funext} `{Univalence}.
 Definition Rlow := RC Q Qlt. 
 
 (** Order relations on Rlow *)
-Global Instance Rlle : Le Rlow. 
-Proof.
-refine (RCLe_l Q Qlt). 
-Defined. 
+Global Instance Rlle : Le Rlow := RCLe_l Q Qlt.
 
 Instance Rlle_order@{} : PartialOrder Rlle.
 Proof.
 apply RCLe_l_partial_order; trivial.
 Defined. 
 
-Global Instance Rllt : Lt Rlow.
-Proof.
-refine (RCLt_l Q Qlt). 
-Defined.
+Global Instance Rllt : Lt Rlow := RCLt_l Q Qlt. 
 
-Lemma FPO_Qle_Qlt : FullPseudoOrder Qle Qlt. 
+Lemma Fpo_Qle_Qlt : FullPseudoOrder Qle Qlt. 
 Proof.
 split; try apply _. 
 split; try apply _.
@@ -296,24 +288,24 @@ Instance Rllt_strict_order@{} : StrictOrder Rllt.
 Proof.
 repeat split.
 - apply _.
-- intros a;hnf;apply (Trunc_ind _);intros [q [E1 E2]].
-  case (E2 E1).
-- intros a b c E E';revert E; apply (Trunc_ind _);intros [q [E1 E2]];
-  revert E';apply (Trunc_ind _);intros [r [E3 E4]].
+- intros a;hnf. apply (Trunc_ind _);intros [q [Hh Hh']].
+  case (Hh' Hh).
+- intros a b c Hh Hh';revert Hh; apply (Trunc_ind _);intros [q [H1 H2]];
+  revert Hh';apply (Trunc_ind _);intros [r [H3 H4]].
   apply tr;exists q. split.
   + apply RC_le with Qle r. red.
     intros x y Hxy Hyx.
     apply (antisymmetry le); trivial.
     apply le_or_lt. trivial.
-    assert (H3 : Qlt q r). 
-    apply RC_orders with Qle b; try trivial.
+    assert (Hlt : Qlt q r). 
+    apply RC_ordlt with Qle b; try trivial.
     intros s s2; apply (antisymmetry le).
     apply le_or_lt. 
-    apply FPO_Qle_Qlt. 
+    apply Fpo_Qle_Qlt. 
     apply rationals_order.
     generalize (le_or_lt q r).
     intros HH. destruct HH. trivial.    
-    apply lt_flip in l. case (l H3).
+    apply lt_flip in l. case (l Hlt).
   + trivial.
 Qed.
 
@@ -328,14 +320,14 @@ intros q; split.
   apply flip_lt_minus_l.
   apply pos_plus_lt_compat_r;solve_propholds.
 + intros p;split.
-  - intros E;apply semi_decidable in E.
+  - intros Hh;apply semi_decidable in Hh.
     apply tr;econstructor;split;[|apply (snd semi_decidable)];
     apply Q_average_between;trivial.
   - apply (Trunc_ind _);
-    intros [s [E1 E2]];
+    intros [r [H1 H2]];
     apply (snd semi_decidable);
-    apply semi_decidable in E2.
-    transitivity s;trivial.
+    apply semi_decidable in H2.
+    transitivity r;trivial.
 Qed. 
 
 Global Instance QRlow : Cast Q Rlow. 
@@ -381,16 +373,15 @@ Qed.
 
 Lemma Rllt_Q_reflecting : StrictlyOrderReflecting (cast Q Rlow).
 Proof.
-intros q r;apply (Trunc_ind _);intros [s [E1 E2]].
-apply (@semi_decidable (_ < _) _ _) in E1.
-simpl in E2. 
-unfold semi_decide in E2. 
+intros q r;apply (Trunc_ind _);intros [s [H1 H2]].
+apply (@semi_decidable (_ < _) _ _) in H1.
+simpl in H2; unfold semi_decide in H2. 
 destruct (decide (s < q)). 
-case (E2 (top_greatest SierTop)). 
+case (H2 (top_greatest SierTop)). 
 destruct (le_or_lt q r).
 destruct (Qdec q r). 
 rewrite p in n. 
-case (n E1). generalize (le_equiv_lt q r).
+case (n H1). generalize (le_equiv_lt q r).
 intros HS. destruct HS. 
 trivial.
 case (n0 p).
@@ -407,7 +398,7 @@ split.
 - apply Rllt_Q_reflecting.
 Qed.
 
-(* Addition of lower reals *)
+(* Addition of lower reals : like in dedekind cuts in HoTTClasses*)
 Definition pred_plus_l : Plus QPred.
 Proof.
 intros x y q.
@@ -423,23 +414,23 @@ Lemma rlow_pred_plus_pr : forall a b : Rlow, forall q,
   merely (exists r s, val a r /\ val b s /\ q < r + s).
 Proof.
 intros a b q;split.
-+ intros E;
-  apply pred_plus_pr in E;
-  revert E;apply (Trunc_ind _);
-  intros [r [s [E1 [E2 E3]]]].
-  apply rounded in E1.
-  revert E1;
++ intros Hh;
+  apply pred_plus_pr in Hh;
+  revert Hh;apply (Trunc_ind _);
+  intros [p [t [H1 [H2 H3]]]].
+  apply rounded in H1.
+  revert H1;
   apply (Trunc_ind _);
-  intros [r' [Er E1]].
-  apply tr;exists r',s;
+  intros [p' [Er E1]].
+  apply tr;exists p',t;
   repeat split;trivial.
-  rewrite E3.
+  rewrite H3.
   apply (strictly_order_preserving (+ _)). trivial.
-+ apply (Trunc_ind _);intros [r [s [E1 [E2 E3]]]].
++ apply (Trunc_ind _);intros [p [t [H1 [H2 H3]]]].
   apply pred_plus_pr.
-  apply tr;exists r, (s - (r + s - q));repeat split.
+  apply tr;exists p, (t - (p + t - q));repeat split.
   - trivial.
-  - apply RC_le with Qle s;trivial.
+  - apply RC_le with Qle t;trivial.
     intros ss sh;
     apply (antisymmetry le).
     apply le_or_lt. 
@@ -457,27 +448,27 @@ Proof.
 intros a b;split.
 + generalize (inhab Q Qlt a).
   apply (Trunc_ind _);
-  intros [r Er].
+  intros [p H1].
   generalize (inhab Q Qlt b).
   apply (Trunc_ind _);
-  intros [s Es].
-  apply tr;exists (r+s).
+  intros [q H2].
+  apply tr;exists (p+q).
   apply pred_plus_pr.
-  apply tr;exists r,s;auto.
+  apply tr;exists p,q;auto.
 + intros q;split.
-  - intros E.
-    apply pred_plus_pr in E.
-    revert E;
+  - intros Hh.
+    apply pred_plus_pr in Hh.
+    revert Hh;
     apply (Trunc_ind _);
-    intros [r [s [E1 [E2 E3]]]].
-    apply (rounded Q Qlt a) in E1.
-    apply (rounded Q Qlt b) in E2.
-    revert E1;apply (Trunc_ind _);
-    intros [r' [E1 E1']];
-    revert E2;apply (Trunc_ind _);
-    intros [s' [E2 E2']].
-    apply tr;exists (r' + s'). split.
-    * rewrite E3. apply plus_lt_compat;trivial.
+    intros [p [t [H1 [H2 H3]]]].
+    apply (rounded Q Qlt a) in H1.
+    apply (rounded Q Qlt b) in H2.
+    revert H1;apply (Trunc_ind _);
+    intros [k [K1 K2]];
+    revert H2;apply (Trunc_ind _);
+    intros [z [Z1 Z2]].
+    apply tr;exists (k + z). split.
+    * rewrite H3. apply plus_lt_compat;trivial.
     * apply pred_plus_pr. apply tr;eauto.
   - apply (Trunc_ind _);intros [q' [E1 E2]].
     apply pred_plus_pr in E2.
@@ -487,7 +478,8 @@ intros a b;split.
     by (rewrite E4;ring_tac.ring_with_integers (NatPair.Z nat)).
     rewrite Hq.
     apply pred_plus_pr.
-    apply tr;econstructor;econstructor;split;[|split;[|reflexivity]];trivial.
+    apply tr;econstructor;econstructor;split;
+    [|split;[|reflexivity]];trivial.
     apply RC_le with Qle r';trivial.
     intros ss sh; apply (antisymmetry le).
     apply le_or_lt. 
@@ -514,7 +506,7 @@ intros a b q;apply pred_plus_pr.
 Qed.
 
 
-Lemma lower_plus_lt_pr : forall a b : Rlow, forall q,
+Lemma rlow_plus_lt_pr : forall a b : Rlow, forall q,
   val (a + b) q <->
   merely (exists r s, val a r /\ val b s /\ q < r + s).
 Proof.
@@ -560,7 +552,8 @@ rewrite E3,E5;
 (apply pred_plus_pr;apply tr;
 do 2 econstructor;split;
 [|split;[|reflexivity]]);
-trivial;apply pred_plus_pr;apply tr;eauto.
+trivial;
+apply pred_plus_pr;apply tr;eauto.
 Qed.
 
 Lemma RlPlus_left_id : LeftIdentity RlPlus 0.
@@ -591,7 +584,7 @@ simpl in *.
   + abstract ring_tac.ring_with_integers (NatPair.Z nat).
 Qed.
 
-Lemma RlPlus_rat : forall q r : Q, QRlow (q + r)
+Lemma RlPlus_Q : forall q r : Q, QRlow (q + r)
                                  = QRlow q + QRlow r :> Rlow.
 Proof.
 intros;apply (antisymmetry le).
@@ -619,7 +612,8 @@ intros;apply (antisymmetry le).
   + set (QRS := q + r - s).
     path_via (q + r - QRS * (2 / 2));
     [|abstract ring_tac.ring_with_integers (NatPair.Z nat)].
-    rewrite dec_recip_inverse;[|apply lt_ne_flip;solve_propholds].
+    rewrite dec_recip_inverse;
+    [|apply lt_ne_flip;solve_propholds].
     rewrite mult_1_r;unfold QRS;clear QRS.
     abstract ring_tac.ring_with_integers (NatPair.Z nat).
 - intros s E.
@@ -628,7 +622,8 @@ intros;apply (antisymmetry le).
   apply pred_plus_pr in E.
   revert E;apply (Trunc_ind _);
   intros [r' [s' [E1 [E2 E3]]]].
-  apply semi_decidable in E1;apply semi_decidable in E2.
+  apply semi_decidable in E1;
+  apply semi_decidable in E2.
   rewrite E3.
   apply plus_lt_compat;trivial.
 Qed.
@@ -646,10 +641,12 @@ intros a b;split.
     apply top_le_join in E.
     revert E;apply (Trunc_ind _).
     intros [E|E];
-    apply rounded in E;revert E;apply (Trunc_ind _);
+    apply rounded in E;
+    revert E;apply (Trunc_ind _);
     intros [r [E1 E2]];
     apply tr;
-    exists r; split;trivial;apply top_le_join,tr;auto.
+    exists r; split;trivial;
+    apply top_le_join,tr;auto.
   - apply (Trunc_ind _);
     intros [r [E1 E2]];
     apply top_le_join in E2;
@@ -670,100 +667,26 @@ Defined.
 
 Arguments RlJoin _ _ /.
 
-
-Lemma rlow_not_lt_le_flip : forall a b : Rlow, ~ a < b -> b <= a.
+Lemma Rlle_Q_preserving : OrderPreserving (cast Q Rlow).
 Proof.
-intros a b.
-intros HS.  
-Admitted. 
-
-
-Lemma Rllt_cotrans : CoTransitive (@lt Rlow Rllt).
-Proof.
-  intros a b E c;
-    revert E;apply (Trunc_ind _). intros [q [E1 E2]].
-
-apply rounded in E1;
-  revert E1;apply (Trunc_ind _);intros [r [Er E1]].
-(*generalize (cut_located c _ _ (transitivity Er Es)).*)
-unfold hor. 
-Admitted. 
-
-Instance Rlow_isapart@{} : IsApart Rlow.
-Proof.
-split.
-- apply _.
-- unfold apart;
-  simpl;intros a b;
-  apply Sum.ishprop_sum;
-  try apply _.
-  intros E1 E2;
-  apply (lt_antisym a b);
-  split;trivial.
-- intros a b [E|E].
-  right. trivial.
-  left. trivial. 
-- intros a b [E|E] c;
-  generalize (Rllt_cotrans _ _ E c);
-  apply (Trunc_ind _);
-  intros [E1|E1];
-  apply tr;
-  unfold apart;
-  simpl;
-  unfold RCApart; auto. 
-- intros a b;split.
-  + intros E.
-    apply (antisymmetry le);apply rlow_not_lt_le_flip;
-    intros E1;
-    apply E;
-    unfold apart;
-    simpl;
-    unfold RCApart;auto.
-  + intros E;
-    destruct E;
-    intros [E|E];
-    revert E;
-    apply (irreflexivity lt).
+intros y q Hh.
+red; unfold Rlle, RCLe_l, cast, QRlow in *. 
+intros t Hty. 
+simpl in *.
+unfold semi_decide in *. 
+destruct (decide (t < y)). 
+destruct (decide (t < q)). 
+trivial. 
+assert (Hf : t < q). 
+apply lt_le_trans with y; try trivial.
+case (n Hf). 
+destruct (decide (t < q)). 
+apply top_greatest. 
+trivial.
 Qed.
 
-Global Instance Rlow_fullpseudoorder@{} : FullPseudoOrder Rlle Rllt.
-Proof.
-repeat (split;try (revert x; fail 1);try apply _).
-- apply lt_antisym.
-- apply Rllt_cotrans.
-- intros a b;
-  split; trivial.
-- intros a b;
-  split.
-  + intros E1.
-    red;apply (Trunc_ind _).
-    intros [q [E2 E3]].
-    apply E3. apply RC_mon with Qle a q.
-    intros ss sh; apply (antisymmetry le).
-    apply le_or_lt. 
-    reflexivity.
-    auto. trivial. 
-  + apply rlow_not_lt_le_flip.
-Qed.
 
-Lemma Rlle_rat_preserving : OrderPreserving (cast Q Rlow).
-Proof.
-apply full_pseudo_order_preserving.
-Qed.
-
-Lemma Rlle_rat_reflecting : OrderReflecting (cast Q Rlow).
-Proof.
-apply full_pseudo_order_reflecting.
-Qed.
-
-Instance Rlle_rat_embedding : OrderEmbedding (cast Q Rlow).
-Proof.
-split.
-- apply Rlle_rat_preserving.
-- apply Rlle_rat_reflecting.
-Qed.
-
-Lemma rlow_plus_le_preserving : forall a : Rlow, OrderPreserving (a +).
+Lemma RlPlus_le_preserving : forall a : Rlow, OrderPreserving (a +).
 Proof.
 intros a b c E q E1.
 apply Rlplus_eq_pr in E1.
@@ -799,31 +722,60 @@ Defined.
 Definition Rllub (f : nat -> Rlow)  : Rlow. 
 exists (fun q => semi_decide (exists n, (val (f n) q))). 
 + split. 
-  - apply tr.   
-    unfold semi_decide in *.
+  - unfold semi_decide in *.
     unfold SDseq_Rlow in *.
     unfold semi_decide_exists in *.
     unfold semi_decide in *.
-    admit. 
+    assert (Hn : forall n, merely (exists qn, val (f n) qn)). 
+    intros n.
+    destruct (f n). 
+    destruct elt_RC0. simpl. trivial.
+    specialize (Hn 0). revert Hn; apply (Trunc_ind _). 
+    intros (q,Hn). 
+    assert (Ho : merely (exists n:nat, val (f n) q)).
+    apply tr; exists 0; trivial. 
+    generalize ((@top_le_enumerable_sup _ _ _ NatEnum) (fun n => val (f n) q)).
+    intros HG. 
+    apply HG in Ho.             
+    apply tr. exists q. 
+    trivial.
  - intros q. 
    split; intros H'.    
    * apply tr. 
-     unfold semi_decide, SDseq_Rlow in H'. 
-     unfold semi_decide_exists in H'.
-     admit.     
+     unfold semi_decide, SDseq_Rlow in *. 
+     unfold semi_decide_exists in *.
+     unfold semi_decide in *. 
+     assert (Hnn : forall n, val (f n) q -> merely (exists r, Qlt q r 
+                                                      ∧  val (f n) r)).
+     intros n. 
+     destruct (f n). 
+     destruct elt_RC0. 
+     simpl. intros Hh. 
+     apply is_rounded0 in Hh. trivial.
+     
+     specialize (Hnn 0). 
+     (*revert Hnn; apply (Trunc_ind _). 
+     intros (q,Hn). 
+     assert (Ho : merely (exists n:nat, val (f n) q)).
+     apply tr; exists 0; trivial. 
+     generalize ((@top_le_enumerable_sup _ _ _ NatEnum) (fun n => val (f n) q)).
+     intros HG. 
+     apply HG in Ho.             
+     apply tr. exists q. 
+     trivial.*)
+     admit. 
    * unfold semi_decide in *. 
      unfold SDseq_Rlow in *. 
      unfold semi_decide_exists in *. 
      revert H'; apply (Trunc_ind _).      
      intros (rr,(H',H'')). 
      assert (Qle q rr).         
+     admit. 
 Admitted.
 
 Lemma Rllub_case 
   : forall (fr : nat -> Rlow) n p, val (fr n) p -> val (Rllub fr) p.
 Proof.
-
-
 Admitted. 
 
 Lemma Rllub_lub : forall (fr : nat -> Rlow) n, Rlle (fr n) (Rllub fr).
@@ -836,7 +788,8 @@ Lemma Rllub_le
 Admitted. 
 
 Lemma Rllub_mon : forall (fr fk : nat -> Rlow), (forall n, Rlle (fr n) (fk n))
--> Rlle (Rllub fr) (Rllub fk). Admitted. 
+                                                -> Rlle (Rllub fr) (Rllub fk).
+Admitted. 
 
 
 Record RlowPos := mkRlP {
@@ -846,16 +799,23 @@ Record RlowPos := mkRlP {
 
 Lemma RlowPos_pos : forall (r : RlowPos), Rlle (' 0) r.
 Proof. 
-intros r. unfold Rlle.
+intros r; unfold Rlle.
 intros p Hp.
 simpl in Hp.
 unfold semi_decide in Hp. 
 destruct (decide (p < 0)). 
-destruct r. 
-simpl. 
+destruct r. simpl. 
 apply rlpos0; trivial.
 case (not_bot Hp). 
 Qed. 
+
+Lemma RlP_eq : forall a b : RlowPos, (forall q, val (rl a) q
+                                    <-> val (rl b) q) -> a = b.
+Proof.
+intros a b E; apply RC_eq in E; auto.
+destruct a; destruct b; simpl; auto.
+simpl in *; destruct E; apply ap; apply path_ishprop.
+Qed.
 
 Definition toRL : RlowPos -> Rlow.
 intros (p,Hpos). refine p; apply p.
@@ -873,20 +833,37 @@ intros x y.
 refine (Rllt (rl x) (rl y)).   
 Defined. 
 
-Lemma IHS_RLP:  IsHSet RlowPos. 
+
+Lemma RCP_eq0 : forall a b : RlowPos, val (rl a) = val (rl b) -> a = b. 
+Proof.  
+intros (a,Ha) (b,Hb); simpl; intros E. destruct E.
 Admitted. 
 
-Instance Rllepos_order@{} : PartialOrder Rllepos.
+Global Instance RCP_isset :  IsHSet RlowPos. 
+Admitted. 
+
+Lemma RCP_eq : forall a b : RlowPos,
+    (forall q, val (rl a) q <-> val (rl b) q) -> a = b.
+Proof.
+intros a b E; apply RCP_eq0; apply path_forall;intros q;apply (antisymmetry le);
+apply imply_le;apply E.
+Qed.
+
+Global Instance Rllepos_order@{} : PartialOrder Rllepos.
 Proof.
 split.
-+ apply IHS_RLP. 
++ apply RCP_isset. 
 + apply _. 
 + split.
   - red; intros; apply Rlle_order.     
   - red. intros x y z. apply Rlle_order. 
 + red. intros x y Hx Hy.
-Admitted. 
-
+  apply RCP_eq.  
+  intros q. 
+  split; intros Hab.
+  * apply Hx; trivial. 
+  * apply Hy; trivial. 
+Qed. 
 
 Definition toRlseq : (nat -> RlowPos) -> (nat -> Rlow). 
 Proof.
@@ -896,7 +873,8 @@ refine (rl L).
 Defined.
 
 Lemma toRlseq_mon (A : hSet) (l m : nat -> RlowPos) :
-        forall n, Rlle (l n) (m n) -> Rlle ((toRlseq l) n) ((toRlseq m) n). 
+  forall n, Rlle (l n) (m n) -> Rlle ((toRlseq l) n)
+                                     ((toRlseq m) n). 
 Proof. auto. Qed. 
 
 Hint Resolve RlowPos_pos toRL. 
@@ -967,7 +945,7 @@ refine ((@Rlow_RlowPos (' 0)) O_simpl).
 Defined.
 
 Lemma Rlle_O_I : Rlle (' 0) (' 1).
-apply (Rlle_rat_preserving).
+apply (Rlle_Q_preserving).
 apply le_0_1.
 Qed. 
 
@@ -984,41 +962,100 @@ rewrite (RlPlus_left_id).
 reflexivity.
 transitivity ((RlPlus r (' 0))). 
 rewrite (RlPlus_comm r (' 0)). 
-apply (rlow_plus_le_preserving ('0)). 
+apply (RlPlus_le_preserving ('0)). 
 apply (RlowPos_pos r).
-apply (rlow_plus_le_preserving r) . 
+apply (RlPlus_le_preserving r) . 
 apply (RlowPos_pos s).
 refine ((@Rlow_RlowPos (RlPlus r s)) Hpo).
 Defined.
 
+Lemma RlP_plus_RlPlus : forall a b,
+         rl (RlP_plus a b) = RlPlus a b. 
+Proof.
+intros a b. 
+reflexivity.
+Qed. 
+
 Lemma RlPPlus_comm : Commutative RlP_plus.
 Proof.
-intros a b. apply Rllepos_order. 
-Admitted. 
+intros a b;
+apply RCP_eq;
+auto;
+simpl;
+intros q;
+split;
+intros E;
+apply pred_plus_pr in E;
+apply pred_plus_pr;
+revert E;
+apply (Trunc_ind _);
+intros [r [s [E1 [E2 E3]]]];
+apply tr;
+exists s,r;
+repeat split;trivial;
+rewrite E3; apply commutativity.
+Qed.   
 
 Lemma RlPPlus_assoc : Associative RlP_plus.
 Proof.
-Admitted. 
+intros a b c;
+apply (antisymmetry Rllepos);
+red;simpl;intros q E;
+simpl in *;
+apply pred_plus_pr in E;
+revert E;apply (Trunc_ind _); 
+[intros [r [s [E1 [E2 E3]]]] | intros [r [s [E2 [E1 E3]]]]];
+apply pred_plus_pr in E2;
+revert E2;apply (Trunc_ind _);
+intros [l [u [E2 [E4 E5]]]];
+rewrite E3,E5;
+[rewrite plus_assoc | rewrite <-plus_assoc];
+(apply pred_plus_pr;apply tr;
+do 2 econstructor;split;
+[|split;[|reflexivity]]);
+trivial;apply pred_plus_pr;apply tr;eauto.
+Qed.
 
 Lemma RlPPlus_left_id : LeftIdentity RlP_plus RlP_0.
 Proof.
-Admitted. 
+intros a;
+apply (antisymmetry le);
+red;simpl;intros q E;
+simpl in *. 
+- apply pred_plus_pr in E;
+  revert E;
+  apply (Trunc_ind _);
+  intros [r [s [E1 [E2 E3]]]].
+  apply semi_decidable in E1.
+  rewrite E3.
+  apply RC_le with Qle s;trivial.
+  intros ss sh; apply (antisymmetry le).
+  apply le_or_lt. 
+  set (S:=s) at 2;rewrite <-(plus_0_l S).
+  apply (order_preserving (+ _)). apply lt_le;trivial.
+- apply pred_plus_pr.
+  apply rounded in E;revert E;
+  apply (Trunc_ind _);
+  intros [s [E1 E2]].
+  apply tr;exists (q - s),s;repeat split.
+  + apply (snd semi_decidable).
+    apply flip_neg_minus in E1. trivial.
+  + trivial.
+  + abstract ring_tac.ring_with_integers (NatPair.Z nat).
+Qed.
 
 Global Instance RlPApart : Apart@{UQ UQ} RlowPos
   := fun a b => a < b \/ b < a.
 Arguments RlPApart _ _ /.
 
-Global Instance RlowPos_fullpseudoorder@{} : FullPseudoOrder Rllepos Rlltpos.
+Lemma Rllepos_plus_le_preserving : forall a : RlowPos, OrderPreserving (a +).
 Proof.
-Admitted. 
-
-Lemma rlowp_plus_le_preserving : forall a : RlowPos, OrderPreserving (a +).
-Proof.
-intros a b c E q E1. apply Rlplus_eq_pr in E1.
-revert E1;apply (Trunc_ind _);intros [r [s [E1 [E2 E3]]]].
-apply (Rlplus_eq_pr a c). apply tr;exists r,s;repeat split;trivial.
-apply E. trivial.
+intros a b c Hh q Hh'. apply Rlplus_eq_pr in Hh'.
+revert Hh';apply (Trunc_ind _);
+intros [p [t [H1 [H2 H3]]]].
+apply (Rlplus_eq_pr a c).
+apply tr;exists p,t;repeat split;trivial.
+apply Hh; trivial.
 Qed. 
-
 
 End LowerReals. 
