@@ -115,7 +115,7 @@ Proof.
 intros f g h Hgh.
 unfold fplus.   
 intros q. 
-apply rlowp_plus_le_preserving.
+apply RlPlus_le_preserving.
 apply Hgh. 
 Qed.
 
