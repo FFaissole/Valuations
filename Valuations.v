@@ -18,7 +18,12 @@ Section OpenSubs.
 Context {A : hSet}.
 Context `{Funext} `{Univalence}.
 
-Definition OS : Type := A -> Sier. 
+Definition OS := A -> Sier. 
+
+Global Instance OS_isset : IsHSet OS. 
+Proof.
+apply _. 
+Qed.   
 
 (** Order relation on OS *)
 Global Instance Osle : Le OS.
@@ -101,11 +106,7 @@ split.
     apply H1. apply H2.
 Defined.
 
-(** Semigroup structure of OS : 
-  associative magma : set S with an operation 
-  op : SxS -> S s.a. forall a b c, a op (b op c) = (a op b) op c
-  OS is a semigroup with op = /\
-*)
+(** Semigroup structure of OS *)
 Global Instance os_semi_group : SemiGroup OS. 
 Proof. 
 split. 
@@ -187,10 +188,8 @@ split.
   apply SierMeet_is_meet; reflexivity.
 Defined.
 
-Global Instance os_dlattice : DistributiveLattice OS.
-Proof.
+Global Instance os_lattice : Lattice OS.
 split.
-+ split.
   - apply os_jslattice.
   - apply os_mslattice. 
   - red. intros x y. 
@@ -205,6 +204,12 @@ split.
     apply SierMeet_is_meet. 
     reflexivity. 
     apply SierJoin_is_join. 
+Defined. 
+    
+Global Instance os_dlattice : DistributiveLattice OS.
+Proof.
+split.
++ exact os_lattice. 
 + repeat red. intros a b c;
   apply path_forall ; intro s.
   generalize Sier_distributive_lattice. 
