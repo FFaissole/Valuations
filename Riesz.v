@@ -1,4 +1,3 @@
-
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders
                HoTTClasses.implementations.sierpinsky
@@ -20,7 +19,8 @@ Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.theory.additional_operations
                HoTTClasses.theory.premetric
                HoTTClasses.implementations.partiality
-               HoTTClasses.implementations.sierpinsky.
+               HoTTClasses.implementations.sierpinsky
+               HoTTClasses.implementations.field_of_fractions. 
 Require Import HoTT.HSet HoTT.Basics.Trunc HProp HSet
                Types.Universe UnivalenceImpliesFunext
                TruncType UnivalenceAxiom Types.Sigma
@@ -28,10 +28,11 @@ Require Import HoTT.HSet HoTT.Basics.Trunc HProp HSet
                Types.Paths.
                
 Local Open Scope path_scope. 
-
 Require Export RoundedClosed Valuations LowerIntpos.
 
 Set Implicit Arguments. 
+
+Section Riesz1. 
 
 Context {A : hSet}.
 Context {Hf : Funext} {Hu : Univalence}.
@@ -109,12 +110,15 @@ Qed.
 Lemma OpenFun_mod : forall U V, fplus (OpenFun U) (OpenFun V) =
                                 fplus (OpenFun (OS_meet U V))
                                       (OpenFun (OS_join U V)).
-Proof. 
-Admitted.
+Proof.
+intros U V.   
+apply path_forall; intros z. 
+unfold fplus.
+apply (antisymmetry le).
+Admitted. 
 
 Definition IntP := @IntPos A _ _. 
 Definition VP := @Val A _ _.
-
 
 (* First part of theorem : mu(I) *)
 Definition Riesz1 : IntP  -> VP. 
@@ -143,47 +147,124 @@ exists (fun U => I J (OpenFun U)).
 + apply I_prob.
 Qed.
 
-Section Bags_equiv.
+End Riesz1. 
 
+Section Bags_equiv.
+  
+Context {Hf : Funext} {Hu : Univalence}.
 (** Coquand-Spitters, Vickers build the set of simple functions to define the integral from a measure; they both use the Tarski's free monoid quotiented by a modularity law. 
 
 Here we provide the construction of the free monoid using bag equivalence (see Danielson : http://www.cse.chalmers.se/~nad/publications/danielsson-bag-equivalence.pdf)
 *)
 
-  
 Variable T : Type.
-    (*                                                      
-Definition equiv_rel (A B : Type) :=
-  exists (to : A -> B) (from : B -> A),
-    (forall x, from (to x) = x) /\ (forall y, to (from y) = y). 
-*)
+Context {T_isset : IsHSet T}.
 
 Fixpoint Any (l : list T) (P : T -> Type) : Type := match l with
               | nil => False
               | cons x q => (P x) \/ (Any q P)
-         end.
+         end.                         
 
-Variable EqT : T -> T -> Type. 
+Definition EqT := fun (a b: T) => a = b. 
 
 Definition App (l: list T) (s : T) := (Any l (EqT s)).
 
-Definition eq_bag := fun l1 l2 => (forall r:T, (App l1 r)) <~>
-                                  (forall r:T, (App l2 r)).
+Definition eq_bag := fun l1 l2 => forall r,
+                      merely ((App l1 r) <~> (App l2 r)). 
 
-End Bags_equiv.
+ 
+Definition free_mon : Type := @quotient _ eq_bag _. 
 
-(** TODO : add the modularity law to build the modular monoid*)
-(** TODO2 : rationalization of the modular monoid *)
+Context {Tjoin : Join T}.
+Context {Tmeet : Meet T}.
+Context {Tlatt : Lattice T}.
+
+Fixpoint Any2 (l : list T) (P : T -> T -> Type) : Type := match l with
+              | nil => False
+              | cons x nil => False
+              | cons x (cons y q) => (P x y) \/ (Any2 q P)
+         end.    
+
+Definition EqT2 := fun (a b c d : T) => a = c /\ b = d. 
+
+Definition App2 (l : list T) (s t : T) := (Any2 l (EqT2 s t)). 
+
+Definition eq_mod := fun l1 l2 => forall r s,
+                merely (App2 l1 r s <~> App2 l2 (Tmeet r s) (Tjoin r s)).
+
+Definition eq_free_mod := fun l1 l2 => eq_bag l1 l2 /\ eq_mod l1 l2. 
+
+Definition modular_mon : Type := @quotient _ eq_free_mod _.  
+
+End Bags_equiv. 
+
+Section Rationalization. 
+
+Context {Hf : Funext} {Hu : Univalence}.
+Context {T : Type}.
+Context {T_isset : IsHSet T}.
+Context {Tjoin : Join T}.
+Context {Tmeet : Meet T}.
+Context {Tlatt : Lattice T}.
+
+Open Scope type_scope.
+Definition rat_mod_mon_aux := Q+ * (list T).
+
+Definition frac_quot : rat_mod_mon_aux -> rat_mod_mon_aux -> hProp.
+Proof.   
+intros r s. 
+unfold rat_mod_mon_aux in r, s.
+Admitted. 
+
+Definition eq_rmm := fun (M N : rat_mod_mon_aux) =>
+           eq_bag (snd M) (snd N) /\ eq_mod (snd M) (snd N) /\ frac_quot M N.
+
+Definition rat_modular_mon :=  @quotient _ eq_rmm _.  
+
+End Rationalization.   
+
+Section SimpleFunctions. 
+
+Context {Hf : Funext} {Hu : Univalence}.
+Context {A : hSet}.  
+
+Global Instance OS_isset : IsHSet (@OS A). 
+apply _. 
+Qed.
+
+Definition simples := (@rat_modular_mon _ _ (@OS A)). 
+
+End SimpleFunctions. 
+
+Section Subdivisions. 
+
+Context {T : hSet}.
+
+Variable p : nat. 
+Hypothesis Hp : 0 < p. 
+
+Check / pos_of_nat p. 
+
+Definition h : Q+ := / pos_of_nat p.  
+
+(* TODO : faire les quotients, avec rec rect etc *)
+
+Definition sv_monoid : nat -> (@simples _ _ T _
+                                OS_join OS_meet os_lattice). 
+Proof. 
+intros n. 
+unfold rat_modular_mon.   
+Admitted. 
+
+(* TODO : faire 1ere ineq. "mu" s <= I f etc *)
+
+End Subdivisions.   
 
 
-Context {Tjoin : Join A}.
-Context {Tmeet : Meet A}.
-Context {Tlatt : Lattice A}. 
+Section List_OS_aux. 
 
-(** Some definitions to manipulate subdivisions : it is usefull ?*)
-Definition equiv_mod := forall (x y:A) l, cons x (cons y l)
-                                         = cons (Tmeet x y) (cons (Tjoin x y) l).
-
+Context {A : hSet}.
+  
 Fixpoint isin (T : Type) (l : list T) (t : T) := match l with  
               | nil => False
               | cons x q => (x = t) \/ (isin q t) end. 
@@ -215,24 +296,13 @@ Definition is_le_simples (l m : list (@OS A)) := forall (n : nat)
                          exists (Mn : set_index_length m n),
                     meet_list_os (subl (subl_n Ln)) <= meet_list_os Mn. 
 
-Definition is_eq_simples l m := is_le_simples l m.
-
-Lemma isHProp_equiv_bag : ∀ x y : list (list OS), IsHProp (eq_bag is_le_simples x y). 
-Proof. 
-intros x y. 
-unfold eq_bag. 
-Admitted.
-
-Definition free_mon : Type := @quotient _ (eq_bag is_le_simples)
-                           isHProp_equiv_bag. 
-
-Close Scope nat_scope. 
+(*Close Scope nat_scope. *)
 
 Definition is_btw (a b c : Q) := (a <= c) /\ (c <= b). 
 
 Inductive sv (a b : Q) :=        
-| sub0 : sv a b
-| subn : forall q : Q, is_btw a b q -> sv a b -> sv a b. 
+  | sub0 : sv a b
+  | subn : forall q : Q, is_btw a b q -> sv a b -> sv a b. 
 
 Inductive lsubdiv (a b : Q) (δ : nat) : sv a b -> Type :=
     | lsubdiv0 :  (@lsubdiv a b) δ (sub0 a b)
@@ -265,4 +335,6 @@ Definition sv_subdiv a b (δ : nat) (l : sv a b) :
 Proof. 
 intros Hl. 
 exists l; trivial.  
-Defined. 
+Defined.
+
+End List_OS_aux. 
