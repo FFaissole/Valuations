@@ -95,27 +95,3 @@ Proof. Admitted.
 (** Fixpoints *)
 
 (* TODO *)
-
-Definition bset : hSet.
-Proof. exists Bool; apply hset_bool. Qed.
-
-
-  
-Section Random.
-
-Definition Nset : IsHSet nat. apply _. Qed. 
-Definition nset : hSet.
-Proof. exists nat; apply Nset. Qed.
-
-Fixpoint sigma (N : nat) (f : nat -> RlowPos) :=
-   match N with
-    | O => f O
-    | S n => sigma n f end. 
-
-Definition random (N : Int) : Mes hset_int. 
-
-Definition random (N : nset) : Mes nset.
-Proof.
-intros U. 
-refine (sigma ( N) ((OpenFun _ U) N)).
-Defined.  
