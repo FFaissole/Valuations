@@ -18,8 +18,6 @@ Set Implicit Arguments.
 
 (** Conditional *)
 
-Variable Bool : hSet. 
-
 (** Image distributions : Rml 3 *) 
 
 Definition im_distr {A B : hSet} (f : A -> B) (m : D A) : D B :=
