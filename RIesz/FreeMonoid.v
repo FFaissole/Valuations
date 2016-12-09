@@ -1,10 +1,3 @@
-Add Rec LoadPath "/Users/faissole/Desktop/HoTT/HoTTClasses/theories".
-
-Add Rec LoadPath "/Users/faissole/Desktop/HoTT/Measures/CoqPL/Spaces".
-
-Add Rec LoadPath "/Users/faissole/Desktop/HoTT/Measures/CoqPL/Theories".
-
-Add Rec LoadPath "/Users/faissole/Desktop/HoTT/Measures/CoqPL/Orders".
 
 
 Require Import HoTTClasses.interfaces.abstract_algebra
