@@ -1,4 +1,5 @@
 
+
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders
                HoTTClasses.implementations.sierpinsky
@@ -50,25 +51,79 @@ Lemma unit_aux_unit (A : hSet) (x:A) : mu _ (unit _ x) = unit_aux _ x.
 Proof. 
 simpl; reflexivity. 
 Qed. 
-  
+
+Lemma Hx1 (A B : hSet) : forall U V (F : A -> D B), ((λ z : A, val (let (rl, _) :=
+                                    mu B (F z) U in rl) 0)
+                   ⋂ (λ z : A, val (let (rl, _) :=
+                                    mu _ (F z) V in rl) 0))  =
+                (λ z : A, val (let (rl, _) :=
+                                   mu _ (F z) (U ⋂ V) in rl) 0).
+Proof.
+Admitted.
+
+Lemma Hx2 (A B : hSet) : forall U V F, ((λ z : A, val (let (rl, _) :=
+                                        mu B (F z) U in rl) 0)
+                  ∪ (λ z : A, val (let (rl, _) := mu _ (F z) V in rl) 0))  =
+                 (λ z : A, val (let (rl, _) := mu _ (F z) (U ∪ V) in rl) 0).
+Proof.
+Admitted.                                                                                                
 Definition bind (A B : hSet) : D A -> (A -> D B) -> D B.
 Proof.
 intros Nu F.
 split with (fun U:OS B => I (Riesz2 Nu)
            (OpenFun _ (D_op 0 (fun x:A => (mu _ (F x)) U)))). 
-+ intros U V. admit. 
++ intros U V.
+  transitivity ((I (Riesz2 Nu) (OpenFun A (D_op 0 (λ x : A,
+        mu _ (F x) (U ∪ V))))) + (I (Riesz2 Nu)
+       (OpenFun A (D_op 0 (λ x : A, mu _ (F x) (U ⋂ V)))))).
+  rewrite <- I_add.
+  unfold D_op.
+  transitivity (
+    (I (Riesz2 Nu)
+       (OpenFun A (λ z : A, val (let (rl, _)
+                          := mu _ (F z) U in rl) 0)))
+    + (I (Riesz2 Nu)
+         (OpenFun A (λ z : A, val (let (rl, _)
+                          := mu _ (F z) V in rl) 0)))).
+  reflexivity. 
+  simpl.
+  rewrite <- I_add. 
+  rewrite OpenFun_mod.
+  rewrite Hx1, Hx2. simpl.
+  assert (Ha : (λ x : A,
+     RlP_plus
+       (OpenFun A
+          (λ z : A,
+           val (let (rl, _) := mu _ (F z) (U ∪ V) in rl) 0)
+          x)
+       (OpenFun A
+          (λ z : A,
+           val (let (rl, _) := mu _ (F z) (U ⋂ V) in rl) 0)
+          x))=
+        (λ x : A,RlP_plus
+       (OpenFun A
+          (λ z : A,
+           val (let (rl, _) := mu _ (F z) (U ⋂ V) in rl) 0)
+          x)
+       (OpenFun A
+          (λ z : A,
+           val (let (rl, _) := mu _ (F z) (U ∪ V) in rl) 0)
+          x))).
+  apply path_forall; intros x.
+  rewrite RlPPlus_comm.
+  reflexivity. unfold fplus. rewrite Ha.
+  reflexivity. reflexivity.
 + unfold empty_op; simpl.
   assert (Hk : (fun x : A => mu _ (F x) ∅) = fun x:A => RlP_0).
   apply path_forall; intros x.  
   rewrite (mu_empty_op _ (F x)); reflexivity.
   rewrite Hk. unfold D_op. simpl. 
   unfold semi_decide. 
-  destruct (decide (0 < 0)).   
-  admit. (* ok pas de soucis *)
-
-  rewrite OpenFun_def. 
-  rewrite I_def; reflexivity.   
-  reflexivity. 
+  destruct (decide (0 < 0)). 
+  apply orders.eq_not_lt in l.
+  case l. reflexivity. 
+  rewrite OpenFun_def. rewrite I_def.
+  reflexivity. reflexivity.  
 + intros U V HUV. 
   apply I_mon. 
   apply OpenFun_mon. 
@@ -79,25 +134,35 @@ split with (fun U:OS B => I (Riesz2 Nu)
   apply (mu_prob  _ (F x)); reflexivity.
   transitivity (I (Riesz2 Nu )(fun x =>  RlP_1)).
   apply I_mon.
-  unfold D_op. 
-  admit.
-Admitted. 
+  unfold D_op.
+  simpl. transitivity (OpenFun A Ω).
+  apply OpenFun_mon.
+  unfold OS_full; intros s.  
+  apply top_greatest. 
+  apply OpenFun_prob; reflexivity. 
+  apply I_prob. 
+Defined.
 
-Lemma monad1 {A B : hSet} : forall (x : A) (F : A -> D B) (f: OS B),
-               mu _ (bind A B (unit A  x) F) f = mu _ (F x) f. 
+Lemma monad1 {A B : hSet} : forall (x : A) (F : A -> D B) U,
+               mu _ (bind A B (unit A  x) F) U = mu _ (F x) U. 
 Proof. 
-intros x F f.
+intros x F U.  
+unfold bind, unit.
+simpl. unfold unit_aux.
+simpl. admit.
 Admitted.
 
-Lemma monad2 {A : hSet} : forall (nu : D A) (U : OS A),
-    mu _ (bind A A nu (fun x:A => unit A x)) U = mu _ nu (fun x => U x).
+Lemma monad2 {A : hSet} : forall (nu : D A),
+    bind A A nu (unit A) = nu.
 Proof.
-intros nu U.
 Admitted.
-(*
-Lemma monad3 {A B C: hSet} : forall (nu : D A) (F : A -> D B) (G : B -> D C) (f : OS C),
-     mu _ (bind B C (bind A B nu F) G) f = bind A B (fun x:A => bind A B (F x) G) f.  
-Proof.*)
+
+Lemma monad3 {A B C: hSet} : forall (nu : D A)
+                 (F : A -> D B) (G : B -> D C),
+            (bind B C (bind A B nu F) G) =
+            (bind A C nu (fun x:A => bind B C (F x) G)).  
+Proof.
+Admitted. 
 
 Definition vD {A :hSet} (nu : D A) (U : OS A) := mu _ nu U.
 
