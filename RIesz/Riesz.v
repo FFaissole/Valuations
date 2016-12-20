@@ -17,7 +17,7 @@ Require Export RoundedClosed Opens Functions
 
 Set Implicit Arguments.
 
-Definition Riesz1 (A : hSet) : IntPos A -> D A. 
+Definition Riesz1 (A : hSet) : IntPos A -> Val A. 
 Proof. 
 intros J. 
 exists (fun U:OS A => (I J (OpenFun A U))). 
@@ -44,14 +44,14 @@ exists (fun U:OS A => (I J (OpenFun A U))).
 Defined.
 
 
-Definition Riesz2 (A : hSet) : D A -> IntPos A.
+Definition Riesz2 (A : hSet) : Val A -> IntPos A.
 Proof.
 intros Nu. 
 refine (I_mu Nu). 
 Defined. 
 
 
-Lemma Riesz_hom1 (A : hSet) : forall (Mu :D A) U,
+Lemma Riesz_hom1 (A : hSet) : forall (Mu :Val A) U,
     mu _ (Riesz1 (Riesz2 Mu)) U = mu _ Mu U.
 Proof.
 intros Mu U.  
