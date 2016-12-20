@@ -1,4 +1,12 @@
 
+Add Rec LoadPath "/Users/faissole/Desktop/HoTT/HoTTClasses/theories".
+
+Add Rec LoadPath "/Users/faissole/Desktop/HoTT/Measures/CoqPL/Spaces".
+
+Add Rec LoadPath "/Users/faissole/Desktop/HoTT/Measures/CoqPL/Theories".
+
+Add Rec LoadPath "/Users/faissole/Desktop/HoTT/Measures/CoqPL/Orders".
+
 
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders
@@ -54,28 +62,82 @@ Defined.
 Lemma Riesz_hom1 (A : hSet) : forall (Mu :D A) U,
     mu _ (Riesz1 (Riesz2 Mu)) U = mu _ Mu U.
 Proof.
-intros Mu U. 
-unfold Riesz1. 
+intros Mu U.  
 simpl. 
-unfold Riesz2.
 rewrite I_mu_simpl.
 apply (antisymmetry le).
 + apply Rllub_le; intros n.
-  unfold toRlseq, sum_p_r, sum_prod_sub.
   induction n.
-  - rewrite Rlow_mult_q_RlP_0. 
-    destruct Mu.
-    destruct (mu U). admit.
+  - unfold toRlseq, sum_p_r, sum_prod_sub.
+    assert (D_op 0 (OpenFun A U) =  U).  
+    generalize (@D_op_correct _ _ A (OpenFun A U) 0).
+    intros HGF.
+    admit.
 
-  - simpl in *. admit.
+    rewrite X.
+    unfold Rlle, RCLe_l; trivial.
+  - simpl in *. 
+    assert (H22 : Rlle ((toRlseq (λ n : nat, sum_p_r n
+                 (OpenFun A U) Mu) (S n)))
+                       ((toRlseq (λ n0 : nat, sum_p_r n0
+                 (OpenFun A U) Mu) n))). 
+    apply toRlseq_mon.
+    intros s Hs.
+    apply IHn.
+    apply H22; trivial.
++ unfold sum_p_r.
+  transitivity (sum_p_r 0 (OpenFun A U) Mu).
+  unfold sum_p_r.  
+  unfold sum_prod_sub.
+  simpl.
+  assert (D_op 0 (OpenFun A U) = U).
+  generalize (@D_op_correct _ _ A (OpenFun A U) 0).
+  intros HGF.
+  admit.  
 
-+ 
-Admitted.  
+  rewrite X.
+  reflexivity. simpl.
+  assert (H2 : Rlow_mult_q (1 / qn 1)
+               (RlP_0 + mu _ Mu (D_op (qn 1) (OpenFun A U))) =
+                RlP_0 + mu _ Mu (D_op (qn 1) (OpenFun A U))).
+  admit. (* ok phase difficile *)
+
+  (*
+  assert (Hr : RlP_0 + mu _ Mu (D_op (qn 1) (OpenFun A U)) =
+               RlP_plus RlP_0 (mu _ Mu (D_op (qn 1)
+                                         (OpenFun A U)))).
+  reflexivity. rewrite Hr.
+  rewrite RlPPlus_left_id.  
+  apply mu_mon.
+  intros s.
+  apply imply_le. intros Hus.
+  apply D_op_correct.  
+  unfold OpenFun; simpl.
+  unfold OpenFun_aux; simpl.
+  apply (RllubPos_lub (λ n : nat, sum_p_r n (OpenFun A U) Mu) 1).*)
+Admitted.
 
 Definition Riesz_hom2 (A : hSet) : forall (It : IntPos A) f,
     I (Riesz2 (Riesz1 It)) f = I It f.
 Proof.
-intros It. 
-unfold Riesz1. 
-destruct It; simpl. 
+intros It.
+unfold Riesz2.  
+rewrite I_mu_simpl.
+intros f.
+apply (antisymmetry le).
++ 
+
+
+  generalize (I_cont It).
+  intros HcI.
+  unfold Mcont in *.
+  rewrite HcI.
+  apply Rllub_le.
+  admit.
+  
++ rewrite I_cont.
+  apply RllubPos_mon.
+  intros n.
+  admit. (* ok revoir cont *)
+ 
 Admitted. 
