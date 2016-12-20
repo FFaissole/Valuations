@@ -37,7 +37,7 @@ Definition mon_opens  {A} (m : Mes A) :=
    forall (U V : OS A), U ⊆ V -> (m U) <= (m V).
 
 (*Space of distributions*)
-Record D  (A : hSet) : Type :=
+Record Val  (A : hSet) : Type :=
   {mu :> @Mes A;
    mu_modular : modular mu; 
    mu_empty_op : empty_op mu;
@@ -50,13 +50,13 @@ Hint Resolve mu_modular mu_prob mu_empty_op mu_mon.
 (** *** Properties of measures *)
 
 (* mu is monotonic *) 
-Lemma mu_monotonic : forall {A} (m : D A), mon_opens m.
+Lemma mu_monotonic : forall {A} (m : Val A), mon_opens m.
 Proof.  auto. Qed.
 Hint Resolve mu_monotonic.
 
 (* eq stable *)
 
-Lemma mu_stable_eq : forall  {A} (m: D A) (U V : OS A),
+Lemma mu_stable_eq : forall  {A} (m: Val A) (U V : OS A),
     U = V -> (mu A m U) = (mu A m V).
 Proof. 
 intros A m U V H2.
@@ -67,7 +67,7 @@ Qed.
 Hint Resolve mu_stable_eq.
 
 (* mu m (fone A) <= 1%RlPos *)
-Lemma mu_one : forall  {A} (m: D A), (mu A m Ω) <=  RlP_1.
+Lemma mu_one : forall  {A} (m: Val A), (mu A m Ω) <=  RlP_1.
 Proof. auto. Qed. 
 
 Hint Resolve mu_one.
