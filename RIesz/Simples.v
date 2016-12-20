@@ -56,7 +56,7 @@ intros n Mu U.
 unfold toRlseq, sum_p_r.
 Admitted.
 
-Definition I_mu (mm : D A) : IntPos A.
+Definition I_mu (mm : Val A) : IntPos A.
 Proof.
 exists (fun f => RllubPos (fun n => (sum_p_r n f mm))); red. 
 + assert (HO : forall n, sum_p_r n (fzero A) mm = RlP_0).
