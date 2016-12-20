@@ -1,4 +1,5 @@
 
+
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders
                HoTTClasses.implementations.partiality
@@ -23,13 +24,14 @@ Definition qn (n : nat) := pos (pos_of_nat n).
 
 Fixpoint sum_prod_sub (p : nat) (f : mf A) (m :D A) 
          {struct p} : RlowPos := match p with
-           | 0 => RlP_0
+           | 0 => (mu _ m) (D_op 0 f)
            | S p => (sum_prod_sub p f m) + 
               ((mu _ m) (D_op (qn (S p)) f))
      end.                         
 
-Definition sum_p_r (N : nat) (f :  mf A) (m : D A) :=
-                Rlow_mult_q (1/(qn N)) (sum_prod_sub N f m). 
+Definition sum_p_r (N : nat) (f :  mf A) (m : D A) := match N with
+           | 0 => (mu _ m) (D_op 0 f)
+           | S p => Rlow_mult_q (1/(qn (S N))) (sum_prod_sub (S N) f m) end. 
 
 Lemma sum_p_r_prod : forall q S mm,
     Rlow_mult_q (1 / (qn q)) (sum_prod_sub q S mm) =
@@ -45,6 +47,14 @@ Proof.
 intros q n f g mm Hfg s.
 Admitted.
 
+Lemma toRlseq_mon : forall n Mu U,
+    (toRlseq (λ n0 : nat, sum_p_r n0 (OpenFun A U) Mu) (S n))
+    <=
+    (toRlseq (λ n0 : nat, sum_p_r n0 (OpenFun A U) Mu) n).
+Proof.
+intros n Mu U.
+unfold toRlseq, sum_p_r.
+Admitted.
 
 Definition I_mu (mm : D A) : IntPos A.
 Proof.
@@ -52,7 +62,18 @@ exists (fun f => RllubPos (fun n => (sum_p_r n f mm))); red.
 + assert (HO : forall n, sum_p_r n (fzero A) mm = RlP_0).
   * induction 0; unfold sum_p_r.
     - simpl; unfold qn, pos_of_nat; simpl.
-      rewrite Rlow_mult_q_RlP_0.     
+      unfold fzero.
+      assert (HO : (D_op 0 (λ _ : A, RlP_0)) = OS_empty).
+      unfold D_op.
+      simpl. unfold semi_decide.
+      destruct (decide (0 < 0)).
+      assert (Hrfl : Qzero <= Qzero).
+      reflexivity.
+      apply orders.le_not_lt_flip in Hrfl.
+      case (Hrfl l).
+      reflexivity.
+      rewrite HO.
+      rewrite mu_empty_op.
       reflexivity.
     - simpl. unfold sum_p_r in IHn.
       unfold D_op. 
@@ -70,7 +91,8 @@ exists (fun f => RllubPos (fun n => (sum_p_r n f mm))); red.
       case H.
       rewrite mu_empty_op. 
       unfold plus. 
-      rewrite RlPPlus_comm, RlPPlus_left_id.
+      (*rewrite RlPPlus_comm, RlPPlus_left_id.*)
+      
       admit. (* faisable mais long et chiant *)                   
   * apply (antisymmetry le).
     apply RllubPos_le. 
@@ -95,7 +117,7 @@ exists (fun f => RllubPos (fun n => (sum_p_r n f mm))); red.
   unfold sum_prod_sub in *.
   admit.
   
-  intros n.
+  intros n Hnn.
   admit.
   (* moins trivial *)
      
@@ -104,28 +126,22 @@ exists (fun f => RllubPos (fun n => (sum_p_r n f mm))); red.
   unfold sum_p_r. 
   unfold toRlseq.
   rewrite sum_p_r_prod. 
-  simpl.
-  assert (Hl : (RlP_0 + mu _ mm (D_op (qn 1) (fone A))) =
-               RlP_plus RlP_0 (mu _ mm (D_op (qn 1) (fone A)))).
-  reflexivity. rewrite Hl. clear Hl.
-  rewrite RlPPlus_left_id.
-  unfold D_op; simpl.  
-  unfold semi_decide.
-  destruct (decide (qn 1 < 1)).
-  assert (1 <= qn 1).
-  reflexivity.
-  apply orders.lt_not_le_flip in l.
-  case (l X).
-  rewrite mu_empty_op.
-  rewrite Rlow_mult_q_RlP_0.
-  simpl. exact Rlle_O_I. 
+  induction n; simpl.
+  - assert (Hone : D_op 0 (fone A) = Ω).
+    admit.
+
+    rewrite Hone.
+    apply mu_prob.
+  - simpl in *.
+    admit.
 + intros f g Hfg. 
   apply Rllub_mon. 
   intros n. 
   unfold toRlseq.
   induction n. 
-  * unfold sum_p_r; simpl. 
-    unfold Rlle, RCLe_l; auto.  
+  * unfold sum_p_r; simpl.
+    apply mu_mon.
+    apply D_op_mon_f; trivial.  
   * unfold sum_p_r.
     apply Rlow_mult_q_mon_f; trivial.
 + intros f. apply (antisymmetry le). 
@@ -163,8 +179,14 @@ exists (fun f => RllubPos (fun n => (sum_p_r n f mm))); red.
   intros HX.
   apply H1, H3; trivial.
   rewrite Hi in Hv. 
-  trivial.  
+  trivial.
 Admitted.
+
+(* to disappear *)
+Lemma I_mu_simpl (mm : D A) : I (I_mu mm) = (fun f =>
+           RllubPos (fun n => (sum_p_r n f mm))).
+Admitted.
+
 
 
 End Simples. 
