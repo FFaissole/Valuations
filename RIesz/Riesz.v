@@ -17,7 +17,7 @@ Require Export RoundedClosed Opens Functions
 
 Set Implicit Arguments.
 
-Definition Riesz1 (A : hSet) : IntPos A -> Val A. 
+Definition Riesz1 (A : hSet) : IntPos A -> D A. 
 Proof. 
 intros J. 
 exists (fun U:OS A => (I J (OpenFun A U))). 
@@ -44,14 +44,14 @@ exists (fun U:OS A => (I J (OpenFun A U))).
 Defined.
 
 
-Definition Riesz2 (A : hSet) : Val A -> IntPos A.
+Definition Riesz2 (A : hSet) : D A -> IntPos A.
 Proof.
 intros Nu. 
 refine (I_mu Nu). 
 Defined. 
 
 
-Lemma Riesz_hom1 (A : hSet) : forall (Mu :Val A) U,
+Lemma Riesz_hom1 (A : hSet) : forall (Mu :D A) U,
     mu _ (Riesz1 (Riesz2 Mu)) U = mu _ Mu U.
 Proof.
 intros Mu U.  
@@ -64,11 +64,25 @@ apply (antisymmetry le).
     assert (D_op 0 (OpenFun A U) =  U).  
     generalize (@D_op_correct _ _ A (OpenFun A U) 0).
     intros HGF.
-    admit.
-
-    rewrite X.
-    unfold Rlle, RCLe_l; trivial.
-  - simpl in *. 
+    unfold D_op, OpenFun, OpenFun_aux.
+    apply path_forall; intros z.
+    generalize (U z).
+    apply (partial_ind0 _ (fun a => _)).
+    -- simpl; intros x. unfold semi_decide.
+       destruct (decide (0 < 1)).
+       * destruct x; reflexivity.
+       * assert (Hos : Qzero < Qone).
+         apply semirings.lt_0_1.
+         case (n Hos).
+    -- simpl; unfold semi_decide.
+       destruct (decide (0 < 0)).
+       * assert (Hj : Qzero <= Qzero). reflexivity.
+         generalize (orders.le_not_lt_flip 0 0 Hj).
+         intros Hj'; case (Hj' l).          
+       * reflexivity.       
+    -- simpl. admit.
+    -- rewrite X; unfold Rlle, RCLe_l; auto.    
+   - simpl in *. 
     assert (H22 : Rlle ((toRlseq (λ n : nat, sum_p_r n
                  (OpenFun A U) Mu) (S n)))
                        ((toRlseq (λ n0 : nat, sum_p_r n0
@@ -85,28 +99,35 @@ apply (antisymmetry le).
   assert (D_op 0 (OpenFun A U) = U).
   generalize (@D_op_correct _ _ A (OpenFun A U) 0).
   intros HGF.
-  admit.  
-
-  rewrite X.
-  reflexivity. simpl.
-  assert (H2 : Rlow_mult_q (1 / qn 1)
+  unfold D_op, OpenFun, OpenFun_aux.
+    apply path_forall; intros z.
+    generalize (U z).
+    apply (partial_ind0 _ (fun a => _)).
+    -- simpl; intros x. unfold semi_decide.
+       destruct (decide (0 < 1)).
+       * destruct x; reflexivity.
+       * assert (Hos : Qzero < Qone).
+         apply semirings.lt_0_1.
+         case (n Hos).
+    -- simpl; unfold semi_decide.
+       destruct (decide (0 < 0)).
+       * assert (Hj : Qzero <= Qzero). reflexivity.
+         generalize (orders.le_not_lt_flip 0 0 Hj).
+         intros Hj'; case (Hj' l).          
+       * reflexivity.       
+    -- simpl. admit.
+    -- rewrite X; unfold Rlle, RCLe_l; auto.
+    -- assert (H2 : Rlow_mult_q (1 / qn 1)
                (RlP_0 + mu _ Mu (D_op (qn 1) (OpenFun A U))) =
                 RlP_0 + mu _ Mu (D_op (qn 1) (OpenFun A U))).
-  admit. (* ok phase difficile *)
-
-  (*
-  assert (Hr : RlP_0 + mu _ Mu (D_op (qn 1) (OpenFun A U)) =
+        admit. (* ok phase difficile *)
+ 
+       assert (Hr : RlP_0 + mu _ Mu (D_op (qn 1) (OpenFun A U)) =
                RlP_plus RlP_0 (mu _ Mu (D_op (qn 1)
                                          (OpenFun A U)))).
-  reflexivity. rewrite Hr.
-  rewrite RlPPlus_left_id.  
-  apply mu_mon.
-  intros s.
-  apply imply_le. intros Hus.
-  apply D_op_correct.  
-  unfold OpenFun; simpl.
-  unfold OpenFun_aux; simpl.
-  apply (RllubPos_lub (λ n : nat, sum_p_r n (OpenFun A U) Mu) 1).*)
+       reflexivity.
+       unfold sum_p_r. simpl.
+       admit. 
 Admitted.
 
 Definition Riesz_hom2 (A : hSet) : forall (It : IntPos A) f,
@@ -117,10 +138,7 @@ unfold Riesz2.
 rewrite I_mu_simpl.
 intros f.
 apply (antisymmetry le).
-+ 
-
-
-  generalize (I_cont It).
++ generalize (I_cont It).
   intros HcI.
   unfold Mcont in *.
   rewrite HcI.
