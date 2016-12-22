@@ -1,6 +1,4 @@
 
-
-
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders
                HoTTClasses.implementations.partiality
@@ -112,38 +110,8 @@ unfold OpenFun.
 apply OpenFun_aux_mon; trivial.
 apply (H1 s).
 Qed.
-(*
-
-Lemma OpenFun_meet_is_meet {A}: forall (U V : OS A) s r,
-      (val (rl ((OpenFun _ U) s)) r
-    /\ val (rl ((OpenFun _ V) s)) r) <->
-       val (rl ((OpenFun_aux ((SierMeet (U s) (V s)))))) r. 
-Proof.
-intros U V r s.  
-split.
-+ intros (H1,H2).
-  unfold OpenFun in H1.
-  revert H1. 
-  apply SierLe_imply. unfold val. admit.   
-+ intros Hm. 
-  
-Admitted. *)
 
 Definition OpenFun_meet {A} (U V : OS A) := OpenFun _ (OS_meet U V).
-
-Lemma OpenFun_siermeet_is_meet A : forall (a b : Sier) r s,
-      ((val (rl ((OpenFun A (fun x => a)) r)) s)
-   /\ (val (rl ((OpenFun A (fun x => b)) r)) s)) <-> 
-       (val (rl ((OpenFun A (fun x => SierMeet a b)) r)) s).  
-Proof.
-split; revert a b.  
-apply (partial_ind0 _ (fun a => forall b, _ -> _)).
-simpl. unfold semi_decide. destruct (decide (s < 1)).
-intros x b (H1,H2).
-assert (SierMeet (eta Unit x) b = b). 
-reflexivity. 
-rewrite X; trivial.
-Admitted. 
 
 Lemma OpenFun_meet_is_meet {A}: forall (U V : OS A) s r,
       (val (rl ((OpenFun _ U) s)) r
@@ -154,10 +122,37 @@ intros U V r s.
 split.
 + intros (H1,H2).
   unfold OpenFun_meet.
-  unfold OS_meet.  
-   
-  unfold val.  admit.
-  
+  unfold OS_meet.
+  unfold val in *.
+  revert H1 H2.
+  unfold OpenFun, OpenFun_aux.
+  generalize (U r) (V r). 
+  apply (partial_ind0 _ (fun a => forall b, _ -> _ -> _)).
+  - intros x z H1 H2.
+    assert (H1' : elt Q Qlt (rl RlP_1) s).
+    trivial. clear H1.       
+    revert H2. generalize z.
+    apply (partial_ind0 _ (fun b => _ -> _)).
+    -- trivial.
+    -- trivial.
+    -- trivial.
+  - intros b Hb1 Hb2.
+    assert (Hb0 : elt Q Qlt (rl RlP_0) s).        
+    trivial. clear Hb1.
+    simpl. unfold semi_decide.
+    destruct (decide (s < 0)).
+    * apply top_greatest.
+    * simpl in Hb0. unfold semi_decide in Hb0.
+      destruct (decide (s < 0)).
+      ** case (n l).
+      ** trivial.
+  - intros Un Hb1.
+    simpl in Hb1.
+    apply (partial_ind0 _ (fun b => _ -> _ -> _)).
+    -- intros x Hx1 Hx2.
+       admit. 
+    -- admit.
+    -- admit.
 + intros HH. 
   split.
   - apply RC_mon with Qle (rl (OpenFun_aux ((OS_meet U V) r))) s.
@@ -204,9 +199,12 @@ split.
     apply SierJoin_is_join.
     apply HDO.  
 + intros HH.
-  unfold OpenFun_join in HH.
-  unfold OS_join in HH.
-  admit. 
+  unfold OpenFun_join in *.
+  unfold OS_join.
+  unfold val in *.
+  revert HH.
+  unfold OpenFun, OpenFun_aux.
+  generalize (U r) (V r). admit.
 Admitted. 
 
   (* new definitions, new proof, to fix soon *)
