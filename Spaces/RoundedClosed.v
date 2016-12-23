@@ -1,4 +1,3 @@
-
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders
                HoTTClasses.implementations.sierpinsky
@@ -667,6 +666,83 @@ apply RlJoin_isRlow.
 Defined.   
 
 Arguments RlJoin _ _ /.
+
+
+Lemma RlMeet_isRlow : forall a b : Rlow,
+  IsRlow (fun q => semi_decide (meet (val a q) (val b q))).
+Proof.
+intros a b;split.
++ generalize (inhab Q Qlt a);apply (Trunc_ind _);intros [qa Ea].
+  generalize (inhab Q Qlt b);apply (Trunc_ind _);intros [qb Eb].
+  apply tr. SearchAbout Q.
+  destruct (Qle_total qa qb).
+  - exists qa. unfold semi_decide, semi_decide_sier.
+    apply top_le_meet. split.
+    * trivial.
+    * apply RC_le with Qle qb; try trivial.
+      intros x y; apply (antisymmetry le).
+      intros x y; apply le_or_lt.
+  - exists qb. unfold semi_decide, semi_decide_sier.
+    apply top_le_meet. split.
+    * apply RC_le with Qle qa; try trivial.
+      intros x y; apply (antisymmetry le).
+      intros x y; apply le_or_lt.
+    * trivial.
++ intros q;split.
+  - intros E.
+    apply top_le_meet in E.
+    revert E.
+    intros (E1,E2).
+    apply rounded in E1.
+    apply rounded in E2.
+    revert E1; apply (Trunc_ind _).
+    intros (q1,(E1,E1')).
+    revert E2; apply (Trunc_ind _).
+    intros (q2,(E2,E2')).
+    apply tr.
+    destruct (Qle_total q1 q2).
+    * exists q1. unfold semi_decide, semi_decide_sier.
+      split; trivial. apply top_le_meet.
+      split. 
+      -- trivial.
+      -- apply RC_le with Qle q2; try trivial.
+         intros x y; apply (antisymmetry le).
+         intros x y; apply le_or_lt.
+    * exists q2. unfold semi_decide, semi_decide_sier.
+      split; trivial. apply top_le_meet.
+      split. 
+      -- apply RC_le with Qle q1; try trivial.
+         intros x y; apply (antisymmetry le).
+         intros x y; apply le_or_lt.
+      -- trivial.
+   - apply (Trunc_ind _).
+     intros (r,(Hr1,Hr2)).
+     unfold semi_decide, semi_decide_sier in *.
+     apply top_le_meet.     
+     apply top_le_meet in Hr2.
+     destruct Hr2 as (Hr21,Hr22).
+     split.     
+     -- apply RC_le with Qle r.
+        intros x y; apply (antisymmetry le).
+        intros x y; apply le_or_lt.
+        trivial.
+        apply lt_le; trivial.
+     -- apply RC_le with Qle r.
+        intros x y; apply (antisymmetry le).
+        intros x y; apply le_or_lt.
+        trivial.
+        apply lt_le; trivial.
+Qed.
+
+Global Instance RlMeet : Meet Rlow. 
+Proof. 
+intros a b. 
+exists (fun q => semi_decide (meet (val a q) (val b q))). 
+apply RlMeet_isRlow. 
+Defined.   
+
+Arguments RlMeet _ _ /.
+
 
 Lemma Rlle_Q_preserving : OrderPreserving (cast Q Rlow).
 Proof.
