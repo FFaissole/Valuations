@@ -1,5 +1,4 @@
 
-
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders
                HoTTClasses.implementations.sierpinsky
@@ -66,7 +65,44 @@ Lemma Hx2 (A B : hSet) : forall U V F, ((λ z : A, val (let (rl, _) :=
                   ∪ (λ z : A, val (let (rl, _) := mu _ (F z) V in rl) 0))  =
                  (λ z : A, val (let (rl, _) := mu _ (F z) (U ∪ V) in rl) 0).
 Proof.
-Admitted.                                                                                                
+simpl.
+intros U V F.
+apply path_forall.
+intros z.
+unfold OS_join.
+destruct (F z).
+simpl.
+apply (antisymmetry le). 
++ apply imply_le. intros H1.
+  apply top_le_join in H1.
+  unfold hor in H1.
+  revert H1; apply (Trunc_ind _).
+  intros HH. destruct HH. 
+  - apply RC_mon with Qle (let (rl, _) := mu U in rl) 0.
+    intros x y; apply (antisymmetry le).
+    intros x y; apply orders.le_or_lt.
+    reflexivity. simpl.
+    apply mu_mon.
+    intros s.
+    apply SierJoin_is_join.
+    simpl; trivial.
+  - apply RC_mon with Qle (let (rl, _) := mu V in rl) 0.
+    intros x y; apply (antisymmetry le).
+    intros x y; apply orders.le_or_lt.
+    reflexivity. simpl.
+    apply mu_mon.
+    intros s.
+    apply SierJoin_is_join.
+    simpl; trivial.
++ apply imply_le. intros H1.
+  apply top_le_join.
+  unfold hor.
+  apply tr.
+  admit. 
+
+Admitted. 
+  
+  
 Definition bind (A B : hSet) : D A -> (A -> D B) -> D B.
 Proof.
 intros Nu F.
@@ -143,13 +179,9 @@ split with (fun U:OS B => I (Riesz2 Nu)
   apply I_prob. 
 Defined.
 
-Lemma monad1 {A B : hSet} : forall (x : A) (F : A -> D B) U,
-               mu _ (bind A B (unit A  x) F) U = mu _ (F x) U. 
+Lemma monad1 {A B : hSet} : forall (x : A) (F : A -> D B),
+               bind A B (unit A  x) F = (F x). 
 Proof. 
-intros x F U.  
-unfold bind, unit.
-simpl. unfold unit_aux.
-simpl. admit.
 Admitted.
 
 Lemma monad2 {A : hSet} : forall (nu : D A),
@@ -157,12 +189,10 @@ Lemma monad2 {A : hSet} : forall (nu : D A),
 Proof.
 Admitted.
 
-Lemma monad3 {A B C: hSet} : forall (nu : D A)
-                 (F : A -> D B) (G : B -> D C),
-            (bind B C (bind A B nu F) G) =
-            (bind A C nu (fun x:A => bind B C (F x) G)).  
+Lemma monad3 {A B C: hSet} : forall (nu : D A) (F : A -> D B) (G : B -> D C),
+     (bind B C (bind A B nu F) G) = (bind A C nu (fun x:A => bind B C (F x) G)).  
 Proof.
-Admitted. 
+  Admitted. 
 
 Definition vD {A :hSet} (nu : D A) (U : OS A) := mu _ nu U.
 
