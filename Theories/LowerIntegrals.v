@@ -18,10 +18,10 @@ Set Implicit Arguments.
 
 Section Integrals.
 
-
-
+(** * Lower Integrals on a hSet A *)
 Definition M (A : hSet) := mf A -> RlowPos. 
 
+(** Needed definition *)
 Definition Mplus {A} : Plus (M A). 
 intros I J f.
 specialize (I f).
@@ -45,7 +45,8 @@ Definition Mmon {A} (I : M A) :=
    forall f g : mf A,  f <= g -> (I f) <= (I g).
 
 Definition Mcont {A} (I : M A) :=
-  forall f : mf A, I f = RllubPos (fun n => I (fun x => (f x))). 
+  forall f : mf A, I f = RllubPos (fun n:nat => I (fun x => Rl_minus_q (f x)
+                                                    (pos (pos_of_nt n)))). 
 
 Global Instance MPos_semi_group {A} : SemiGroup (M A)
                                           (Aop := @Mplus A). 
