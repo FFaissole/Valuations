@@ -19,6 +19,9 @@ Set Implicit Arguments.
 Section Integrals.
 
 (** * Lower Integrals on a hSet A *)
+
+(** We will define the type of integrals. [M] will be the carrier of
+this type *)
 Definition M (A : hSet) := mf A -> RlowPos. 
 
 (** Needed definition *)
