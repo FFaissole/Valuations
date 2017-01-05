@@ -1,4 +1,14 @@
 
+Add Rec LoadPath "/Users/faissole/Desktop/HoTT/HoTTClasses/theories".
+
+Add Rec LoadPath "/Users/faissole/Desktop/HoTT/Measures/CoqPL/Spaces".
+
+Add Rec LoadPath "/Users/faissole/Desktop/HoTT/Measures/CoqPL/Theories".
+
+Add Rec LoadPath "/Users/faissole/Desktop/HoTT/Measures/CoqPL/Orders".
+
+Add Rec LoadPath "/Users/faissole/Desktop/HoTT/Measures/CoqPL/Riesz".
+
 
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders
@@ -17,6 +27,13 @@ Require Export RoundedClosed Opens Functions
 
 Set Implicit Arguments.
 
+(** * Formal proof of a constructive Riesz Theorem: for 
+the detailed pen-and-paper proof, see Coquand-Spitters09, 
+Integrals and valuations, or Vickers08, Monad of valuation 
+locales *)
+
+(** From Integrals to Valuations: 
+  mu_I (U)  = I (1_U) *)
 Definition Riesz1 (A : hSet) : IntPos A -> D A. 
 Proof. 
 intros J. 
@@ -43,6 +60,21 @@ exists (fun U:OS A => (I J (OpenFun A U))).
 + unfold OS_full; apply I_prob. 
 Defined.
 
+(** From Integrals to Valuations : 
+
+ ^        
+ |        ** 
+ |        ||
+ |--------*-*------------------
+ |       *|D_2|*
+ |----*-*-------*--------------
+ |  * |   D_1   |*
+ |-*--------------*------------
+ |* |     D_0     |  * * *
+ ---|-------------|---------------->
+
+I_mu (f) = sup (fun n => sum(i)_0^n (mu (D_op i))
+ *)
 
 Definition Riesz2 (A : hSet) : D A -> IntPos A.
 Proof.
@@ -50,7 +82,10 @@ intros Nu.
 refine (I_mu Nu). 
 Defined. 
 
-
+(** Homeorphism between integrals and Valuations: 
+    - hom1: mu_(I_nu) (U) = nu(U)
+    - hom2: I_(mu_J) (f) = J(f) 
+ *) 
 Lemma Riesz_hom1 (A : hSet) : forall (Mu :D A) U,
     mu _ (Riesz1 (Riesz2 Mu)) U = mu _ Mu U.
 Proof.
@@ -80,14 +115,22 @@ apply (antisymmetry le).
          generalize (orders.le_not_lt_flip 0 0 Hj).
          intros Hj'; case (Hj' l).          
        * reflexivity.       
-    -- simpl. admit.
+    -- intros f HU.
+       assert (Vn : nat -> RlowPos).
+       intros p.
+       specialize (f p). 
+       admit. 
+       admit.
+      
     -- rewrite X; unfold Rlle, RCLe_l; auto.    
    - simpl in *. 
     assert (H22 : Rlle ((toRlseq (λ n : nat, sum_p_r n
                  (OpenFun A U) Mu) (S n)))
                        ((toRlseq (λ n0 : nat, sum_p_r n0
                  (OpenFun A U) Mu) n))). 
-    apply toRlseq_mon.
+    apply toRlseq_antimon.
+    apply Peano.le_S.
+    reflexivity.
     intros s Hs.
     apply IHn.
     apply H22; trivial.
@@ -117,18 +160,36 @@ apply (antisymmetry le).
        * reflexivity.       
     -- simpl. admit.
     -- rewrite X; unfold Rlle, RCLe_l; auto.
-    -- assert (H2 : Rlow_mult_q (1 / qn 1)
-               (RlP_0 + mu _ Mu (D_op (qn 1) (OpenFun A U))) =
-                RlP_0 + mu _ Mu (D_op (qn 1) (OpenFun A U))).
-        admit. (* ok phase difficile *)
- 
-       assert (Hr : RlP_0 + mu _ Mu (D_op (qn 1) (OpenFun A U)) =
-               RlP_plus RlP_0 (mu _ Mu (D_op (qn 1)
-                                         (OpenFun A U)))).
-       reflexivity.
-       unfold sum_p_r. simpl.
-       admit. 
-Admitted.
+    -- simpl. assert (Hu : D_op 0 (OpenFun A U) = U).
+       generalize (@D_op_correct _ _ A (OpenFun A U) 0).
+       intros HGF.
+       unfold D_op, OpenFun, OpenFun_aux.
+       apply path_forall; intros z.
+       generalize (U z).
+       apply (partial_ind0 _ (fun a => _)).
+       --- simpl; intros x. unfold semi_decide.
+           destruct (decide (0 < 1)).
+           * destruct x; reflexivity.
+           * assert (Hos : Qzero < Qone).
+             apply semirings.lt_0_1.
+             case (n Hos).
+       --- simpl; unfold semi_decide.
+           destruct (decide (0 < 0)).
+           * assert (Hj : Qzero <= Qzero). reflexivity.
+             generalize (orders.le_not_lt_flip 0 0 Hj).
+             intros Hj'; case (Hj' l).          
+           * reflexivity.       
+       --- simpl. admit.
+       --- rewrite Hu. 
+       apply (RllubPos_lub (λ n : nat,
+       match n with
+       | 0 => mu _ Mu U
+       | S _ =>
+           Rlow_mult_q (1 / qnp (S n))
+             (sum_prod_sub n (OpenFun A U) Mu +
+              mu _ Mu (D_op (qn (S n)) (OpenFun A U)))
+       end) 0).
+Admitted.  
 
 Definition Riesz_hom2 (A : hSet) : forall (It : IntPos A) f,
     I (Riesz2 (Riesz1 It)) f = I It f.
@@ -138,16 +199,16 @@ unfold Riesz2.
 rewrite I_mu_simpl.
 intros f.
 apply (antisymmetry le).
-+ generalize (I_cont It).
++ unfold sum_p_r. simpl. generalize (I_cont It).
   intros HcI.
   unfold Mcont in *.
   rewrite HcI.
   apply Rllub_le.
-  admit.
+  intros n. 
+  unfold toRlseq.
+   admit.
   
 + rewrite I_cont.
   apply RllubPos_mon.
-  intros n.
-  admit. (* ok revoir cont *)
- 
+  intros n. admit. (* ok revoir cont *) 
 Admitted. 
