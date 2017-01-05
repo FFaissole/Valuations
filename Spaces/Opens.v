@@ -12,7 +12,12 @@ Require Import HoTT.HSet HoTT.Basics.Trunc HProp HSet
 
 Require Import RoundedClosed Cpo.
 
-(*Context `{Funext} `{Univalence}.*)
+(** * Open Subspaces of a hset A *)
+
+(** The continuous maps from A to 
+the Sierpinski space Sier forms a classifying topos for the opens 
+subsets of A. In Synthetic topology, continuous maps are the 
+definissible ones. *)
 
 Definition OS (A : hSet) := A -> Sier. 
 
@@ -57,12 +62,13 @@ Global Instance OS_join {A} : Join (OS A) :=
 Global Instance OS_meet {A} : Meet (OS A) := 
               fun U V => fun x => SierMeet (U x) (V x).
 
-(* Empty space *)
+(** Empty space *)
 Global Instance OS_empty {A} : Zero (OS A) := fun x : A => ⊥.
 
-(* All the space itself *)
+(** The entire space itself *)
 Global Instance OS_full {A} : One (OS A) := fun x : A => ⊤.
 
+(** OS A is has a cpo *)
 Global Instance OS_cpo {A} : cpo (OS A) Osle. 
 Proof.   
 exists (fun f : (nat -> OS A) => (fun x =>
@@ -76,7 +82,7 @@ refine OS_empty.
   apply (countable_sup_least_ub (fun n => f n a)); trivial. 
 Defined. 
 
-(* Notations *)
+(** Notations *)
 Notation "U ⋂ V" := (OS_meet U V) (at level 80). 
 Notation "U ∪ V" := (OS_join U V) (at level 80).
 Notation "∅" := (OS_empty).
@@ -108,7 +114,9 @@ split.
     apply H1. apply H2.
 Defined.
 
-(** Semigroup structure of OS *)
+(** Semigroup structure of OS A with sg_op = join (OS A) :
+     - associative sg_op
+     - OS A is a hSet *)
 Global Instance os_semi_group {A} : SemiGroup (OS A). 
 Proof. 
 split. 
