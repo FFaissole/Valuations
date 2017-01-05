@@ -15,6 +15,13 @@ Require Import RoundedClosed Opens Functions
                               
 Set Implicit Arguments.
 
+(** * D_op: operator which takes a function and a rational 
+and gives the open in which the function is bigger than the 
+rational *)
+
+(** see a similart construction with Dedekind cuts in 
+Coquand-Spitters 09, Integrals and valuations *)
+
 Section Dop.
 
 Context `{Funext} `{Univalence}.
@@ -26,6 +33,7 @@ destruct (f z).
 refine (val rl q). 
 Defined. 
 
+(** Correctness of the definition *)
 Lemma D_op_correct {A:hSet}: forall f q (x:A),
     (D_op q f) x <-> QRlow q < (f x).
 Proof. 
@@ -66,8 +74,9 @@ intros f q x; split; intro HH.
   intros F. case (n F). 
   unfold RCLe_l; auto. 
   trivial. 
-Qed. 
+Qed.
 
+(** Monotonicity of the operator on the functional arg*)
 Lemma D_op_mon_f {A:hSet}: forall q f g,
     f <= g -> D_op q f <= @D_op A q g. 
 Proof. 
@@ -81,6 +90,7 @@ apply imply_le.
 exact (Hle q). 
 Qed. 
 
+(** Monotonicity of the operator on the rational arg*)
 Lemma D_op_mon_q {A:hSet} : forall p q f,
     p <= q -> @D_op A q f <= @D_op A p f. 
 Proof. 
