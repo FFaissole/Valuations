@@ -51,6 +51,28 @@ Proof.
 simpl; reflexivity. 
 Qed. 
 
+
+Global Instance RlPJoin : Join RlowPos. 
+Proof. 
+intros a b.
+destruct a as (a,PA).  
+destruct b as (b,PB).
+exists (RlJoin a b). 
+intros p Hp.
+specialize (PA p Hp).
+specialize (PB p Hp).
+unfold RlJoin.
+simpl.
+unfold semi_decide.
+apply top_le_join.
+unfold hor.
+apply tr.
+left. trivial.
+Defined.   
+
+Arguments RlPJoin _ _ /.
+
+
 Lemma Hx1 (A B : hSet) : forall U V (F : A -> D B), ((λ z : A, val (let (rl, _) :=
                                     mu B (F z) U in rl) 0)
                    ⋂ (λ z : A, val (let (rl, _) :=
@@ -58,7 +80,25 @@ Lemma Hx1 (A B : hSet) : forall U V (F : A -> D B), ((λ z : A, val (let (rl, _)
                 (λ z : A, val (let (rl, _) :=
                                    mu _ (F z) (U ⋂ V) in rl) 0).
 Proof.
-Admitted.
+simpl.
+intros U V F.
+apply path_forall.
+intros z.
+unfold OS_meet.
+destruct (F z).
+simpl.
+apply (antisymmetry le). 
++ apply imply_le. intros H1.
+  apply top_le_meet in H1.
+  destruct H1 as (H1,H2).
+  assert (rl (mu (λ x : B, SierMeet (U x) (V x))) =
+          RlJoin (rl (mu U)) (rl (mu V))).
+ 
+  admit. 
+
+Admitted. 
+  
+
 
 Lemma Hx2 (A B : hSet) : forall U V F, ((λ z : A, val (let (rl, _) :=
                                         mu B (F z) U in rl) 0)
@@ -96,11 +136,37 @@ apply (antisymmetry le).
     simpl; trivial.
 + apply imply_le. intros H1.
   apply top_le_join.
-  unfold hor.
-  apply tr.
-  admit. 
+  unfold hor. 
+  assert (Hj : mu
+                 (λ x : B, SierJoin (U x) (V x)) =
+               RlPJoin (mu U) (mu V)).
+  apply (antisymmetry Rllepos).
+  unfold Rllepos.
+  intros q Hq.
+  unfold RlPJoin.
+  simpl.
+  unfold semi_decide.
+  
+  unfold SierJoin in Hq.
+  
+  simpl.
+  simpl.
+  admit.
 
-Admitted. 
+  assert (Hj2 : val
+         (let (rl, _) := RlPJoin (mu U) (mu V) in
+          rl) 0).
+  admit.
+ 
+  simpl in Hj2.
+  unfold semi_decide in Hj2.
+  apply top_le_join in Hj2.
+  unfold hor in Hj2; trivial.
+  unfold Rllepos.
+  intros q Hq.
+  unfold RlPJoin in Hq.  
+
+Admitted.
   
   
 Definition bind (A B : hSet) : D A -> (A -> D B) -> D B.
@@ -179,14 +245,54 @@ split with (fun U:OS B => I (Riesz2 Nu)
   apply I_prob. 
 Defined.
 
-Lemma monad1 {A B : hSet} : forall (x : A) (F : A -> D B),
-               bind A B (unit A  x) F = (F x). 
-Proof. 
+
+
+Lemma monad1_aux {A B : hSet} : forall (x : A) (F : A -> D B),
+               mu _ (bind A B (unit A  x) F) = mu _ (F x). 
+Proof.
+intros x F.
+unfold bind; simpl.
+apply path_forall.
+intros U.
+unfold Riesz2.
+rewrite I_mu_simpl.
+apply (antisymmetry le).
+apply Rllub_le; intros n.
+unfold toRlseq.
+assert (mu _ (unit A x) = (fun U : OS A => (OpenFun _ U) x)).
+admit. 
+
+unfold OpenFun, OpenFun_aux.
+unfold sum_p_r.
+rewrite X.
+simpl. 
 Admitted.
+
+Lemma monad1 {A B : hSet} : forall (x : A) (F : A -> D B),
+               bind A B (unit A  x) F = F x.
+Proof. 
+intros x F. 
+Admitted. 
+
+Lemma monad2_aux {A : hSet} : forall (nu : D A),
+    mu _ (bind A A nu (unit A)) = mu _ nu.
+Proof.
+intros nu; simpl.
+unfold Riesz2.
+rewrite I_mu_simpl.
+apply path_forall; intros U.
+apply (antisymmetry le).
+apply Rllub_le.
+unfold toRlseq; intros n. 
+admit. admit. 
+Admitted.
+
 
 Lemma monad2 {A : hSet} : forall (nu : D A),
     bind A A nu (unit A) = nu.
 Proof.
+intros nu; simpl.
+unfold Riesz2.
 Admitted.
 
 Lemma monad3 {A B C: hSet} : forall (nu : D A) (F : A -> D B) (G : B -> D C),
@@ -214,6 +320,3 @@ Qed.
 Lemma bind_mon {A B :hSet} : forall (x:A) (nu: D A) (F : A -> D B) (f g : OS B), 
        f <= g -> vD (bind A B nu F) f <= vD (bind A B nu F) g. 
 Admitted.
-(*
-Lemma bind_le_comp {A B :hSet} : forall (nu1 nu2 : D A) (F1 F2 : A -> D B),
-         nu1 <= nu2 -> F1 <= F2 -> star  *)
