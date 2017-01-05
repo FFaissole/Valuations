@@ -19,18 +19,11 @@ Set Implicit Arguments.
 
 Definition mf (A:hSet) : Type := A -> RlowPos.
 
-Definition ffle {A} : mf A -> mf A -> Type. 
-Proof.
-intros f g.
-unfold mf in f, g.
-refine (forall x:A, (f x) <= (g x)).  
-Defined.
-
 Definition ffle_hProp {A} : mf A  -> mf A  -> hProp.
 Proof.
-intros U V.  
-refine ((fun x y => BuildhProp (ffle x y)) _  _). 
-exact U. exact V. 
+intros f g.  
+refine ((fun x y => BuildhProp (fun f g => forall x:A, f x <= g x)) _ _). 
+exact f. exact g. 
 Defined.
 
 (** Order on functions *)
