@@ -1,5 +1,4 @@
 
-
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders
                HoTTClasses.implementations.sierpinsky
@@ -14,6 +13,9 @@ Require Import HoTT.HSet HoTT.Basics.Trunc HProp HSet
 Require Import RoundedClosed.
 
 Set Implicit Arguments.  
+
+(** * Positive integrable functions from A to RlowPos *)
+
 
 Definition mf (A:hSet) : Type := A -> RlowPos.
 
@@ -68,6 +70,7 @@ split.
   apply H'. apply H1.
 Defined.
 
+(** Operations of functions *)
 Global Instance fplus {A} : Plus (mf A) := fun f g => fun x => RlP_plus (f x) (g x).
 
 Global Instance fzero {A} : Zero (mf A) := fun x => RlP_0.
@@ -111,7 +114,9 @@ apply RlPlus_le_preserving.
 apply Hgh. 
 Qed.
 
-(** Semigroup structure on mf *)
+(** Semigroup structure on mf with sg_op = plus 
+     - sg_op associative
+     - mf A is an hset *)
 Global Instance mf_semi_group {A} : SemiGroup (mf A). 
 Proof. 
 split. 
