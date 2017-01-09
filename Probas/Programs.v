@@ -1,5 +1,4 @@
 
-
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders
                HoTTClasses.implementations.partiality
@@ -140,9 +139,6 @@ rewrite (Hx a); reflexivity.
 rewrite Hu, monad2; reflexivity. 
 Qed.  
 
-(** *  Conditional distribution : Rml 4 *)
-
-(* TODO *)
 
 (** Correctness judgement *) 
 
@@ -160,7 +156,7 @@ Definition up_fun {A B} (f : OS A) (E : A -> Val B) (F : A -> OS B) :=
 
 (** Rules for applications *)
 
-Lemma apply_rule {A B} : forall (nu : D A) (f : A -> Val B)
+Lemma apply_rule {A B} : forall (nu : Val A) (f : A -> Val B)
                                 (r : RlowPos)
                                 (F : OS A) (G : OS B),
           ok r nu F -> ok_fun F f (fun x => G) ->
@@ -393,20 +389,14 @@ intros f F G HO.
 unfold ok_fun, ok in *; trivial. 
 Qed. 
 
-Lemma lambda_rule_up {A B:hSet} : forall (f : A -> D B) (F : OS A) (G : A -> OS B),
+Lemma lambda_rule_up {A B:hSet} : forall (f : A -> Val B) (F : OS A) (G : A -> OS B),
        (forall x:A, ok_up (OpenFun _ F x) (f x) (G x)) -> up_fun F f G. 
 Proof.
 intros f F G HO. 
 unfold up_fun, ok_up in *; trivial. 
 Qed. 
 
-(** Rules for conditional *)
-
-(* TODO *) 
-
-(** Fixpoints *)
-
-(* TODO *)
+(** Distribution on the hSet version of Bool *)
 
 Definition hS_of_hset (A : Type) (hset_A : IsHSet A) : hSet.
 Proof. 
@@ -436,6 +426,21 @@ assert (b' : hS_of_hset hset_bool).
 refine b.
 refine ((OpenFun (hS_of_hset hset_bool) B) b'). 
 Defined.
+
+
+(** Rules for conditional *)
+
+Definition Mif (A:hSet) (b: Val (hS_of_hset hset_bool)) (m1 m2:Val A) : Mes A. 
+Proof.                          
+intros X.
+exists (rl (mu _ (bind (hS_of_hset hset_bool) A b
+        (fun x:Bool => if x then m1 else m2)) X)).
+intros p Hp. 
+apply (mu _ (bind (hS_of_hset hset_bool) A b
+        (λ x : Bool, if x then m1 else m2)) X); trivial. 
+Defined. 
+
+(** Boundedness of OSb *)
  
 Lemma OSb_prob : forall B x, OSb B x <= RlP_1. 
 Proof. 
@@ -450,6 +455,8 @@ apply top_greatest.
 apply OpenFun_prob. 
 reflexivity. 
 Qed. 
+
+(** Distribution on the hSet version of nat *)
 
 Lemma hset_nat : IsHSet nat. 
 Proof. 
@@ -469,7 +476,9 @@ intros n.
 assert (n' : hS_of_hset hset_nat). 
 refine n.
 refine ((OpenFun (hS_of_hset hset_nat) N) n'). 
-Defined. 
+Defined.
+
+(** Flip program *)
 
 Definition flip_aux : Mes (hS_of_hset hset_bool). 
 Proof.
@@ -584,7 +593,7 @@ apply top_greatest.
 trivial. 
 refine (Rlow_RlowPos (QRlow (rationals.pos q)) HP). 
 Defined. 
-  
+
 Fixpoint sum_n_moy_aux (p : nat) (f : nat -> RlowPos) : RlowPos := match p with
           |O => RlP_0
           |S p0 => RlP_plus (f (S p0)) (sum_n_moy_aux p0 f)
@@ -598,6 +607,8 @@ Defined.
 
 Fixpoint sum_n_moy (p : nat) f : RlowPos := Rlow_mult_q (O_Sp p)
                                                   (sum_n_moy_aux p f). 
+
+(** Random program *)
 
 Definition random_aux (M : nat) : Mes (hS_of_hset hset_nat). 
 Proof.
