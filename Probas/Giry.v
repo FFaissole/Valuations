@@ -1,4 +1,5 @@
 
+
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders
                HoTTClasses.implementations.sierpinsky
@@ -50,28 +51,6 @@ Lemma unit_aux_unit (A : hSet) (x:A) : mu _ (unit _ x) = unit_aux _ x.
 Proof. 
 simpl; reflexivity. 
 Qed. 
-
-
-Global Instance RlPJoin : Join RlowPos. 
-Proof. 
-intros a b.
-destruct a as (a,PA).  
-destruct b as (b,PB).
-exists (RlJoin a b). 
-intros p Hp.
-specialize (PA p Hp).
-specialize (PB p Hp).
-unfold RlJoin.
-simpl.
-unfold semi_decide.
-apply top_le_join.
-unfold hor.
-apply tr.
-left. trivial.
-Defined.   
-
-Arguments RlPJoin _ _ /.
-
 
 Lemma Hx1 (A B : hSet) : forall U V (F : A -> D B), ((λ z : A, val (let (rl, _) :=
                                     mu B (F z) U in rl) 0)
@@ -245,8 +224,6 @@ split with (fun U:OS B => I (Riesz2 Nu)
   apply I_prob. 
 Defined.
 
-
-
 Lemma monad1_aux {A B : hSet} : forall (x : A) (F : A -> D B),
                mu _ (bind A B (unit A  x) F) = mu _ (F x). 
 Proof.
@@ -257,21 +234,35 @@ intros U.
 unfold Riesz2.
 rewrite I_mu_simpl.
 apply (antisymmetry le).
-apply Rllub_le; intros n.
-unfold toRlseq.
-assert (mu _ (unit A x) = (fun U : OS A => (OpenFun _ U) x)).
-admit. 
++ apply Rllub_le; intros n.
+  unfold toRlseq, sum_p_r.
+  induction n. 
+  - unfold unit. unfold unit_aux. simpl.
+    assert (HV : forall V, D_op 0 (OpenFun A V) =  V).
+    intros V. 
+    generalize (@D_op_correct _ _ A (OpenFun A V) 0).
+    intros HGF.
+    unfold D_op, OpenFun, OpenFun_aux.
+    apply path_forall; intros z.
+    generalize (V z).
+    admit.
 
-unfold OpenFun, OpenFun_aux.
-unfold sum_p_r.
-rewrite X.
-simpl. 
+    rewrite HV.
+    admit. 
+  - admit. 
++ intros q Hq. apply (Rllub_lub  (λ n : nat,
+        sum_p_r n (OpenFun A (D_op 0 (λ x0 : A, mu _ (F x0) U)))
+          (unit A x)) 0). 
+  simpl.
+  unfold unit_aux; simpl.
+  admit.   
 Admitted.
 
 Lemma monad1 {A B : hSet} : forall (x : A) (F : A -> D B),
                bind A B (unit A  x) F = F x.
 Proof. 
-intros x F. 
+intros x F. destruct (F x).
+destruct (bind A B (unit A x) F). 
 Admitted. 
 
 Lemma monad2_aux {A : hSet} : forall (nu : D A),
@@ -282,9 +273,38 @@ unfold Riesz2.
 rewrite I_mu_simpl.
 apply path_forall; intros U.
 apply (antisymmetry le).
-apply Rllub_le.
-unfold toRlseq; intros n. 
-admit. admit. 
++ apply Rllub_le.
+  unfold toRlseq; intros n. 
+  induction n. 
+  - simpl. unfold unit_aux. 
+    assert (HV : forall V, D_op 0 (OpenFun A V) =  V).
+    intros V. 
+    generalize (@D_op_correct _ _ A (OpenFun A V) 0).
+    intros HGF.
+    unfold D_op, OpenFun, OpenFun_aux.
+    apply path_forall; intros z.
+    generalize (V z).
+    admit.
+
+    repeat rewrite HV. 
+    intros q; trivial.
+  - simpl. admit.
++ unfold unit_aux; simpl.
+  intros q Hq.       
+  apply (Rllub_lub  (λ n : nat,
+                           sum_p_r n (OpenFun A (D_op 0
+                         (λ x : A, OpenFun A U x))) nu) 0).
+  simpl. 
+  assert (HV : forall V, D_op 0 (OpenFun A V) =  V).
+  intros V. 
+  generalize (@D_op_correct _ _ A (OpenFun A V) 0).
+  intros HGF.
+  unfold D_op, OpenFun, OpenFun_aux.
+  apply path_forall; intros z.
+  generalize (V z).
+  admit. 
+
+  repeat rewrite HV; trivial. 
 Admitted.
 
 
@@ -294,6 +314,33 @@ Proof.
 intros nu; simpl.
 unfold Riesz2.
 Admitted.
+
+
+Lemma monad3_aux {A B C: hSet} : forall (nu : D A) (F : A -> D B) (G : B -> D C),
+     mu _ (bind B C (bind A B nu F) G) = mu _ (bind A C nu (fun x:A => bind B C (F x) G)).  
+Proof.
+intros nu F G. simpl.
+unfold Riesz2.
+rewrite I_mu_simpl.
+apply path_forall; intros U.
+apply (antisymmetry le).
++ apply Rllub_le. 
+  unfold toRlseq. 
+  induction 0. 
+  simpl. unfold Riesz2. 
+  intros q Hq. simpl.
+  unfold D_op in *; simpl in *. 
+  admit. admit. 
++ intros q Hq.
+  apply (Rllub_lub (λ n : nat,
+       sum_p_r n
+         (OpenFun B
+            (D_op 0 (λ x : B, mu _ (G x) U)))
+         (bind A B nu F)) 0). 
+  simpl. unfold Riesz2. 
+  admit. 
+Admitted. 
+
 
 Lemma monad3 {A B C: hSet} : forall (nu : D A) (F : A -> D B) (G : B -> D C),
      (bind B C (bind A B nu F) G) = (bind A C nu (fun x:A => bind B C (F x) G)).  
@@ -317,6 +364,31 @@ rewrite unit_aux_unit.
 apply unit_aux_mon; trivial.
 Qed. 
 
+Lemma sum_p_r_mon_f2 {A :hSet} : forall n f g mm, f <= g -> 
+      sum_p_r n f mm <= @sum_p_r A n g mm.
+Proof.
+intros n f g mm Hfg.
+induction n.  
++ simpl.
+  apply mu_mon.
+  apply D_op_mon_f; trivial.
++admit. 
+Admitted. 
+
 Lemma bind_mon {A B :hSet} : forall (x:A) (nu: D A) (F : A -> D B) (f g : OS B), 
        f <= g -> vD (bind A B nu F) f <= vD (bind A B nu F) g. 
-Admitted.
+Proof.
+intros x nu F f g Hfg q Hq. 
+unfold bind.
+simpl in *. 
+unfold Riesz2 in *; rewrite I_mu_simpl. 
+rewrite I_mu_simpl in Hq.
+revert Hq. apply Rllub_mon. 
+intros n.
+unfold toRlseq.
+apply sum_p_r_mon_f2.
+apply OpenFun_mon. 
+apply D_op_mon_f.
+intros s. 
+apply mu_mon; trivial. 
+Qed. 
