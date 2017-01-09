@@ -30,15 +30,35 @@ Install the dependencies and run the following commands:
     -- Rljoin: join of two lower reals; 
     -- Rlmeet: meet of two lower reals; 
     -- Rllub: lub of a sequence/enumerable set of lower reals. 
+    
+ - Opens.v:  
+ 
+ - Functions.v:
+ 
+ - Cpo.v
   
-- Model.v: some axioms and results needed for synthetic topology.
-- Monad.v: a little definition of a monad (Kleisli's approach) based on the HoTT's category theory.
-- Valuations.v: formalization of open subsets and valuations (probability distributions but on open subsets). 
-- LowerIntpos.v: integrable functions and lower integrals. 
-- Riesz.v:
-
 2) Theories: 
-- Test
+- Valuations.v: 
+
+- LowerIntegrals.v: 
+
+3) Riesz: 
+ - D_op.v: 
+ 
+ - OpenFun.v: 
+ 
+ - Simples.v:
+ 
+ - Riesz.v: 
+ 
+4) Probas: 
+ - Monad.v: 
+ 
+ - Giry.v:
+ 
+ - Programs.v: 
+ 
+ 
 
 
 
