@@ -22,7 +22,7 @@ Proof.
 refine (fun U : OS A => (OpenFun _ U) x). 
 Defined. 
 
-Definition unit (A : hSet) (x:A) : D A.
+Definition unit (A : hSet) (x:A) : Val A.
 Proof.
 exists (unit_aux _ x).    
 + unfold modular. intros U V.
@@ -148,7 +148,7 @@ apply (antisymmetry le).
 Admitted.
   
   
-Definition bind (A B : hSet) : D A -> (A -> D B) -> D B.
+Definition bind (A B : hSet) : Val A -> (A -> Val B) -> Val B.
 Proof.
 intros Nu F.
 split with (fun U:OS B => I (Riesz2 Nu)
@@ -224,7 +224,7 @@ split with (fun U:OS B => I (Riesz2 Nu)
   apply I_prob. 
 Defined.
 
-Lemma monad1_aux {A B : hSet} : forall (x : A) (F : A -> D B),
+Lemma monad1_aux {A B : hSet} : forall (x : A) (F : A -> Val B),
                mu _ (bind A B (unit A  x) F) = mu _ (F x). 
 Proof.
 intros x F.
@@ -258,7 +258,7 @@ apply (antisymmetry le).
   admit.   
 Admitted.
 
-Lemma monad1 {A B : hSet} : forall (x : A) (F : A -> D B),
+Lemma monad1 {A B : hSet} : forall (x : A) (F : A -> Val B),
                bind A B (unit A  x) F = F x.
 Proof. 
 intros x F. destruct (F x).
@@ -308,7 +308,7 @@ apply (antisymmetry le).
 Admitted.
 
 
-Lemma monad2 {A : hSet} : forall (nu : D A),
+Lemma monad2 {A : hSet} : forall (nu : Val A),
     bind A A nu (unit A) = nu.
 Proof.
 intros nu; simpl.
@@ -316,7 +316,7 @@ unfold Riesz2.
 Admitted.
 
 
-Lemma monad3_aux {A B C: hSet} : forall (nu : D A) (F : A -> D B) (G : B -> D C),
+Lemma monad3_aux {A B C: hSet} : forall (nu : Val A) (F : A -> Val B) (G : B -> Val C),
      mu _ (bind B C (bind A B nu F) G) = mu _ (bind A C nu (fun x:A => bind B C (F x) G)).  
 Proof.
 intros nu F G. simpl.
@@ -342,7 +342,7 @@ apply (antisymmetry le).
 Admitted. 
 
 
-Lemma monad3 {A B C: hSet} : forall (nu : D A) (F : A -> D B) (G : B -> D C),
+Lemma monad3 {A B C: hSet} : forall (nu : Val A) (F : A -> Val B) (G : B -> Val C),
      (bind B C (bind A B nu F) G) = (bind A C nu (fun x:A => bind B C (F x) G)).  
 Proof.
   Admitted. 
@@ -375,7 +375,7 @@ induction n.
 +admit. 
 Admitted. 
 
-Lemma bind_mon {A B :hSet} : forall (x:A) (nu: D A) (F : A -> D B) (f g : OS B), 
+Lemma bind_mon {A B :hSet} : forall (x:A) (nu: Val A) (F : A -> Val B) (f g : OS B), 
        f <= g -> vD (bind A B nu F) f <= vD (bind A B nu F) g. 
 Proof.
 intros x nu F f g Hfg q Hq. 
