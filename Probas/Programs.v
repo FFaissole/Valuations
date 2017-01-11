@@ -21,13 +21,17 @@ Set Implicit Arguments.
 
 (** Image distributions : Rml 3 *) 
 
-Definition im_distr {A B : hSet} (f : A -> B) (m : Val A) : Val B :=
+Definition im_distr {A B : hSet} (f : A -> B) (m : D A) : D B :=
        bind A B m (fun a => unit B (f a)). 
 
-Lemma im_distr_comp {A B C: hSet} (f : A -> B) (g : B -> C) (m : Val A) : 
-         im_distr g (im_distr f m) = im_distr (fun a => g (f a)) m.
-Proof.   
+    
+Lemma im_distr_comp {A B C: hSet} (f : A -> B) (g : B -> C)
+      (m : D A) : 
+   im_distr g (im_distr f m) = im_distr (fun a => g (f a)) m.
+Proof.    
 unfold im_distr; simpl.
+generalize (@monad3 A).   
+intros HGm. 
 rewrite monad3.
 assert (Hu : (λ x : A, bind B C (unit B (f x))
                             (λ a : B, unit C (g a))) =
@@ -48,71 +52,26 @@ apply (antisymmetry le).
   - simpl.
     assert (Ho1 : D_op 0 (OpenFun B (D_op 0 (λ x0 : B,
                           OpenFun C U (g x0)))) =
-                 (D_op 0 (λ x0 : B, OpenFun C U (g x0)))).
-    unfold D_op, OpenFun, OpenFun_aux.
-    apply path_forall; intros z.
-    generalize (U (g z)).
-    apply (partial_ind0 _ (fun a => _)).
-    -- simpl; intros s. unfold semi_decide.
-       destruct (decide (0 < 1)).
-       * transitivity (val (rl RlP_1) 0).
-         reflexivity. 
-         unfold RlP_1. 
-         simpl. unfold semi_decide.
-         destruct (decide (0 < 1)). 
-         reflexivity. 
-         case (n l). 
-       * assert (Hos : Qzero < Qone).
-         apply semirings.lt_0_1.
-         case (n Hos).
-    -- simpl; unfold semi_decide.
-       destruct (decide (0 < 0)).
-       * assert (Hj : Qzero <= Qzero). reflexivity.
-         generalize (orders.le_not_lt_flip 0 0 Hj).
-         intros Hj'; case (Hj' l).          
-       * transitivity (elt Q Qlt (rl RlP_0) 0).
-         reflexivity.  
-         unfold RlP_0. simpl. 
-         unfold semi_decide. 
-         destruct (decide (0 < 0)). 
-         case (n l). 
-         reflexivity.       
-    -- simpl. admit.
-    -- rewrite Ho1. 
-       assert (Ho2 : (D_op 0 (λ x0 : B, OpenFun C U (g x0))) =
-                (λ x0 : B, U (g x0))).    
-       unfold D_op; simpl. 
-       apply path_forall. 
-       intros z.     
-       unfold OpenFun, OpenFun_aux. generalize (U (g z)). 
-       apply (partial_ind0 _ (fun a => _)).
-       --- simpl; intros s. unfold semi_decide.
-           transitivity (elt Q Qlt (rl RlP_1) 0). 
-           reflexivity. simpl. unfold semi_decide. 
-           destruct (decide (0 < 1)).
-           * destruct s. reflexivity.
-           * assert (Hos : Qzero < Qone).
-             apply semirings.lt_0_1.
-             case (n Hos).
-       --- simpl; unfold semi_decide.
-           destruct (decide (0 < 0)).
-           * assert (Hj : Qzero <= Qzero). reflexivity.
-             generalize (orders.le_not_lt_flip 0 0 Hj).
-             intros Hj'; case (Hj' l).          
-           * transitivity (elt Q Qlt (rl RlP_0) 0). simpl.
-             unfold semi_decide. 
-             destruct (decide (0 < 0)). 
-             case (n l). reflexivity. 
-             simpl. unfold semi_decide. 
-             destruct (decide (0 < 0)). 
-             case (n l). 
-             reflexivity. 
-        --- admit. 
-        --- rewrite Ho2.
-            unfold OpenFun.
-            unfold Rlle, RCLe_l; auto. 
-  -  unfold unit, unit_aux; simpl.
-    simpl. admit.
+                  (D_op 0 (λ x0 : B, OpenFun C U (g x0)))).
+    rewrite D_op_OpenFun. 
+    reflexivity.
+    rewrite Ho1.
+    rewrite D_op_OpenFun. unfold unit, unit_aux; simpl.  
+    intros q Hq. 
+    unfold OpenFun, OpenFun_aux in *; simpl in *. 
+    trivial.        
+  - repeat rewrite D_op_OpenFun. 
+    intros q Hq.
+    apply IHn.     
+    revert Hq. 
+    apply RC_mon with Qle. 
+    intros x' y'; apply (antisymmetry le). 
+    intros x' y'; apply orders.le_or_lt. 
+    reflexivity.
+    unfold unit_aux. 
+    rewrite OpenFun_D_op.
+    unfold OpenFun. 
+    apply toRlseq_antimon'.  
 + assert (Hv : (λ n : nat,
        sum_p_r n
          (OpenFun B (D_op 0 (λ x0 : B, unit_aux C (g x0) U)))
@@ -120,15 +79,24 @@ apply (antisymmetry le).
                (λ n : nat,
        sum_p_r n
          ((λ x0 : B, unit_aux C (g x0) U))
-         (unit B (f x)))). 
-  admit. 
-
-  rewrite Hv. 
-  unfold unit, unit_aux.
-  admit. 
+         (unit B (f x)))).
+  rewrite OpenFun_D_op. 
+  reflexivity.
+  rewrite Hv.
+  unfold unit_aux; simpl. 
+  intros q Hq. 
+  assert (Ho : elt Q Qlt (rl (sum_p_r 0 (λ x0 : B, OpenFun C U (g x0))
+                                      (unit B (f x)))) q). 
+  simpl. unfold unit_aux; simpl.     
+  rewrite OpenFun_D_op; trivial. 
+  apply Rllub_lub with 0.
+  trivial.
++ admit. (* pb of universes *)
++ rewrite <- Hu. 
+  reflexivity. 
 Admitted. 
 
-Lemma im_distr_id {A : hSet}: forall (f : A -> A) (m : Val A),
+Lemma im_distr_id {A : hSet}: forall (f : A -> A) (m : D A),
           (forall x, f x = x) -> im_distr f m = m. 
 Proof. 
 intros f m Hx. 
@@ -139,24 +107,27 @@ rewrite (Hx a); reflexivity.
 rewrite Hu, monad2; reflexivity. 
 Qed.  
 
+(** *  Conditional distribution : Rml 4 *)
+
+(* TODO *)
 
 (** Correctness judgement *) 
 
-Definition ok {A} (p : RlowPos) (nu : Val A) (F : OS A) :=
+Definition ok {A} (p : RlowPos) (nu : D A) (F : OS A) :=
                          p <= mu _ nu F. 
 
-Definition ok_fun {A B} (f : OS A) (E : A -> Val B) (F : A -> OS B) :=
+Definition ok_fun {A B} (f : OS A) (E : A -> D B) (F : A -> OS B) :=
                      forall x:A, ok ((OpenFun _ f) x) (E x) (F x). 
 
-Definition ok_up {A} (p : RlowPos) (nu : Val A) (F : OS A) :=
+Definition ok_up {A} (p : RlowPos) (nu : D A) (F : OS A) :=
                         mu _ nu F <= p. 
 
-Definition up_fun {A B} (f : OS A) (E : A -> Val B) (F : A -> OS B) :=
+Definition up_fun {A B} (f : OS A) (E : A -> D B) (F : A -> OS B) :=
                      forall x:A, ok_up ((OpenFun _ f) x) (E x) (F x). 
 
 (** Rules for applications *)
 
-Lemma apply_rule {A B} : forall (nu : Val A) (f : A -> Val B)
+Lemma apply_rule {A B} : forall (nu : D A) (f : A -> D B)
                                 (r : RlowPos)
                                 (F : OS A) (G : OS B),
           ok r nu F -> ok_fun F f (fun x => G) ->
@@ -179,75 +150,23 @@ transitivity (I (Riesz2 nu) (OpenFun A (D_op 0
             (D_op 0 (λ x : A, OpenFun A F x))). 
     generalize (@D_op_correct _ _ A (fun x => OpenFun A F x) 0).
     intros HGF.
-    unfold D_op, OpenFun, OpenFun_aux.
-    apply path_forall; intros z.
-    generalize (F z).
-    apply (partial_ind0 _ (fun a => _)).
-    -- simpl; intros x. unfold semi_decide.
-       destruct (decide (0 < 1)).
-       * transitivity (val (rl RlP_1) 0).
-         reflexivity. 
-         unfold RlP_1. 
-         simpl. unfold semi_decide.
-         destruct (decide (0 < 1)). 
-         reflexivity. 
-         case (n l). 
-       * assert (Hos : Qzero < Qone).
-         apply semirings.lt_0_1.
-         case (n Hos).
-    -- simpl; unfold semi_decide.
-       destruct (decide (0 < 0)).
-       * assert (Hj : Qzero <= Qzero). reflexivity.
-         generalize (orders.le_not_lt_flip 0 0 Hj).
-         intros Hj'; case (Hj' l).          
-       * transitivity (elt Q Qlt (rl RlP_0) 0).
-         reflexivity.  
-         unfold RlP_0. simpl. 
-         unfold semi_decide. 
-         destruct (decide (0 < 0)). 
-         case (n l). 
-         reflexivity.       
-    -- simpl. admit.
-    -- rewrite H1. 
-       assert (H2 : (D_op 0 (λ x : A, OpenFun A F x)) =
+    rewrite D_op_OpenFun. 
+    reflexivity. 
+    rewrite H1. 
+    assert (H2 : (D_op 0 (λ x : A, OpenFun A F x)) =
                   fun x =>  F x). 
-       unfold D_op; simpl. 
-       apply path_forall. 
-       intros z.     
-       unfold OpenFun, OpenFun_aux. generalize (F z). 
-       apply (partial_ind0 _ (fun a => _)).
-       --- simpl; intros x. unfold semi_decide.
-           transitivity (elt Q Qlt (rl RlP_1) 0). 
-           reflexivity. simpl. unfold semi_decide. 
-           destruct (decide (0 < 1)).
-           * destruct x. reflexivity.
-           * assert (Hos : Qzero < Qone).
-             apply semirings.lt_0_1.
-             case (n Hos).
-       --- simpl; unfold semi_decide.
-           destruct (decide (0 < 0)).
-           * assert (Hj : Qzero <= Qzero). reflexivity.
-             generalize (orders.le_not_lt_flip 0 0 Hj).
-             intros Hj'; case (Hj' l).          
-           * transitivity (elt Q Qlt (rl RlP_0) 0). simpl.
-             unfold semi_decide. 
-             destruct (decide (0 < 0)). 
-             case (n l). generalize (F z). intros; auto.
-             simpl. unfold semi_decide. 
-             destruct (decide (0 < 0)). 
-             case (n l). 
-             reflexivity. 
-        --- admit. 
-        --- rewrite H2.
-            reflexivity. 
+    rewrite D_op_OpenFun.
+    reflexivity. 
+    rewrite H2.
+    reflexivity. 
    - apply (Rllub_lub (λ n : nat,
                           sum_p_r n (OpenFun A (D_op 0
                       (λ x : A, OpenFun A F x))) nu) 0). 
 + apply I_mon, OpenFun_mon, D_op_mon_f.        
-  intros x; trivial. 
-Admitted. 
+  intros x; trivial.
+Qed. 
 
-Lemma apply_rule_up {A B} : forall (mu : Val A) (f : A -> Val B)
+Lemma apply_rule_up {A B} : forall (mu : D A) (f : A -> D B)
                                    (r : RlowPos)
                                 (F : OS A) (G : OS B),
     ok_up r mu F -> up_fun F f (fun x => G) ->
@@ -277,111 +196,40 @@ transitivity (I (Riesz2 nu) (OpenFun A (D_op 0
   - simpl.   
     assert (H1 : D_op 0 (OpenFun A (D_op 0
                  (λ x : A, OpenFun A F x))) =
-            (D_op 0 (λ x : A, OpenFun A F x))). 
-    generalize (@D_op_correct _ _ A (fun x => OpenFun A F x) 0).
-    intros HGF.
-    unfold D_op, OpenFun, OpenFun_aux.
-    apply path_forall; intros z.
-    generalize (F z).
-    apply (partial_ind0 _ (fun a => _)).
-    -- simpl; intros x. unfold semi_decide.
-       destruct (decide (0 < 1)).
-       * transitivity (val (rl RlP_1) 0).
-         reflexivity. 
-         unfold RlP_1. 
-         simpl. unfold semi_decide.
-         destruct (decide (0 < 1)). 
-         reflexivity. 
-         case (n l). 
-       * assert (Hos : Qzero < Qone).
-         apply semirings.lt_0_1.
-         case (n Hos).
-    -- simpl; unfold semi_decide.
-       destruct (decide (0 < 0)).
-       * assert (Hj : Qzero <= Qzero). reflexivity.
-         generalize (orders.le_not_lt_flip 0 0 Hj).
-         intros Hj'; case (Hj' l).          
-       * transitivity (elt Q Qlt (rl RlP_0) 0).
-         reflexivity.  
-         unfold RlP_0. simpl. 
-         unfold semi_decide. 
-         destruct (decide (0 < 0)). 
-         case (n l). 
-         reflexivity.       
-    -- simpl. admit.
-    -- rewrite H1. 
-       assert (H2 : (D_op 0 (λ x : A, OpenFun A F x)) =
-                  fun x =>  F x). 
-       unfold D_op; simpl. 
-       apply path_forall. 
-       intros z.     
-       unfold OpenFun, OpenFun_aux. generalize (F z). 
-       apply (partial_ind0 _ (fun a => _)).
-       --- simpl; intros x. unfold semi_decide.
-           transitivity (elt Q Qlt (rl RlP_1) 0). 
-           reflexivity. simpl. unfold semi_decide. 
-           destruct (decide (0 < 1)).
-           * destruct x. reflexivity.
-           * assert (Hos : Qzero < Qone).
-             apply semirings.lt_0_1.
-             case (n Hos).
-       --- simpl; unfold semi_decide.
-           destruct (decide (0 < 0)).
-           * assert (Hj : Qzero <= Qzero). reflexivity.
-             generalize (orders.le_not_lt_flip 0 0 Hj).
-             intros Hj'; case (Hj' l).          
-           * transitivity (elt Q Qlt (rl RlP_0) 0). simpl.
-             unfold semi_decide. 
-             destruct (decide (0 < 0)). 
-             case (n l). generalize (F z). intros; auto.
-             simpl. unfold semi_decide. 
-             destruct (decide (0 < 0)). 
-             case (n l). 
-             reflexivity. 
-        --- admit. 
-        --- rewrite H2.
-            apply Rllub_le.
-            intros n. unfold toRlseq. 
-            unfold sum_p_r. 
-            induction n. 
-            * simpl. rewrite H2. 
-              intros q; trivial. 
-            * rewrite sum_p_r_prod. 
-              rewrite Rlow_mult_q1. 
-              rewrite sum_p_r_prod in IHn. 
-              rewrite Rlow_mult_q1 in IHn.
-              simpl. 
-              rewrite H2.
-              rewrite H2 in IHn. 
-              induction n. 
-              admit. 
-              apply IHn0. 
-              induction n. 
-              intros q; trivial. 
-              simpl. 
-              rewrite H2. 
-              assert (H3 : mu _ nu (D_op (qn 1)
-                     (OpenFun A (λ x : A, F x))) = RlP_0).
-              generalize (@D_op_correct _ _ A
-                                 (OpenFun A (λ x : A, F x)) 1). 
-              intros HG. 
-              assert (HL : forall x : A,
-               D_op 1 (OpenFun A (λ x0 : A, F x0)) x <->
-               False).          
-              split. 
-              intros HL'.
-              apply HG in HL'. 
-              assert (HL2 : OpenFun A (λ x : A, F x) x <= RlP_1). 
-              admit. admit. admit.
-
-              admit. admit. admit. admit. 
-  - simpl. admit. 
-Admitted. 
+                 (D_op 0 (λ x : A, OpenFun A F x))).
+    rewrite OpenFun_D_op. 
+    reflexivity.
+    rewrite H1. 
+    rewrite OpenFun_D_op. 
+    apply Rllub_le.
+    intros n. unfold toRlseq.
+    induction n. 
+    * simpl.
+      intros q; trivial. 
+    * intros q Hq. 
+      assert (Ho :  elt Q Qlt (rl (sum_p_r 0
+                    (λ x : A, OpenFun A F x) nu)) q).
+      revert Hq.       
+      apply RC_mon with Qle. 
+      intros x y; apply (antisymmetry le). 
+      intros x y; apply orders.le_or_lt. 
+      reflexivity.
+      generalize (@toRlseq_antimon A 0 (S n) nu
+                 (fun z : A => OpenFun A F z)). 
+      intros HRL. unfold toRlseq in HRL. 
+      apply HRL.
+      apply orders.lt_le.
+      apply peano_naturals.S_gt_0. 
+      trivial. 
+   - simpl.        
+     repeat rewrite D_op_OpenFun. 
+     reflexivity. 
+Qed. 
 
 
 (** Rules for abstraction *)
 
-Lemma lambda_rule {A B:hSet} : forall (f : A -> Val B) (F : OS A)
+Lemma lambda_rule {A B:hSet} : forall (f : A -> D B) (F : OS A)
                                       (G : A -> OS B),
     (forall x:A, ok (OpenFun _ F x) (f x) (G x)) -> ok_fun F f G. 
 Proof.
@@ -389,7 +237,7 @@ intros f F G HO.
 unfold ok_fun, ok in *; trivial. 
 Qed. 
 
-Lemma lambda_rule_up {A B:hSet} : forall (f : A -> Val B) (F : OS A) (G : A -> OS B),
+Lemma lambda_rule_up {A B:hSet} : forall (f : A -> D B) (F : OS A) (G : A -> OS B),
        (forall x:A, ok_up (OpenFun _ F x) (f x) (G x)) -> up_fun F f G. 
 Proof.
 intros f F G HO. 
@@ -398,45 +246,25 @@ Qed.
 
 (** Distribution on the hSet version of Bool *)
 
-Definition hS_of_hset (A : Type) (hset_A : IsHSet A) : hSet.
-Proof. 
-exists A; trivial. 
-Defined.
-
-Definition hS_of_t (A : Type) (hset_A : IsHSet A)
-           (x : hS_of_hset hset_A) : A. 
-Proof. 
-refine x. 
-Qed. 
-
 Definition DH (A : Type) (hset_A : IsHSet A) := 
-                             Val (hS_of_hset hset_A).
+                             D (default_TruncType 0 A hset_A).
 
-Definition valb (b : hS_of_hset hset_bool) : bool.
-Proof. 
-destruct (hS_of_t hset_bool b). 
-+ refine true. 
-+ refine false. 
-Defined.
+Definition Bool_s : hSet := default_TruncType 0 bool hset_bool. 
 
-Definition OSb (B : OS (hS_of_hset hset_bool)) : bool -> RlowPos. 
-Proof. 
-intros b. 
-assert (b' : hS_of_hset hset_bool). 
-refine b.
-refine ((OpenFun (hS_of_hset hset_bool) B) b'). 
-Defined.
+Definition valb (b : Bool_s) : bool := b.
 
+Definition OSb (B : OS (Bool_s)) : bool -> RlowPos :=
+        fun b => (OpenFun Bool_s B) b. 
 
 (** Rules for conditional *)
 
-Definition Mif (A:hSet) (b: Val (hS_of_hset hset_bool)) (m1 m2:Val A) : Mes A. 
+Definition Mif (A:hSet) (b: DH hset_bool) (m1 m2:D A) : Mes A. 
 Proof.                          
 intros X.
-exists (rl (mu _ (bind (hS_of_hset hset_bool) A b
+exists (rl (mu _ (bind Bool_s A b
         (fun x:Bool => if x then m1 else m2)) X)).
 intros p Hp. 
-apply (mu _ (bind (hS_of_hset hset_bool) A b
+apply (mu _ (bind Bool_s A b
         (λ x : Bool, if x then m1 else m2)) X); trivial. 
 Defined. 
 
@@ -446,7 +274,7 @@ Lemma OSb_prob : forall B x, OSb B x <= RlP_1.
 Proof. 
 intros B x. 
 unfold OSb.
-transitivity (OpenFun (hS_of_hset hset_bool) Ω x).
+transitivity (OpenFun Bool_s Ω x).
 apply OpenFun_mon.
 unfold OS_full.
 simpl. 
@@ -458,53 +286,79 @@ Qed.
 
 (** Distribution on the hSet version of nat *)
 
-Lemma hset_nat : IsHSet nat. 
-Proof. 
-apply _. 
-Qed. 
+Require Export Spaces.Nat.  
+Close Scope nat. 
+Definition Nat_s : hSet := default_TruncType 0 nat hset_nat. 
 
-Definition valn (n : hS_of_hset hset_nat) : nat.
-Proof. 
-destruct (hS_of_t hset_nat n). 
-+ refine O. 
-+ refine (S n0). 
-Defined.
+Definition valn (n : Nat_s) : nat := n.
 
-Definition OSn (N : OS (hS_of_hset hset_nat)) : nat -> RlowPos. 
-Proof. 
-intros n. 
-assert (n' : hS_of_hset hset_nat). 
-refine n.
-refine ((OpenFun (hS_of_hset hset_nat) N) n'). 
-Defined.
+Definition OSn (N : OS (Nat_s)) : nat -> RlowPos :=
+        fun n => (OpenFun Nat_s N) n. 
 
 (** Flip program *)
 
-Definition flip_aux : Mes (hS_of_hset hset_bool). 
+Definition flip_aux : Mes Bool_s. 
 Proof.
 intros B.
 pose (B' := OSb B).
-exists (rl ((Rlow_mult_q (1 / 2) (B' true))
-       + 
+exists (rl (RlP_plus (Rlow_mult_q (1 / 2) (B' true))
        (Rlow_mult_q (1 / 2) (B' false)))).
 intros p Hp. 
-apply ((Rlow_mult_q (1 / 2) (B' true))
-       + 
+apply (RlP_plus (Rlow_mult_q (1 / 2) (B' true))
        (Rlow_mult_q (1 / 2) (B' false))); trivial.  
 Defined. 
 
-Definition flip : Val (hS_of_hset hset_bool). 
+Definition flip : D Bool_s. 
 Proof. 
 exists flip_aux.  
 + unfold modular. intros U V.
-  apply (antisymmetry le). 
-  intros p Hp. 
-  simpl in *. 
-  unfold OSb. 
-  admit. 
-  admit. 
+  apply (antisymmetry Rllepos). 
+  - intros p Hp. 
+    simpl in *. 
+    unfold OSb in *.
+    unfold pred_multQ in *.
+    simpl in *. 
+    apply pred_plus_pr. 
+    apply pred_plus_pr in Hp. 
+    revert Hp; apply (Trunc_ind _).
+    intros (t,(f,(Ht,(Hf,Hs)))).
+    apply pred_plus_pr in Hf. 
+    apply pred_plus_pr in Ht. 
+    revert Ht; apply (Trunc_ind _). 
+    intros (t1,(f1,(Ht1,(Hf1,Hs1)))).
+    revert Hf; apply (Trunc_ind _). 
+    intros (t2,(f2,(Ht2,(Hf2,Hs2)))).
+    apply tr. 
+    exists t, f. 
+    split. 
+    -- apply pred_plus_pr. apply tr. 
+       exists t1,f1. 
+       repeat split; admit.     
+    -- repeat split; admit.
+  - intros p Hp. 
+    simpl in *.    
+    unfold OSb in *.
+    unfold pred_multQ in *.
+    simpl in *. 
+    apply pred_plus_pr. 
+    apply pred_plus_pr in Hp. 
+    revert Hp; apply (Trunc_ind _).
+    intros (t,(f,(Ht,(Hf,Hs)))).
+    apply pred_plus_pr in Hf. 
+    apply pred_plus_pr in Ht. 
+    revert Ht; apply (Trunc_ind _). 
+    intros (t1,(f1,(Ht1,(Hf1,Hs1)))).
+    revert Hf; apply (Trunc_ind _). 
+    intros (t2,(f2,(Ht2,(Hf2,Hs2)))).
+    apply tr. 
+    exists t, f. 
+    split. 
+    -- apply pred_plus_pr. apply tr. 
+       exists t1,f1. 
+       repeat split; admit.     
+    -- repeat split; admit.
 + unfold empty_op.
-  apply (antisymmetry le). 
+  apply (antisymmetry Rllepos). 
   - intros p Hp.
     simpl in Hp.
     unfold pred_multQ, semi_decide in Hp.
@@ -512,8 +366,8 @@ exists flip_aux.
     apply pred_plus_pr in Hp. 
     revert Hp; apply (Trunc_ind _). 
     intros (r,(s,(H1,(H2,H3)))).
-    destruct (decide (' 1 * ' (/ 2) * r < 0)).
-    destruct (decide (' 1 * ' (/ 2) * s < 0)).
+    destruct (decide ((' 1 * ' (/ 2) * r)%mc < 0)).
+    destruct (decide ((' 1 * ' (/ 2) * s)%mc < 0)).
     -- apply RlP_0. 
        admit. (* ok j'y crois *)
     -- apply not_bot in H2; case H2. 
@@ -525,11 +379,11 @@ exists flip_aux.
     apply pred_plus_pr. 
     apply tr.
     exists (p/2), (p/2). 
-    destruct (decide (' 1 * ' (/ 2) * (p/2) < 0)).
-
-    repeat split; try (apply top_greatest). 
-    admit. (* ok *)
-    admit. (* ok *)
+    destruct (decide ((' 1 * ' (/ 2) * (p/2))%mc < 0)%mc).
+    repeat split; try (apply top_greatest).
+    admit. (* field ? *)
+    
+    repeat split; admit.
 + unfold mon_opens. 
   intros U V HUV.
   intros q Hq. 
@@ -544,26 +398,55 @@ exists flip_aux.
   repeat split; try trivial.
   - revert H1. 
     apply RC_mon with Qle. 
-    intros x y; apply (antisymmetry le). 
+    intros x y; apply (antisymmetry Qle). 
     intros x y; apply orders.le_or_lt. 
     reflexivity. 
     unfold OSb. 
     apply OpenFun_mon; trivial.
   - revert H2. 
     apply RC_mon with Qle. 
-    intros x y; apply (antisymmetry le). 
+    intros x y; apply (antisymmetry Qle). 
     intros x y; apply orders.le_or_lt. 
     reflexivity. 
     unfold OSb. 
     apply OpenFun_mon; trivial.
 + intros p Hp.
   apply RC_mon with Qle (rl (flip_aux Ω)) p. 
-  intros x y; apply (antisymmetry le). 
+  intros x y; apply (antisymmetry Qle). 
   intros x y; apply orders.le_or_lt.   
   reflexivity. 
-  assert (HPP : Rlow_mult_q (1 / 2) (OSb Ω true) +
-               Rlow_mult_q (1 / 2) (OSb Ω false) <= RlP_1). 
-  admit. 
+  assert (HPP : RlP_plus (Rlow_mult_q (1 / 2) (OSb Ω true))
+               (Rlow_mult_q (1 / 2) (OSb Ω false)) <= RlP_1). 
+  pose (Htrue := OSb_prob Ω true). 
+  pose (Hfalse := OSb_prob Ω false). 
+  assert (H1 : forall b, (Rlow_mult_q (1 / 2) (OSb Ω b))
+                         <= Rlow_mult_q (1/2) RlP_1). 
+  intros b; case b;
+  intros q Hq; 
+  unfold Rlow_mult_q in *; simpl in *;
+  unfold pred_multQ in *; simpl in *;
+  trivial.     
+  intros q Hq.
+
+  Check pred_plus_pr. 
+  assert (HC : merely (exists t f : Q,
+             val (rl ((Rlow_mult_q (1 / 2) (OSb Ω true)))) t  ∧
+             val (rl ((Rlow_mult_q (1 / 2) (OSb Ω false)))) f  ∧
+             q = (t + f)%mc)). 
+  apply pred_plus_pr; apply Hq.  
+  revert HC; apply (Trunc_ind _); intros (t,(f,(Hct,(Hcf,HQ)))).  
+  simpl. rewrite HQ. 
+  unfold Rlow_mult_q in Hct, Hcf; 
+  simpl in *; unfold pred_multQ in Hct, Hcf; simpl in *. 
+  unfold semi_decide in *. 
+  destruct (decide ((t + f)%mc < 1));
+  destruct (decide ((' 1 * ' (/ 2) * t)%mc < 1)); 
+  destruct (decide ((' 1 * ' (/ 2) * f)%mc < 1)); try trivial. 
+  apply top_greatest. 
+  case n. 
+  assert (Hsum : ((' 1 * ' (/ 2) * t) +
+                 (' 1 * ' (/ 2) * f))%mc = (t + f)%mc). 
+  admit. admit. (* field *) 
 
   unfold flip_aux. 
   simpl. 
@@ -618,7 +501,7 @@ exists (rl (sum_n_moy M N')).
 apply (sum_n_moy M). 
 Defined. 
 
-Definition random (M : nat) :  Val (hS_of_hset hset_nat). 
+Definition random (M : nat) :  D (hS_of_hset hset_nat). 
 Proof. 
 exists (random_aux M).  
 + unfold modular. intros U V.
@@ -671,4 +554,3 @@ exists (random_aux M).
     admit. 
 + admit. 
 Admitted. 
- 
