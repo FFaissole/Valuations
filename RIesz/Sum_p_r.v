@@ -23,7 +23,7 @@ Definition qnp (n : nat) := pos_of_nat n.
 Definition qn (n : nat) := pos (pos_of_nat n). 
 
 (** sum_prod_sub: sum before rationalization*) 
-Fixpoint sum_prod_sub (p : nat) (f : mf A) (m :D A) 
+Fixpoint sum_prod_sub (p : nat) (f : mf A) (m :Val A) 
          {struct p} : RlowPos := match p with
            | 0 => (mu _ m) (D_op 0 f)
            | S p => (sum_prod_sub p f m) + 
@@ -31,7 +31,7 @@ Fixpoint sum_prod_sub (p : nat) (f : mf A) (m :D A)
      end.                         
 
 (** sum_p_r: sum after rationalization*) 
-Definition sum_p_r (N : nat) (f :  mf A) (m : D A) := match N with
+Definition sum_p_r (N : nat) (f :  mf A) (m : Val A) := match N with
            | 0 => (mu _ m) (D_op 0 f)
            | S p => Rlow_mult_q (1/(qnp (S N))) (sum_prod_sub (S N) f m) end.
 
