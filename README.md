@@ -24,7 +24,9 @@ Install the dependencies and run the following commands:
   Rlow / RlowPos = Q -> Sier + inhabited + down-rounded + positivity (for RlowPos). 
   Operations on Rlow/RlowPos: 
     -- QRlow: cast of Q as a Rlow;
+    
     -- RlPlus: sum of lower reals; 
+    
     -- Rlmult_q: product of a lower real with a positive rational;
     -- Rlminus_q: substraction of a lower real and a positive rational; 
     -- Rljoin: join of two lower reals; 
