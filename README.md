@@ -42,12 +42,12 @@ Install the dependencies and run the following commands:
     
     -- Rllub: lub of a sequence/enumerable set of lower reals. 
     
- - Opens.v: here we give a construction of the opens subspaces of a set A using the correspondance 
+- Opens.v: here we give a construction of the opens subspaces of a set A using the correspondance 
     O(A) <---> A --> S where S is the Sierpinski space. 
  
- - Functions.v: here we give a construction of the positive functions from A to RlowPos.  
+- Functions.v: here we give a construction of the positive functions from A to RlowPos.  
  
- - Cpo.v: here we define the structure directed complete partial order to define lower bounds on 
+- Cpo.v: here we define the structure directed complete partial order to define lower bounds on 
  sets of a given type/set. 
   
 2) Theories: In this repository, we build the two theories of Valuations and LowerIntegrals.
