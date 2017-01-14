@@ -48,8 +48,10 @@ Definition Mmon {A} (I : M A) :=
    forall f g : mf A,  f <= g -> (I f) <= (I g).
 
 Definition Mcont {A} (I : M A) :=
-  forall f : mf A, I f = RllubPos (fun n:nat => I (fun x => Rl_minus_q (f x)
-                                                    (pos (pos_of_nt n)))). 
+  forall f : mf A, (I f = RllubPos (fun n:nat =>
+                                I (fun x => RlP_minus_q2 (f x)
+                                       (pos_of_nat n)))). 
+
 
 Global Instance MPos_semi_group {A} : SemiGroup (M A)
                                           (Aop := @Mplus A). 
