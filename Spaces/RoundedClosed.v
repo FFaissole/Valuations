@@ -1465,7 +1465,7 @@ Proof.
 intros Hqq. 
 assert (fm : (Q -> Q)).    
 intros x. 
-refine (x - q).
+refine (x + q).
 refine (fun m => r (fm m)). 
 Defined.   
 
@@ -1474,12 +1474,9 @@ Lemma minusQ_l_isRlow : forall (a : Rlow) (p : Q) (H : val a p),
 Proof.
 intros a p;split.
 + apply tr. unfold pred_minusQ_l.  
-  exists (p+p).
-  assert (Hpp : p + p - p = p).
-  rewrite <- rings.plus_assoc.
-  rewrite <- rings.plus_conjugate_alt with p p.
-  reflexivity.
-  rewrite Hpp; trivial.
+  exists 0.
+  SearchAbout plus 0. 
+  rewrite rings.plus_0_l; trivial.
 + split.
   - intros Hq.
     unfold pred_minusQ_l in *.
@@ -1489,20 +1486,21 @@ intros a p;split.
     intros Hq.
     apply tr.
     destruct Hq as (r,(Hr1,Hr2)).
-    exists (r + p).
+    exists (r - p).
     split.
-    -- apply flip_lt_minus_l in Hr1.
+    -- apply flip_lt_minus_r in Hr1.
        trivial.
     -- rewrite <- rings.plus_assoc.
+       rewrite (plus_comm _ p). 
        rewrite plus_negate_r.
        rewrite plus_0_r.
        trivial.
    - apply (Trunc_ind _). intros (r,(E1,E2)).
      unfold pred_minusQ_l in *.
-     assert ((q - p) < (r - p)).
+     assert ((q + p) < (r + p)).
      apply plus_lt_le_compat; trivial.
      reflexivity.
-     apply RC_le with Qle (r - p).
+     apply RC_le with Qle (r + p).
      intros x y; apply (antisymmetry le).
      intros x y; apply orders.le_or_lt.
      trivial.
@@ -1525,18 +1523,17 @@ assert (Hpo : Rlle (' 0) (Rl_minus_q (rl r) (pos q) He)).
 unfold Rl_minus_q. unfold pred_minusQ_l. 
 intros v Hv.
 simpl.
-assert (v - pos q < pos q).
-transitivity Qzero.
-simpl in Hv.
-unfold semi_decide in Hv.
+assert (v + pos q < pos q).
+apply lt_le_trans with (0 + pos q). 
+apply plus_lt_le_compat. 
+simpl in Hv; unfold semi_decide in Hv.
 destruct (decide (v < 0)).
-apply (flip_neg_minus (pos q) v).
-transitivity Qzero.
 trivial.
-apply q.
 apply not_bot in Hv.
 case Hv.
-apply q.
+reflexivity. 
+rewrite plus_0_l. 
+reflexivity. 
 apply RC_le with Qle (pos q).
 intros x y; apply (antisymmetry le).
 intros x y; apply orders.le_or_lt.
@@ -1551,7 +1548,7 @@ Definition pred_minusQ_l2 (r : QPred) (q : Q) : QPred.
 Proof.
 assert (fm : (Q -> Q)).    
 intros x. 
-refine (x - q).
+refine (x + q).
 refine (fun m => r (fm m)). 
 Defined.
 
@@ -1567,9 +1564,10 @@ intros a p;split.
   apply (Trunc_ind _).
   intros (z,Hz).
   apply tr.
-  exists (z+p).
-  assert (Hpp : z + p - p = z).
+  exists (z-p).
+  assert (Hpp : z - p + p = z).
   rewrite <- rings.plus_assoc.
+  rewrite (plus_comm _ p). 
   rewrite plus_negate_r.
   rewrite rings.plus_0_r.
   reflexivity.
@@ -1592,11 +1590,12 @@ intros a p;split.
     --  apply rounded in i.
         revert i; apply (Trunc_ind _).         
         intros (r,(Hr1,Hr2)).
-        apply tr; exists (r + p).
+        apply tr; exists (r - p).
         split.
-        --- apply flip_lt_minus_l in Hr1.
+        --- apply flip_lt_minus_r in Hr1.
             trivial.
         --- rewrite <- rings.plus_assoc.
+            rewrite (plus_comm _ p). 
             rewrite plus_negate_r.
             rewrite plus_0_r.
             apply top_le_join.
@@ -1612,7 +1611,7 @@ intros a p;split.
        apply tr; right; trivial.
   - apply (Trunc_ind _). intros (r,(E1,E2)).
     unfold pred_minusQ_l2 in *.
-    assert ((q - p) < (r - p)).
+    assert ((q + p) < (r + p)).
     apply plus_lt_le_compat; trivial.
     reflexivity.
     unfold semi_decide in *; unfold semi_decide_disj in *.  
@@ -1626,7 +1625,7 @@ intros a p;split.
     intros Hq.
     destruct Hq. 
     -- apply tr; left.
-       apply RC_le with Qle (r - p).
+       apply RC_le with Qle (r + p).
        intros x y; apply (antisymmetry le).
        intros x y; apply orders.le_or_lt.
        trivial.
@@ -1842,7 +1841,4 @@ unfold meet.
 split; trivial.
 Defined.   
 
-Arguments RlPMeet _ _ /.
-
-     
-End LowerReals. 
+End LowerReals
