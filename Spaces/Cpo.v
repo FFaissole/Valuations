@@ -1,3 +1,5 @@
+
+
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders
                HoTTClasses.implementations.partiality
@@ -87,7 +89,7 @@ Class cpo C LC {ordA : PartialOrder LC} := {
      lub_le : forall (f : nat -> C) x, (forall n, f n <= x)
                                              -> lub f <= x  
 }.   
-
+(*
 Lemma lub_le_compat : forall `{c : cpo C} (f g : nat -> C),
                       (forall x, f x <= g x) -> lub f <= lub g. 
 Proof.                              
@@ -108,7 +110,7 @@ Proof.
 intros f g. 
 refine (forall x, f x <= g x).
 Defined.
-  (*
+ 
 Lemma lub_lift_right : forall A (LA : Le A) (OA : PartialOrder LA)
                               (CA:cpo _ LA) (f:nat -> A) n, monotonic f -> 
                              (@lub A LA OA CA) f = (@lub A LA OA CA) (seq_lift_right f n).
@@ -140,7 +142,7 @@ Admitted.
 
 Hint Resolve lub_lift_right.*)
 
-
+(*
 
 Context `{Univalence} `{Funext}.  
 
@@ -161,4 +163,4 @@ Admitted. *)
 Record fcont `{c1:cpo D1} `{c2:cpo D2}: Type
      := mk_fc {fcontm :> D1 -> D2; fcontinuous : continuity fcontm}.
 
-Hint Resolve @fcontinuous.
+Hint Resolve @fcontinuous.*)

@@ -1,4 +1,5 @@
 
+
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders
                HoTTClasses.implementations.sierpinsky
@@ -1841,4 +1842,18 @@ unfold meet.
 split; trivial.
 Defined.   
 
-End LowerReals
+Arguments RlPMeet _ _ /.
+(*
+Global Instance RlowLattice : Lattice Rlow. 
+Proof. 
+split.
++ split. 
+  - split. 
+    -- split. 
+       * apply _.
+       * unfold sg_op.
+         unfold join_is_sg_op.*)
+         
+      
+
+End LowerReals. 

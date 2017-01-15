@@ -1,4 +1,5 @@
 
+
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders
                HoTTClasses.implementations.sierpinsky
@@ -10,7 +11,7 @@ Require Import HoTT.HSet HoTT.Basics.Trunc HProp HSet
                TruncType UnivalenceAxiom Types.Sigma
                hit.quotient. 
 
-Require Import RoundedClosed.
+Require Import Spaces.RoundedClosed.
 
 Set Implicit Arguments.  
 
@@ -19,11 +20,18 @@ Set Implicit Arguments.
 
 Definition mf (A:hSet) : Type := A -> RlowPos.
 
+Definition ffle {A} : mf A -> mf A -> Type. 
+Proof.
+intros f g.
+unfold mf in f, g.
+refine (forall x:A, (f x) <= (g x)).  
+Defined.
+
 Definition ffle_hProp {A} : mf A  -> mf A  -> hProp.
 Proof.
-intros f g.  
-refine ((fun x y => BuildhProp (fun f g => forall x:A, f x <= g x)) _ _). 
-exact f. exact g. 
+intros U V.  
+refine ((fun x y => BuildhProp (ffle x y)) _  _). 
+exact U. exact V. 
 Defined.
 
 (** Order on functions *)

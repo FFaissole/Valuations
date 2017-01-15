@@ -10,7 +10,7 @@ Require Import HoTT.HSet HoTT.Basics.Trunc HProp HSet
                TruncType UnivalenceAxiom Types.Sigma
                FunextVarieties. 
 
-Require Import RoundedClosed Cpo.
+Require Import Spaces.RoundedClosed Spaces.Cpo.
 
 (** * Open Subspaces of a hset A *)
 
