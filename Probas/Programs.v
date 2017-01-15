@@ -1,3 +1,7 @@
+
+Add Rec LoadPath "/Users/faissole/Desktop/HoTT/HoTTClasses/theories".
+
+
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders
                HoTTClasses.implementations.partiality
@@ -10,20 +14,36 @@ Require Import HoTT.HSet HoTT.Basics.Trunc HProp HSet
                TruncType UnivalenceAxiom Types.Sigma
                FunextVarieties hit.quotient Spaces.Int. 
 
-Require Export RoundedClosed Opens Functions 
-        Valuations LowerIntegrals D_op OpenFun
-        Riesz Giry.
+Require Export Spaces.RoundedClosed
+               Spaces.Opens Spaces.Functions 
+               Theories.Valuations
+               Theories.LowerIntegrals
+               Riesz.D_op Riesz.OpenFun
+               Riesz.Riesz Probas.Giry.
 
 Set Implicit Arguments.
 
-(** Image distributions : Rml 3 *) 
+(** * Interpretation of probabilistic programs *)
+(**
+      .              |   [.] 
+      v              |  unit v 
+ let x=a in b        | bind  [a] (fun x => [b]) 
+     f a             | bind  [a] (fun x => [f] x) 
+if b then a1 else a2 | bind  [b] 
+                     |    (fun x:bool => if b then [a1] 
+                     |                        else [a2])
+**)
 
-Definition im_distr {A B : hSet} (f : A -> B) (m : D A) : D B :=
+
+
+(** Image distributions by a function f :  *) 
+
+Definition im_distr {A B : hSet} (f : A -> B) (m : Val A) : Val B :=
        bind A B m (fun a => unit B (f a)). 
 
     
 Lemma im_distr_comp {A B C: hSet} (f : A -> B) (g : B -> C)
-      (m : D A) : 
+      (m : Val A) : 
    im_distr g (im_distr f m) = im_distr (fun a => g (f a)) m.
 Proof.    
 unfold im_distr; simpl.
@@ -104,27 +124,70 @@ rewrite (Hx a); reflexivity.
 rewrite Hu. simpl; rewrite monad2; reflexivity. 
 Qed.  
 
-(** *  Conditional distribution : Rml 4 *)
+(**  Conditional distribution *)
 
-(* TODO *)
+Definition DH (A : Type) (hset_A : IsHSet A) := 
+                             Val (default_TruncType 0 A hset_A).
 
-(** Correctness judgement *) 
+Definition Bool_s : hSet := default_TruncType 0 bool hset_bool. 
 
-Definition ok {A} (p : RlowPos) (nu : D A) (F : OS A) :=
+Definition valb (b : Bool_s) : bool := b.
+
+Definition OSb (B : OS (Bool_s)) : bool -> RlowPos :=
+        fun b => (OpenFun Bool_s B) b. 
+
+
+(** Boundedness of OSb *)
+ 
+Lemma OSb_prob : forall B x, OSb B x <= RlP_1. 
+Proof. 
+intros B x. 
+unfold OSb.
+transitivity (OpenFun Bool_s Ω x).
+apply OpenFun_mon.
+unfold OS_full.
+simpl. 
+intros s. 
+apply top_greatest. 
+apply OpenFun_prob. 
+reflexivity. 
+Qed. 
+
+
+Definition Mif (A:hSet) (b: DH hset_bool) (m1 m2:Val A) : Mes A. 
+Proof.                          
+intros X.
+exists (rl (mu _ (bind Bool_s A b
+        (fun x:Bool => if x then m1 else m2)) X)).
+intros p Hp. 
+apply (mu _ (bind Bool_s A b
+        (λ x : Bool, if x then m1 else m2)) X); trivial. 
+Defined. 
+
+(** * Correctness judgements *)
+
+(** ok: the measure of F by the program associated 
+        to nu is at least p, here p plays the role of 
+        the probability.
+
+    ok_up: the measure of F by the program associated 
+           to nu is at most p. *)
+
+Definition ok {A} (p : RlowPos) (nu : Val A) (F : OS A) :=
                          p <= mu _ nu F. 
 
-Definition ok_fun {A B} (f : OS A) (E : A -> D B) (F : A -> OS B) :=
+Definition ok_fun {A B} (f : OS A) (E : A -> Val B) (F : A -> OS B) :=
                      forall x:A, ok ((OpenFun _ f) x) (E x) (F x). 
 
-Definition ok_up {A} (p : RlowPos) (nu : D A) (F : OS A) :=
+Definition ok_up {A} (p : RlowPos) (nu : Val A) (F : OS A) :=
                         mu _ nu F <= p. 
 
-Definition up_fun {A B} (f : OS A) (E : A -> D B) (F : A -> OS B) :=
+Definition up_fun {A B} (f : OS A) (E : A -> Val B) (F : A -> OS B) :=
                      forall x:A, ok_up ((OpenFun _ f) x) (E x) (F x). 
 
-(** Rules for applications *)
+(** Correctness rules for applications *)
 
-Lemma apply_rule {A B} : forall (nu : D A) (f : A -> D B)
+Lemma apply_rule {A B} : forall (nu : Val A) (f : A -> Val B)
                                 (r : RlowPos)
                                 (F : OS A) (G : OS B),
           ok r nu F -> ok_fun F f (fun x => G) ->
@@ -163,7 +226,7 @@ transitivity (I (Riesz2 nu) (OpenFun A (D_op 0
   intros x; trivial.
 Qed. 
 
-Lemma apply_rule_up {A B} : forall (mu : D A) (f : A -> D B)
+Lemma apply_rule_up {A B} : forall (mu : Val A) (f : A -> Val B)
                                    (r : RlowPos)
                                 (F : OS A) (G : OS B),
     ok_up r mu F -> up_fun F f (fun x => G) ->
@@ -224,9 +287,9 @@ transitivity (I (Riesz2 nu) (OpenFun A (D_op 0
 Qed. 
 
 
-(** Rules for abstraction *)
+(** Correctness rules for abstraction *)
 
-Lemma lambda_rule {A B:hSet} : forall (f : A -> D B) (F : OS A)
+Lemma lambda_rule {A B:hSet} : forall (f : A -> Val B) (F : OS A)
                                       (G : A -> OS B),
     (forall x:A, ok (OpenFun _ F x) (f x) (G x)) -> ok_fun F f G. 
 Proof.
@@ -241,58 +304,13 @@ intros f F G HO.
 unfold up_fun, ok_up in *; trivial. 
 Qed. 
 
-(** Distribution on the hSet version of Bool *)
+(** * Little examples of probabilistic programs *)
 
-Definition DH (A : Type) (hset_A : IsHSet A) := 
-                             Val (default_TruncType 0 A hset_A).
-
-Definition Bool_s : hSet := default_TruncType 0 bool hset_bool. 
-
-Definition valb (b : Bool_s) : bool := b.
-
-Definition OSb (B : OS (Bool_s)) : bool -> RlowPos :=
-        fun b => (OpenFun Bool_s B) b. 
-
-(** Rules for conditional *)
-
-Definition Mif (A:hSet) (b: DH hset_bool) (m1 m2:D A) : Mes A. 
-Proof.                          
-intros X.
-exists (rl (mu _ (bind Bool_s A b
-        (fun x:Bool => if x then m1 else m2)) X)).
-intros p Hp. 
-apply (mu _ (bind Bool_s A b
-        (λ x : Bool, if x then m1 else m2)) X); trivial. 
-Defined. 
-
-(** Boundedness of OSb *)
+(** Flip program : Val bool
  
-Lemma OSb_prob : forall B x, OSb B x <= RlP_1. 
-Proof. 
-intros B x. 
-unfold OSb.
-transitivity (OpenFun Bool_s Ω x).
-apply OpenFun_mon.
-unfold OS_full.
-simpl. 
-intros s. 
-apply top_greatest. 
-apply OpenFun_prob. 
-reflexivity. 
-Qed. 
-
-(** Distribution on the hSet version of nat *)
-
-Require Export Spaces.Nat.  
-Close Scope nat. 
-Definition Nat_s : hSet := default_TruncType 0 nat hset_nat. 
-
-Definition valn (n : Nat_s) : nat := n.
-
-Definition OSn (N : OS (Nat_s)) : nat -> RlowPos :=
-        fun n => (OpenFun Nat_s N) n. 
-
-(** Flip program *)
+   fun f: bool -> Sier  => (1/2) (f true) + 
+                           (1/2) (f false)
+*)
 
 Definition flip_aux : Mes Bool_s. 
 Proof.
@@ -512,6 +530,21 @@ trivial.
 refine (Rlow_RlowPos (QRlow (rationals.pos q)) HP). 
 Defined. 
 
+
+(** Random program : Val nat
+   fun f: nat -> Sier => (1 / S n) * sum_1^n (f n)
+*)
+
+Require Export Spaces.Nat.  
+Close Scope nat. 
+Definition Nat_s : hSet := default_TruncType 0 nat hset_nat. 
+
+Definition valn (n : Nat_s) : nat := n.
+
+Definition OSn (N : OS (Nat_s)) : nat -> RlowPos :=
+        fun n => (OpenFun Nat_s N) n. 
+
+
 Fixpoint sum_n_moy_aux (p : nat) (f : nat -> RlowPos) : RlowPos := match p with
           |O => RlP_0
           |S p0 => RlP_plus (f (S p0)) (sum_n_moy_aux p0 f)
@@ -525,8 +558,6 @@ Defined.
 Fixpoint sum_n_moy (p : nat) f : RlowPos := Rlow_mult_q (O_Sp p)
                               (sum_n_moy_aux p f). 
 
-(** Random program *)
-
 Definition random_aux (M : nat) : Mes Nat_s. 
 Proof.
 intros N.
@@ -535,7 +566,7 @@ exists (rl (sum_n_moy M N')).
 apply (sum_n_moy M). 
 Defined. 
 
-Definition random (M : nat) : Val Nat_s.  
+Definition random (M : nat) :  Val Nat_s.  
 Proof. 
 exists (random_aux M).  
 + unfold modular. intros U V.
@@ -622,3 +653,4 @@ exists (random_aux M).
     admit. 
 + admit. 
 Admitted. 
+ 
