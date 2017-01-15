@@ -1,4 +1,5 @@
 
+
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders
                HoTTClasses.implementations.sierpinsky
@@ -10,21 +11,16 @@ Require Import HoTT.HSet HoTT.Basics.Trunc HProp HSet
                TruncType UnivalenceAxiom Types.Sigma
                FunextVarieties hit.quotient. 
 
-Require Import RoundedClosed
-               Functions
-               Valuations. 
+Require Import Spaces.RoundedClosed
+               Spaces.Functions
+               Theories.Valuations. 
                
 Set Implicit Arguments.
 
 Section Integrals.
 
-(** * Lower Integrals on a hSet A *)
-
-(** We will define the type of integrals. [M] will be the carrier of
-this type *)
 Definition M (A : hSet) := mf A -> RlowPos. 
 
-(** Needed definition *)
 Definition Mplus {A} : Plus (M A). 
 intros I J f.
 specialize (I f).
@@ -52,7 +48,6 @@ Definition Mcont {A} (I : M A) :=
                                 I (fun x => RlP_minus_q2 (f x)
                                        (pos_of_nat n)))). 
 
-
 Global Instance MPos_semi_group {A} : SemiGroup (M A)
                                           (Aop := @Mplus A). 
 Proof. 
@@ -74,7 +69,7 @@ Record IntPos (A : hSet) : Type :=
    I_add : Mstable_add I;
    I_prob : Mprob I;
    I_mon : Mmon I;
-   I_cont : Mcont I
+   I_cont : Mcont I 
 }.
 
 Hint Resolve I_def I_add I_prob I_mon I_cont. 
