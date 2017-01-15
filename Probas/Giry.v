@@ -11,18 +11,21 @@ Require Import HoTT.HSet HoTT.Basics.Trunc HProp HSet
                TruncType UnivalenceAxiom Types.Sigma
                FunextVarieties hit.quotient. 
 
-Require Export RoundedClosed Opens Functions 
-        Valuations LowerIntegrals D_op OpenFun
-        Riesz.
+Require Export RoundedClosed
+               Opens
+               Functions 
+               Valuations
+               LowerIntegrals
+               D_op OpenFun
+               Riesz.
 
-(*Set Implicit Arguments.*)
 
 Definition unit_aux (A : hSet) (x : A) : Mes A. 
 Proof.
 refine (fun U : OS A => (OpenFun _ U) x). 
 Defined. 
 
-Definition unit (A : hSet) (x:A) : D A.
+Definition unit (A : hSet) (x:A) : Val A.
 Proof.
 exists (unit_aux _ x).    
 + unfold modular. intros U V.
@@ -52,7 +55,7 @@ Proof.
 simpl; reflexivity. 
 Qed. 
 
-Lemma Hx1 (A B : hSet) : forall U V (F : A -> D B), ((λ z : A, val (let (rl, _) :=
+Lemma Hx1 (A B : hSet) : forall U V (F : A -> Val B), ((λ z : A, val (let (rl, _) :=
                                     mu B (F z) U in rl) 0)
                    ⋂ (λ z : A, val (let (rl, _) :=
                                     mu _ (F z) V in rl) 0))  =
@@ -69,9 +72,44 @@ simpl.
 apply (antisymmetry le). 
 + apply imply_le. intros H1.
   apply top_le_meet in H1.
-  destruct H1 as (H1,H2).
+  destruct H1 as (H1,H2).  
+  assert (H3 : val ((RlMeet (mu U) (mu V))) 0). admit.
+
+  revert H3. 
+  apply RC_mon with Qle. 
+  intros x y; apply (antisymmetry le). 
+  intros x y; apply orders.le_or_lt. 
+  reflexivity.
+  assert (H4 : forall X Y, RlMeet (mu X) (mu Y)
+              <= mu (X ⊓ Y)). 
+  intros X Y q Hq.
+  unfold RlMeet in Hq. 
+  simpl in Hq; unfold semi_decide in Hq. 
+  apply top_le_meet in Hq. 
+  destruct Hq as (Hq1,Hq2).
+  
+ 
+        
+ 
+  admit.   
+
+   
+ 
+  unfold SierMeet. 
+  generalize (val (rl (mu (λ x : B, U x))) 0). 
+  generalize (val (rl (mu  (λ x : B, V x))) 0).
+  apply (partiality.partial_ind0 _
+                   (fun a => forall b, _)).
+  simpl.   
+    
+  generalize (val (let (rl, _) := mu U in rl) 0).
+  generalize (val (let (rl, _) := mu V in rl) 0).
+
+  
   assert (rl (mu (λ x : B, SierMeet (U x) (V x))) =
           RlJoin (rl (mu U)) (rl (mu V))).
+  
+  
  
   admit. 
 
@@ -116,6 +154,12 @@ apply (antisymmetry le).
 + apply imply_le. intros H1.
   apply top_le_join.
   unfold hor. 
+  apply tr.
+   
+  unfold SierJoin in H1. 
+
+
+  simpl in H1.   
   assert (Hj : mu
                  (λ x : B, SierJoin (U x) (V x)) =
                RlPJoin (mu U) (mu V)).
@@ -125,11 +169,9 @@ apply (antisymmetry le).
   unfold RlPJoin.
   simpl.
   unfold semi_decide.
+  unfold SierJoin in Hq.   
+
   
-  unfold SierJoin in Hq.
-  
-  simpl.
-  simpl.
   admit.
 
   assert (Hj2 : val
@@ -143,12 +185,15 @@ apply (antisymmetry le).
   unfold hor in Hj2; trivial.
   unfold Rllepos.
   intros q Hq.
-  unfold RlPJoin in Hq.  
-
+  unfold RlPJoin in Hq.
+  simpl in Hq. 
+  unfold semi_decide in *. 
+  unfold SierJoin. 
+  unfold SierJoin_aux. 
 Admitted.
   
   
-Definition bind (A B : hSet) : D A -> (A -> D B) -> D B.
+Definition bind (A B : hSet) : Val A -> (A -> Val B) -> Val B.
 Proof.
 intros Nu F.
 split with (fun U:OS B => I (Riesz2 Nu)
@@ -224,8 +269,15 @@ split with (fun U:OS B => I (Riesz2 Nu)
   apply I_prob. 
 Defined.
 
-Lemma monad1_aux {A B : hSet} : forall (x : A) (F : A -> D B),
-               mu _ (bind A B (unit A  x) F) = mu _ (F x). 
+Lemma OpenFun_D_op {A B : hSet} :
+  forall (Mu_X:A -> Val B) U z, 
+    OpenFun A (D_op 0 (λ x : A, mu _ (Mu_X x) U)) z
+    = mu _ (Mu_X z) U. 
+Admitted. 
+
+  
+Lemma monad1_aux {A B : hSet} : forall (x : A) (F : A -> Val B),
+               mu _ (bind A B (unit A x) F) = mu _ (F x). 
 Proof.
 intros x F.
 unfold bind; simpl.
@@ -256,20 +308,20 @@ apply (antisymmetry le).
           (unit A x)) 0). 
   simpl.
   unfold unit_aux; simpl.
-  repeat rewrite OpenFun_D_op. 
-  trivial.   
+  simpl. 
+  rewrite <- (OpenFun_D_op F U x) in Hq. 
+  rewrite D_op_OpenFun. 
+  trivial.
 Qed. 
 
-Lemma monad1 {A B : hSet} : forall (x : A) (F : A -> D B),
+
+Lemma monad1 {A B : hSet} : forall (x : A) (F : A -> Val B),
                bind A B (unit A  x) F = F x.
 Proof. 
 intros x F.
-assert (Hs : forall X, IsHSet (D X)).  
-intros X.
-admit.  
 Admitted. 
 
-Lemma monad2_aux {A : hSet} : forall (nu : D A),
+Lemma monad2_aux {A : hSet} : forall (nu : Val A),
     mu _ (bind A A nu (unit A)) = mu _ nu.
 Proof.
 intros nu; simpl.
@@ -301,20 +353,22 @@ apply (antisymmetry le).
                          (λ x : A, OpenFun A U x))) nu) 0).
   simpl.
   repeat rewrite OpenFun_D_op. 
-  rewrite D_op_OpenFun; trivial. 
+  repeat rewrite D_op_OpenFun; trivial. 
 Qed.
 
 
-Lemma monad2 {A : hSet} : forall (nu : D A),
+Lemma monad2 {A : hSet} : forall (nu : Val A),
     bind A A nu (unit A) = nu.
 Proof.
 intros nu; simpl.
 unfold Riesz2.
+
 Admitted.
 
-
-Lemma monad3_aux {A B C: hSet} : forall (nu : D A) (F : A -> D B) (G : B -> D C),
-     mu _ (bind B C (bind A B nu F) G) = mu _ (bind A C nu (fun x:A => bind B C (F x) G)).  
+Lemma monad3_aux {A B C: hSet} : forall (nu : Val A)
+                   (F : A -> Val B) (G : B -> Val C),
+    mu _ (bind B C (bind A B nu F) G) =
+    mu _ (bind A C nu (fun x:A => bind B C (F x) G)).  
 Proof.
 intros nu F G. simpl.
 unfold Riesz2.
@@ -334,14 +388,24 @@ apply (antisymmetry le).
   intros x' y'; apply orders.le_or_lt.
   reflexivity. 
   apply I_mon. 
-  intros x.
+  intros x. simpl. 
+  repeat rewrite OpenFun_D_op.
+  repeat rewrite D_op_OpenFun.
+  intros p Hp. 
+  assert (Ho : elt Q Qlt (rl (sum_p_r 0 (λ x0 : B,
+                (mu _ (G x0)) U) (F x))) p).
+  simpl; trivial.
+  admit. 
+(*  rewrite OpenFun_D_op. 
+  apply (Rllub_lub _ 0). 
+  trivial.
   rewrite I_mu_simpl. 
   intros p Hp. 
   assert (Ho : elt Q Qlt (rl (sum_p_r 0 (λ x0 : B,
                 (mu _ (G x0)) U) (F x))) p).
   simpl; trivial.
   apply (Rllub_lub _ 0). 
-  trivial.
+  trivial.*)
   intros q Hq. 
   apply IHn. 
   revert Hq. 
@@ -373,7 +437,13 @@ apply (antisymmetry le).
   unfold toRlseq in *.
   revert Hle. 
   apply sum_p_r_mon_f.
-  intros z.   
+  intros z.
+  transitivity ((λ x : A,
+                       I (I_mu (F x))
+              (OpenFun B (D_op 0 (λ x0 : B, mu _ (G x0) U)))) z).
+  admit. 
+
+  simpl. 
   rewrite I_mu_simpl.   
   simpl. apply Rllub_le.
   intros m; unfold toRlseq.
@@ -383,22 +453,22 @@ apply (antisymmetry le).
   revert Hv; apply RC_mon with Qle.
   intros x' y'; apply (antisymmetry le). 
   intros x' y'; apply orders.le_or_lt.
-  reflexivity. 
-  apply toRlseq_antimon.
+  reflexivity. simpl. 
   induction m. 
-  - reflexivity.  
-  - apply orders.lt_le.
-    apply peano_naturals.S_gt_0.
-  - simpl in H'; trivial.  
-Qed. 
+  - simpl. intros a Ha.
+    rewrite D_op_OpenFun in Ha.
+    trivial. 
+  - admit. 
+Admitted. 
     
 
-Lemma monad3 {A B C: hSet} : forall (nu : D A) (F : A -> D B) (G : B -> D C),
+Lemma monad3 {A B C: hSet} : forall (nu : Val A) (F : A -> Val B) (G : B -> Val C),
      (bind B C (bind A B nu F) G) = (bind A C nu (fun x:A => bind B C (F x) G)).  
 Proof.
-  Admitted. 
+Admitted. 
 
-Definition vD {A :hSet} (nu : D A) (U : OS A) := mu _ nu U.
+
+Definition vD {A :hSet} (nu : Val A) (U : OS A) := mu _ nu U.
 
 Lemma unit_aux_mon {A :hSet} : forall (x:A) (U V : OS A),
     U <= V -> (unit_aux A x) U <= (unit_aux A x) V.
@@ -415,9 +485,7 @@ rewrite unit_aux_unit.
 apply unit_aux_mon; trivial.
 Qed. 
 
- 
-
-Lemma bind_mon {A B :hSet} : forall (x:A) (nu: D A) (F : A -> D B) (f g : OS B), 
+Lemma bind_mon {A B :hSet} : forall (x:A) (nu: Val A) (F : A -> Val B) (f g : OS B), 
        f <= g -> vD (bind A B nu F) f <= vD (bind A B nu F) g. 
 Proof.
 intros x nu F f g Hfg q Hq. 
@@ -434,3 +502,4 @@ apply D_op_mon_f.
 intros s. 
 apply mu_mon; trivial. 
 Qed. 
+

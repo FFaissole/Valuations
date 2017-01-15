@@ -1,6 +1,4 @@
 
-
-
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders
                HoTTClasses.implementations.partiality
@@ -12,6 +10,7 @@ Require Import HoTT.HSet HoTT.Basics.Trunc HProp HSet
                Types.Universe UnivalenceImpliesFunext
                TruncType UnivalenceAxiom Types.Sigma
                FunextVarieties hit.quotient Spaces.Int. 
+
 
 Require Export Spaces.RoundedClosed
                Spaces.Opens Spaces.Functions 
@@ -41,8 +40,7 @@ Definition im_distr {A B : hSet} (f : A -> B) (m : Val A) : Val B :=
        bind A B m (fun a => unit B (f a)). 
 
     
-Lemma im_distr_comp {A B C: hSet} (f : A -> B) (g : B -> C)
-      (m : Val A) : 
+Lemma im_distr_comp {A B C: hSet} (f : A -> B) (g : B -> C) (m : Val A) : 
    im_distr g (im_distr f m) = im_distr (fun a => g (f a)) m.
 Proof.    
 unfold im_distr; simpl.
@@ -85,10 +83,12 @@ apply (antisymmetry le).
     intros x' y'; apply orders.le_or_lt. 
     reflexivity.
     unfold unit_aux. 
-    rewrite OpenFun_D_op.
+    rewrite D_op_OpenFun.
     unfold OpenFun. 
     apply toRlseq_antimon'.  
-+ assert (Hv : (λ n : nat,
++ unfold unit_aux; simpl.
+  rewrite D_op_OpenFun. 
+(*      assert (Hv : (λ n : nat,
        sum_p_r n
          (OpenFun B (D_op 0 (λ x0 : B, unit_aux C (g x0) U)))
          (unit B (f x))) =
@@ -97,14 +97,14 @@ apply (antisymmetry le).
          ((λ x0 : B, unit_aux C (g x0) U))
          (unit B (f x)))).
   rewrite OpenFun_D_op. 
-  reflexivity.
-  rewrite Hv.
-  unfold unit_aux; simpl. 
+  reflexivity.*)
   intros q Hq. 
   assert (Ho : elt Q Qlt (rl (sum_p_r 0 (λ x0 : B, OpenFun C U (g x0))
                                       (unit B (f x)))) q). 
   simpl. unfold unit_aux; simpl.     
-  rewrite OpenFun_D_op; trivial. 
+  rewrite D_op_OpenFun.
+  simpl. unfold OpenFun; simpl. 
+  trivial. 
   apply Rllub_lub with 0.
   trivial.
 +  admit. (* pb of universes *)
@@ -112,7 +112,7 @@ apply (antisymmetry le).
   reflexivity. 
 Admitted. 
 
-Lemma im_distr_id {A : hSet}: forall (f : A -> A) (m : D A),
+Lemma im_distr_id {A : hSet}: forall (f : A -> A) (m : Val A),
           (forall x, f x = x) -> im_distr f m = m. 
 Proof. 
 intros f m Hx. 
@@ -256,15 +256,16 @@ transitivity (I (Riesz2 nu) (OpenFun A (D_op 0
     assert (H1 : D_op 0 (OpenFun A (D_op 0
                  (λ x : A, OpenFun A F x))) =
                  (D_op 0 (λ x : A, OpenFun A F x))).
-    rewrite OpenFun_D_op. 
+    rewrite D_op_OpenFun. 
     reflexivity.
     rewrite H1. 
-    rewrite OpenFun_D_op. 
+    rewrite D_op_OpenFun. 
     apply Rllub_le.
     intros n. unfold toRlseq.
     induction n. 
     * simpl.
-      intros q; trivial. 
+      rewrite D_op_OpenFun. 
+      intros q; trivial.
     * intros q Hq. 
       assert (Ho :  elt Q Qlt (rl (sum_p_r 0
                     (λ x : A, OpenFun A F x) nu)) q).
@@ -279,8 +280,10 @@ transitivity (I (Riesz2 nu) (OpenFun A (D_op 0
       apply HRL.
       apply orders.lt_le.
       apply peano_naturals.S_gt_0. 
-      trivial. 
-   - simpl.        
+      trivial. simpl in Ho. 
+      rewrite D_op_OpenFun in Ho.
+      trivial.                                  
+  - simpl.        
      repeat rewrite D_op_OpenFun. 
      reflexivity. 
 Qed. 
@@ -296,7 +299,7 @@ intros f F G HO.
 unfold ok_fun, ok in *; trivial. 
 Qed. 
 
-Lemma lambda_rule_up {A B:hSet} : forall (f : A -> D B) (F : OS A) (G : A -> OS B),
+Lemma lambda_rule_up {A B:hSet} : forall (f : A -> Val B) (F : OS A) (G : A -> OS B),
        (forall x:A, ok_up (OpenFun _ F x) (f x) (G x)) -> up_fun F f G. 
 Proof.
 intros f F G HO. 
