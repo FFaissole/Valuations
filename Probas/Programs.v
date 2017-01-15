@@ -1,4 +1,3 @@
-
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders
                HoTTClasses.implementations.partiality
@@ -16,8 +15,6 @@ Require Export RoundedClosed Opens Functions
         Riesz Giry.
 
 Set Implicit Arguments.
-
-(** Conditional *)
 
 (** Image distributions : Rml 3 *) 
 
@@ -91,7 +88,7 @@ apply (antisymmetry le).
   rewrite OpenFun_D_op; trivial. 
   apply Rllub_lub with 0.
   trivial.
-+ admit. (* pb of universes *)
++  admit. (* pb of universes *)
 + rewrite <- Hu. 
   reflexivity. 
 Admitted. 
@@ -104,7 +101,7 @@ unfold im_distr.
 assert (Hu : (λ a : A, unit A (f a)) = unit A). 
 apply path_forall; intros a.  
 rewrite (Hx a); reflexivity. 
-rewrite Hu, monad2; reflexivity. 
+rewrite Hu. simpl; rewrite monad2; reflexivity. 
 Qed.  
 
 (** *  Conditional distribution : Rml 4 *)
@@ -247,7 +244,7 @@ Qed.
 (** Distribution on the hSet version of Bool *)
 
 Definition DH (A : Type) (hset_A : IsHSet A) := 
-                             D (default_TruncType 0 A hset_A).
+                             Val (default_TruncType 0 A hset_A).
 
 Definition Bool_s : hSet := default_TruncType 0 bool hset_bool. 
 
@@ -308,7 +305,7 @@ apply (RlP_plus (Rlow_mult_q (1 / 2) (B' true))
        (Rlow_mult_q (1 / 2) (B' false))); trivial.  
 Defined. 
 
-Definition flip : D Bool_s. 
+Definition flip : Val Bool_s. 
 Proof. 
 exists flip_aux.  
 + unfold modular. intros U V.
@@ -333,8 +330,44 @@ exists flip_aux.
     split. 
     -- apply pred_plus_pr. apply tr. 
        exists t1,f1. 
-       repeat split; admit.     
-    -- repeat split; admit.
+       repeat split.
+       apply OpenFun_join_is_join. 
+       left; trivial. 
+       apply OpenFun_join_is_join. 
+       left; trivial. 
+       trivial.   
+    -- repeat split; trivial.
+       apply pred_plus_pr.
+       apply tr.
+       destruct (Qle_total t1 t2).
+       --- destruct (Qle_total f1 f2). 
+           * exists t2, f2. 
+             repeat split; trivial.
+             ** apply OpenFun_meet_is_meet.             
+                repeat split; admit.          
+             ** apply OpenFun_meet_is_meet.              
+                repeat split; admit.             
+           * exists t1, f2.                      
+             repeat split; trivial.  
+             ** apply OpenFun_meet_is_meet.   
+                repeat split; admit. 
+             ** apply OpenFun_meet_is_meet.   
+                repeat split; admit.
+             ** admit. 
+       --- destruct (Qle_total f1 f2). 
+           * exists t2, f1. 
+             repeat split; trivial.
+             ** apply OpenFun_meet_is_meet.             
+                repeat split; admit.          
+             ** apply OpenFun_meet_is_meet.              
+                repeat split; admit.
+             ** admit. 
+           * exists t2, f2.                      
+             repeat split; trivial.  
+             ** apply OpenFun_meet_is_meet.   
+                repeat split; admit. 
+             ** apply OpenFun_meet_is_meet.   
+                repeat split; admit.
   - intros p Hp. 
     simpl in *.    
     unfold OSb in *.
@@ -355,7 +388,9 @@ exists flip_aux.
     split. 
     -- apply pred_plus_pr. apply tr. 
        exists t1,f1. 
-       repeat split; admit.     
+       repeat split; trivial.
+       --- admit. 
+       --- admit. 
     -- repeat split; admit.
 + unfold empty_op.
   apply (antisymmetry Rllepos). 
@@ -369,7 +404,7 @@ exists flip_aux.
     destruct (decide ((' 1 * ' (/ 2) * r)%mc < 0)).
     destruct (decide ((' 1 * ' (/ 2) * s)%mc < 0)).
     -- apply RlP_0. 
-       admit. (* ok j'y crois *)
+       admit. (* ok *)
     -- apply not_bot in H2; case H2. 
     -- apply not_bot in H1; case H1. 
   - intros p Hp. 
@@ -420,41 +455,41 @@ exists flip_aux.
   pose (Htrue := OSb_prob Ω true). 
   pose (Hfalse := OSb_prob Ω false). 
   assert (H1 : forall b, (Rlow_mult_q (1 / 2) (OSb Ω b))
-                         <= Rlow_mult_q (1/2) RlP_1). 
+                         <= Rlow_mult_q (1/2) RlP_1).
   intros b; case b;
   intros q Hq; 
   unfold Rlow_mult_q in *; simpl in *;
   unfold pred_multQ in *; simpl in *;
   trivial.     
-  intros q Hq.
-
-  Check pred_plus_pr. 
-  assert (HC : merely (exists t f : Q,
-             val (rl ((Rlow_mult_q (1 / 2) (OSb Ω true)))) t  ∧
-             val (rl ((Rlow_mult_q (1 / 2) (OSb Ω false)))) f  ∧
-             q = (t + f)%mc)). 
-  apply pred_plus_pr; apply Hq.  
-  revert HC; apply (Trunc_ind _); intros (t,(f,(Hct,(Hcf,HQ)))).  
-  simpl. rewrite HQ. 
-  unfold Rlow_mult_q in Hct, Hcf; 
-  simpl in *; unfold pred_multQ in Hct, Hcf; simpl in *. 
+  transitivity (RlP_plus (Rlow_mult_q (1 / 2) RlP_1)
+                         (Rlow_mult_q (1 / 2) RlP_1)).
+  transitivity (RlP_plus
+            (Rlow_mult_q (1 / 2) (OSb Ω true))
+                  (Rlow_mult_q (1 / 2) RlP_1)).
+  apply RlPlus_le_preserving. 
+  apply H1. 
+  apply RlPlus_le_preserving. 
+  intros q; trivial. 
+  intros q Hq. 
+  apply pred_plus_pr in Hq. 
+  revert Hq; apply (Trunc_ind _). 
+  intros (r,(s,(E1,(E2,E3)))).
+  unfold Rlow_mult_q in E1, E2. 
+  simpl in E1, E2. 
+  unfold pred_multQ in E1, E2. 
+  simpl in E1, E2. 
   unfold semi_decide in *. 
-  destruct (decide ((t + f)%mc < 1));
-  destruct (decide ((' 1 * ' (/ 2) * t)%mc < 1)); 
-  destruct (decide ((' 1 * ' (/ 2) * f)%mc < 1)); try trivial. 
-  apply top_greatest. 
-  case n. 
-  assert (Hsum : ((' 1 * ' (/ 2) * t) +
-                 (' 1 * ' (/ 2) * f))%mc = (t + f)%mc). 
-  admit. admit. (* field *) 
-
-  unfold flip_aux. 
-  simpl. 
-  apply HPP.
-  trivial.
+  destruct (decide ((' 1 * ' (/ 2) * r)%mc < 1)); 
+  destruct (decide ((' 1 * ' (/ 2) * s)%mc < 1)). 
+  - admit. (* ok *)
+  - apply not_bot in E2; case E2. 
+  - apply not_bot in E1; case E1. 
+  - apply not_bot in E1; case E1. 
+  - unfold flip_aux. 
+    simpl. 
+    apply HPP.
+  - trivial. 
 Admitted.
-
-SearchAbout RlowPos. 
 
 Definition QRlow_qpos (q : Q+)  : RlowPos. 
 Proof.
@@ -482,18 +517,17 @@ Fixpoint sum_n_moy_aux (p : nat) (f : nat -> RlowPos) : RlowPos := match p with
           |S p0 => RlP_plus (f (S p0)) (sum_n_moy_aux p0 f)
 end.
 
-
 Definition O_Sp (p : nat) : Q+. 
 Proof. 
 refine (1 / qnp (S p)). 
 Defined. 
 
 Fixpoint sum_n_moy (p : nat) f : RlowPos := Rlow_mult_q (O_Sp p)
-                                                  (sum_n_moy_aux p f). 
+                              (sum_n_moy_aux p f). 
 
 (** Random program *)
 
-Definition random_aux (M : nat) : Mes (hS_of_hset hset_nat). 
+Definition random_aux (M : nat) : Mes Nat_s. 
 Proof.
 intros N.
 pose (N' := OSn N).
@@ -501,30 +535,44 @@ exists (rl (sum_n_moy M N')).
 apply (sum_n_moy M). 
 Defined. 
 
-Definition random (M : nat) :  D (hS_of_hset hset_nat). 
+Definition random (M : nat) : Val Nat_s.  
 Proof. 
 exists (random_aux M).  
 + unfold modular. intros U V.
-  admit.    
+  apply (antisymmetry Rllepos).   
+  unfold Rllepos; simpl. 
+  intros q Hq. 
+  - unfold OSn in *. 
+    apply pred_plus_pr. 
+    apply pred_plus_pr in Hq. 
+    revert Hq; apply (Trunc_ind _). 
+    intros (r,(s,(E1,(E2,E3)))).
+    apply tr. 
+    exists r, s. 
+    repeat split; trivial. 
+    admit. admit. 
+  - admit. 
 + unfold empty_op. 
-  apply (antisymmetry le). 
+  apply (antisymmetry Rllepos). 
   - intros p Hp.
     simpl in Hp.
     induction M. 
     -- simpl in Hp.
        unfold semi_decide in Hp.
        unfold pred_multQ in Hp.
-       destruct (decide (rationals.pos (O_Sp 0) * p < 0)).
+       destruct (decide ((rationals.pos (O_Sp 0) * p)%mc < 0)).
        simpl. unfold semi_decide.
        destruct (decide (p < 0)). 
        apply top_greatest. 
+       unfold O_Sp in l. 
+       simpl in l. 
        admit. (* ok *)
        apply not_bot in Hp. 
        case Hp. 
     -- assert (Hnn : elt Q Qlt (rl (sum_n_moy M (OSn ∅))) p).
        revert Hp. 
        apply RC_mon with Qle.   
-       intros x y; apply (antisymmetry le). 
+       intros x y; apply (antisymmetry Qle). 
        intros x y; apply orders.le_or_lt. 
        reflexivity. 
        intros q Hq. 
@@ -534,10 +582,17 @@ exists (random_aux M).
        apply pred_plus_pr in Hq.
        revert Hq; apply (Trunc_ind _).
        intros (r,(s,(H1,(H2,H3)))).
+       unfold OSn.  
        admit. (* ok but cumbersome *)
 
        apply IHM; trivial.
-  - admit. 
+  - intros q Hq.
+    apply rlpos. 
+    simpl in Hq; 
+    unfold semi_decide in Hq;
+    destruct (decide (q < 0)); try trivial.  
+    apply not_bot in Hq.     
+    case Hq. 
 + unfold mon_opens. 
   intros U V HUV.
   intros q Hq. 
@@ -545,12 +600,25 @@ exists (random_aux M).
   induction M.
   - simpl in *. 
     trivial.
-  - unfold sum_n_moy. 
-    unfold sum_n_moy_aux.
-    unfold sum_n_moy in Hq. 
-    unfold sum_n_moy_aux in Hq.
-    simpl.    
+  - simpl.    
     simpl in Hq.     
+    unfold pred_multQ in Hq. 
+    unfold pred_multQ. 
+    apply pred_plus_pr. 
+    apply pred_plus_pr in Hq. 
+    revert Hq; apply (Trunc_ind _). 
+    intros (r,(s,(E1,(E2,E3)))).
+    apply tr. 
+    exists r, s.     
+    repeat split; trivial. 
+    revert E1. 
+    apply RC_mon with Qle. 
+    intros x y; apply (antisymmetry Qle). 
+    intros x y; apply orders.le_or_lt.
+    reflexivity.
+    apply OpenFun_mon. 
+    trivial.
+    revert E2.
     admit. 
 + admit. 
 Admitted. 
