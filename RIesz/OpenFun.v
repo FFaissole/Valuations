@@ -1,4 +1,5 @@
 
+
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders
                HoTTClasses.implementations.partiality
@@ -12,9 +13,10 @@ Require Import HoTT.HSet HoTT.Basics.Trunc HProp HSet
                TruncType UnivalenceAxiom Types.Sigma
                FunextVarieties hit.quotient. 
 
-Require Import RoundedClosed
-               Functions
-               Valuations. 
+Require Import Spaces.RoundedClosed
+               Spaces.Functions
+               Theories.Valuations
+               Riesz.D_op. 
                
 Set Implicit Arguments. 
 
@@ -313,5 +315,11 @@ apply (antisymmetry le).
          apply (snd Ho2). 
      * apply rings.plus_conjugate_alt.
 Qed.
+
+
+Lemma D_op_OpenFun {A  : hSet}: forall (U : OS A),
+           (D_op 0 (OpenFun A U)) = U. 
+Proof. Admitted. 
+
 
 End OpenFun. 

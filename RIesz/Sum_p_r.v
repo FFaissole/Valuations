@@ -1,3 +1,4 @@
+
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders
                HoTTClasses.implementations.partiality
@@ -10,8 +11,13 @@ Require Import HoTT.HSet HoTT.Basics.Trunc HProp HSet
                TruncType Types.Sigma
                hit.quotient. 
 
-Require Export RoundedClosed Opens Functions 
-               Valuations LowerIntegrals D_op OpenFun. 
+Require Export Spaces.RoundedClosed
+               Spaces.Opens
+               Spaces.Functions 
+               Theories.Valuations
+               Theories.LowerIntegrals
+               Riesz.D_op
+               Riesz.OpenFun. 
 
 Set Implicit Arguments. 
 
@@ -204,6 +210,16 @@ induction n.
 Admitted.
 
 
+Lemma sum_p_r_Sn : forall n Mu f,
+    sum_p_r (S n) f Mu =  Rlow_mult_q (qnp (S n) / qnp n)
+                                     (sum_p_r n f Mu)
+                          +  Rlow_mult_q (1 / qnp (S n))
+                        ((mu _ Mu) (D_op (qn (S n)) f)).
+Proof. 
+
+Admitted. 
+
+  
 (* OK *)
 Lemma toRlseq_antimon : forall n n' Mu f, n <= n' -> 
     (toRlseq (λ n0 : nat, sum_p_r n0 f Mu) n')

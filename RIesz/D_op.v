@@ -1,4 +1,5 @@
 
+
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders
                HoTTClasses.implementations.sierpinsky
@@ -10,16 +11,16 @@ Require Import HoTT.HSet HoTT.Basics.Trunc HProp HSet
                TruncType UnivalenceAxiom Types.Sigma
                FunextVarieties hit.quotient. 
 
-Require Import RoundedClosed Opens Functions 
-               Valuations LowerIntegrals. 
+Require Import Spaces.RoundedClosed Spaces.Opens Spaces.Functions 
+               Theories.Valuations Theories.LowerIntegrals. 
                               
 Set Implicit Arguments.
 
-(** * D_op: operator which takes a function and a rational 
+(** D_op: operator which takes a function and a rational 
 and gives the open in which the function is bigger than the 
 rational *)
 
-(** see a similart construction with Dedekind cuts in 
+(** see a similar construction with Dedekind cuts in 
 Coquand-Spitters 09, Integrals and valuations *)
 
 Section Dop.
@@ -123,5 +124,7 @@ exists s; split.
   trivial. trivial.
 + intros z; apply imply_le; exact (Haux z). 
 Qed.
+
+Hint Resolve D_op_mon_f D_op_mon_q.
 
 End Dop. 

@@ -1,3 +1,5 @@
+
+
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders
                HoTTClasses.implementations.partiality
@@ -10,9 +12,14 @@ Require Import HoTT.HSet HoTT.Basics.Trunc HProp HSet
                TruncType Types.Sigma
                hit.quotient. 
 
-Require Export RoundedClosed Opens Functions 
-        Valuations LowerIntegrals D_op OpenFun
-        Sum_p_r. 
+Require Export Spaces.RoundedClosed
+               Spaces.Opens
+               Spaces.Functions 
+               Theories.Valuations
+               Theories.LowerIntegrals
+               Riesz.D_op
+               Riesz.OpenFun
+               Riesz.Sum_p_r. 
 
 Set Implicit Arguments. 
 
@@ -27,7 +34,7 @@ Context {A : hSet}.
 
 (** Definition of the integral from measures and 
 subdivisions as classically in measure theory *)
-Definition I_mu (mm : D A) : IntPos A.
+Definition I_mu (mm : Val A) : IntPos A.
 Proof.
 exists (fun f => RllubPos (fun n => (sum_p_r n f mm))); red. 
 + assert (HO : forall n, sum_p_r n (fzero A) mm = RlP_0).
@@ -234,7 +241,7 @@ exists (fun f => RllubPos (fun n => (sum_p_r n f mm))); red.
   apply Rllub_lub with nc; trivial.
   unfold Rllepos; simpl.
   unfold toRlseq. 
-  intros c Hc. Check pred_plus_pr. 
+  intros c Hc. 
   assert (E : merely (exists r s,
               val (Rllub (λ n : nat, sum_p_r n f mm)) r  ∧
               val (Rllub (λ n : nat, sum_p_r n g mm)) s  ∧
@@ -339,7 +346,8 @@ exists (fun f => RllubPos (fun n => (sum_p_r n f mm))); red.
     case (n H01). unfold sum_p_r. 
     rewrite Hone.
     apply mu_prob.
-  - generalize toRlseq_antimon'.
+  - unfold toRlseq in *. 
+    simpl. generalize toRlseq_antimon'.
     intro HG.
     specialize (HG A n mm).
     unfold toRlseq in *. 
@@ -361,41 +369,47 @@ exists (fun f => RllubPos (fun n => (sum_p_r n f mm))); red.
   * unfold sum_p_r.
     apply Rlow_mult_q_mon_f; trivial.
 + intros f. apply (antisymmetry le). 
-  apply Rllub_mon; intros n. 
-  unfold toRlseq.
-  intros v Hv. 
-  apply Rllub_lub with n.
-  unfold toRlseq; trivial.
-  intros v Hv.
-  assert (Hi : RllubPos (λ _ : nat,
-          RllubPos (λ n0 : nat, sum_p_r n0 (λ x : A, f x) mm)) =
-           RllubPos (λ n0 : nat, sum_p_r n0 (λ x : A, f x) mm)).
-  apply (antisymmetry le). 
-  apply Rllub_le. 
-  intros m. unfold toRlseq. 
-  unfold Rlle, RCLe_l; auto. 
-  apply Rllub_le.  
-  intros m. unfold toRlseq.
-  assert (H1: (λ _ : nat,
-                 RllubPos (λ n0 : nat, sum_p_r n0
-                  (λ x : A, f x) mm)) 0 <=
-           (RllubPos
-       (λ _ : nat,
-        RllubPos (λ n0 : nat, sum_p_r n0 (λ x : A, f x) mm)))
-      ).
-  apply (Rllub_lub (λ _ : nat,
-                 RllubPos (λ n0 : nat, sum_p_r n0
-                  (λ x : A, f x) mm)) 0).  
-  assert (H3 : (λ _ : nat, sum_p_r m (λ x : A, f x) mm) 0 <=
-   (λ _ : nat,
-        RllubPos (λ n0 : nat, sum_p_r n0 (λ x : A, f x) mm)) 0).
-  apply (Rllub_lub (λ n0 : nat, sum_p_r n0 (λ x : A, f x) mm) m).
-  intros q. unfold Rlle in H1.
-  unfold Rlle in H3.
-  intros HX.
-  apply H1, H3; trivial.
-  rewrite Hi in Hv. 
-  trivial.
-Defined.
+  - intros q Hq.
+    
+  
+    admit. 
+  - intros q.
+    apply RllubPos_le; intros N.  
+    apply Rllub_mon. 
+    intros n p; unfold toRlseq. 
+    apply sum_p_r_mon_f. 
+    intros x r Hr. 
+    unfold RlP_minus_q2 in Hr.   
+    simpl in Hr. 
+    unfold pred_minusQ_l2 in Hr;
+    unfold semi_decide in Hr. 
+    apply top_le_join in Hr.
+    unfold hor in Hr;
+    revert Hr; apply (Trunc_ind _). 
+    intros Hr; destruct Hr.
+    -- revert i.
+       apply RC_mon with Qle.
+       intros x' y'; apply (antisymmetry le).  
+       intros x' y'; apply orders.le_or_lt. 
+       transitivity (r + 0).
+       rewrite rings.plus_0_r. 
+       reflexivity. 
+       apply semirings.plus_le_compat.  
+       reflexivity.
+       apply orders.lt_le. 
+       apply (pos_of_nat N). 
+       intros v; trivial. 
+    -- destruct (decide (r < 0)).      
+       apply (f x); trivial.  
+       apply not_bot in i; case i. 
+Admitted.
+
+(* to disappear *)
+Lemma I_mu_simpl (mm : Val A) : I (I_mu mm) = (fun f =>
+               RllubPos (fun n => (sum_p_r n f mm))).
+Proof.  
+Admitted.
+
+
 
 End Simples. 

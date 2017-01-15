@@ -12,8 +12,11 @@ Require Import HoTT.HSet HoTT.Basics.Trunc HProp HSet
                TruncType Types.Sigma
                hit.quotient. 
 
-Require Export RoundedClosed Opens Functions 
-               Valuations LowerIntegrals D_op OpenFun Simples. 
+Require Export Spaces.RoundedClosed
+               Spaces.Opens Spaces.Functions 
+               Theories.Valuations
+               Theories.LowerIntegrals
+               Riesz.D_op Riesz.OpenFun Riesz.Simples. 
 
 Set Implicit Arguments.
 
@@ -24,7 +27,7 @@ locales *)
 
 (** From Integrals to Valuations: 
   mu_I (U)  = I (1_U) *)
-Definition Riesz1 (A : hSet) : IntPos A -> D A. 
+Definition Riesz1 (A : hSet) : IntPos A -> Val A. 
 Proof. 
 intros J. 
 exists (fun U:OS A => (I J (OpenFun A U))). 
@@ -66,7 +69,7 @@ Defined.
 I_mu (f) = sup (fun n => sum(i)_0^n (mu (D_op i))
  *)
 
-Definition Riesz2 (A : hSet) : D A -> IntPos A.
+Definition Riesz2 (A : hSet) : Val A -> IntPos A.
 Proof.
 intros Nu. 
 refine (I_mu Nu). 
@@ -76,7 +79,7 @@ Defined.
     - hom1: mu_(I_nu) (U) = nu(U)
     - hom2: I_(mu_J) (f) = J(f) 
  *) 
-Lemma Riesz_hom1 (A : hSet) : forall (Mu :D A) U,
+Lemma Riesz_hom1 (A : hSet) : forall (Mu :Val A) U,
     mu _ (Riesz1 (Riesz2 Mu)) U = mu _ Mu U.
 Proof.
 intros Mu U.  
@@ -105,15 +108,12 @@ apply (antisymmetry le).
          generalize (orders.le_not_lt_flip 0 0 Hj).
          intros Hj'; case (Hj' l).          
        * reflexivity.       
-    -- intros f HU.
-       assert (Vn : nat -> RlowPos).
-       intros p.
-       specialize (f p). 
+    -- intros h HU. 
        admit. 
-       admit.
-      
+       
+     
     -- rewrite X; unfold Rlle, RCLe_l; auto.    
-   - simpl in *. 
+  - simpl in *. 
     assert (H22 : Rlle ((toRlseq (λ n : nat, sum_p_r n
                  (OpenFun A U) Mu) (S n)))
                        ((toRlseq (λ n0 : nat, sum_p_r n0
