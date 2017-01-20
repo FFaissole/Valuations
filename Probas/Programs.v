@@ -11,25 +11,26 @@ Require Import HoTT.HSet HoTT.Basics.Trunc HProp HSet
                TruncType UnivalenceAxiom Types.Sigma
                FunextVarieties hit.quotient Spaces.Int. 
 
-
 Require Export Spaces.RoundedClosed
                Spaces.Opens Spaces.Functions 
                Theories.Valuations
                Theories.LowerIntegrals
-               Riesz.D_op Riesz.OpenFun
-               Riesz.Riesz Probas.Giry.
+               Theories.Riesz Probas.Giry.
 
 Set Implicit Arguments.
 
 (** * Interpretation of probabilistic programs *)
 (**
-      .              |   [.] 
-      v              |  unit v 
- let x=a in b        | bind  [a] (fun x => [b]) 
-     f a             | bind  [a] (fun x => [f] x) 
-if b then a1 else a2 | bind  [b] 
-                     |    (fun x:bool => if b then [a1] 
-                     |                        else [a2])
+      .  --> [.] ;
+
+      v  --> unit v ;
+
+ let x=a in b --> bind  [a] (fun x => [b]) ;
+
+     f a  -->  bind  [a] (fun x => [f] x) ;
+
+    if b then a1 else a2 --> bind  [b] (fun x:bool => 
+    if b then [a1] else [a2]).
 **)
 
 
@@ -408,9 +409,7 @@ exists flip_aux.
     split. 
     -- apply pred_plus_pr. apply tr. 
        exists t1,f1. 
-       repeat split; trivial.
-       --- admit. 
-       --- admit. 
+       admit.
     -- repeat split; admit.
 + unfold empty_op.
   apply (antisymmetry Rllepos). 
@@ -433,12 +432,9 @@ exists flip_aux.
     simpl.
     apply pred_plus_pr. 
     apply tr.
-    exists (p/2), (p/2). 
-    destruct (decide ((' 1 * ' (/ 2) * (p/2))%mc < 0)%mc).
-    repeat split; try (apply top_greatest).
-    admit. (* field ? *)
-    
-    repeat split; admit.
+    exists (p/2), (p/2).
+    destruct (decide ((' 1 * ' (/ 2) * (p/2))%mc < 0)%mc);
+    admit. (*field *)
 + unfold mon_opens. 
   intros U V HUV.
   intros q Hq. 
@@ -582,8 +578,7 @@ exists (random_aux M).
     intros (r,(s,(E1,(E2,E3)))).
     apply tr. 
     exists r, s. 
-    repeat split; trivial. 
-    admit. admit. 
+    admit. 
   - admit. 
 + unfold empty_op. 
   apply (antisymmetry Rllepos). 
@@ -652,7 +647,5 @@ exists (random_aux M).
     apply OpenFun_mon. 
     trivial.
     revert E2.
-    admit. 
-+ admit. 
 Admitted. 
  
