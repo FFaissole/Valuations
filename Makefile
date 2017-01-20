@@ -57,17 +57,14 @@ vo_to_obj = $(addsuffix .o,\
 COQLIBS?=\
   -R "Spaces" Spaces\
   -R "Theories" Theories\
- -R "Riesz" Riesz\
  -R "Probas" Probas
 COQCHKLIBS?=\
   -R "Spaces" Spaces\
    -R "Theories" Theories\
- -R "Riesz" Riesz\
  -R "Probas" Probas
 COQDOCLIBS?=\
   -R "Spaces" Spaces\
  -R "Theories" Theories\
- -R "Riesz" Riesz\
  -R "Probas" Probas
 
 ##########################
@@ -116,12 +113,7 @@ VFILES:=Spaces/Cpo.v\
  Spaces/Opens.v\
  Theories/Valuations.v\
  Theories/LowerIntegrals.v\
- Riesz/D_op.v\
- Riesz/OpenFun.v\
- Riesz/FreeMonoid.v\
- Riesz/Sum_p_r.v\
- Riesz/Simples.v\
- Riesz/Riesz.v\
+ Theories/Riesz.v\
  Probas/Giry.v\
  Probas/Programs.v
 
