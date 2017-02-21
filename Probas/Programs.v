@@ -37,86 +37,13 @@ Set Implicit Arguments.
 
 (** Image distributions by a function f :  *) 
 
-Definition im_distr {A B : hSet} (f : A -> B) (m : Val A) : Val B :=
-       bind A B m (fun a => unit B (f a)). 
-
-    
-Lemma im_distr_comp {A B C: hSet} (f : A -> B) (g : B -> C) (m : Val A) : 
-   im_distr g (im_distr f m) = im_distr (fun a => g (f a)) m.
-Proof.    
-unfold im_distr; simpl.
-generalize (@monad3 A).   
-intros HGm. 
-rewrite monad3.
-assert (Hu : (λ x : A, bind B C (unit B (f x))
-                            (λ a : B, unit C (g a))) =
-             (λ a : A, unit C (g (f a)))). 
-apply path_forall. 
-intros x. assert (Hmu : mu _ (bind B C (unit B (f x))
-                     (λ a : B, unit C (g a))) =
-                        mu _ (unit C (g (f x)))).
-rewrite unit_aux_unit; unfold unit_aux.
-apply path_forall; intros U. 
-simpl in *. 
-unfold Riesz2.
-rewrite I_mu_simpl.
-apply (antisymmetry le). 
-+ apply Rllub_le. intros n.
-  unfold toRlseq. 
-  induction n. 
-  - simpl.
-    assert (Ho1 : D_op 0 (OpenFun B (D_op 0 (λ x0 : B,
-                          OpenFun C U (g x0)))) =
-                  (D_op 0 (λ x0 : B, OpenFun C U (g x0)))).
-    rewrite D_op_OpenFun. 
-    reflexivity.
-    rewrite Ho1.
-    rewrite D_op_OpenFun. unfold unit, unit_aux; simpl.  
-    intros q Hq. 
-    unfold OpenFun, OpenFun_aux in *; simpl in *. 
-    trivial.        
-  - repeat rewrite D_op_OpenFun. 
-    intros q Hq.
-    apply IHn.     
-    revert Hq. 
-    apply RC_mon with Qle. 
-    intros x' y'; apply (antisymmetry le). 
-    intros x' y'; apply orders.le_or_lt. 
-    reflexivity.
-    unfold unit_aux. 
-    rewrite D_op_OpenFun.
-    unfold OpenFun. 
-    apply toRlseq_antimon'.  
-+ unfold unit_aux; simpl.
-  rewrite D_op_OpenFun. 
-(*      assert (Hv : (λ n : nat,
-       sum_p_r n
-         (OpenFun B (D_op 0 (λ x0 : B, unit_aux C (g x0) U)))
-         (unit B (f x))) =
-               (λ n : nat,
-       sum_p_r n
-         ((λ x0 : B, unit_aux C (g x0) U))
-         (unit B (f x)))).
-  rewrite OpenFun_D_op. 
-  reflexivity.*)
-  intros q Hq. 
-  assert (Ho : elt Q Qlt (rl (sum_p_r 0 (λ x0 : B, OpenFun C U (g x0))
-                                      (unit B (f x)))) q). 
-  simpl. unfold unit_aux; simpl.     
-  rewrite D_op_OpenFun.
-  simpl. unfold OpenFun; simpl. 
-  trivial. 
-  apply Rllub_lub with 0.
-  trivial.
-+  admit. (* pb of universes *)
-+ rewrite <- Hu. 
-  reflexivity. 
-Admitted. 
-
-Lemma im_distr_id {A : hSet}: forall (f : A -> A) (m : Val A),
-          (forall x, f x = x) -> im_distr f m = m. 
+Definition im_distr {A B : hSet} b (f : A -> B) (m : Val A) : Val B 
+                                := bind A B b m (fun a => unit B (f a)).
+                                
+Lemma im_distr_id {A : hSet}: forall b (f : A -> A) (m : Val A),
+          (forall x, f x = x) -> im_distr b f m = m. 
 Proof. 
-intros f m Hx. 
+intros b f m Hx. 
 unfold im_distr.
 assert (Hu : (λ a : A, unit A (f a)) = unit A). 
 apply path_forall; intros a.  
@@ -154,13 +81,13 @@ reflexivity.
 Qed. 
 
 
-Definition Mif (A:hSet) (b: DH hset_bool) (m1 m2:Val A) : Mes A. 
+Definition Mif (A:hSet) (bb:Q+) (b: DH hset_bool) (m1 m2:Val A) : Mes A. 
 Proof.                          
 intros X.
-exists (rl (mu _ (bind Bool_s A b
+exists (rl (mu _ (bind Bool_s A bb b
         (fun x:Bool => if x then m1 else m2)) X)).
 intros p Hp. 
-apply (mu _ (bind Bool_s A b
+apply (mu _ (bind Bool_s A bb b
         (λ x : Bool, if x then m1 else m2)) X); trivial. 
 Defined. 
 
@@ -187,21 +114,25 @@ Definition up_fun {A B} (f : OS A) (E : A -> Val B) (F : A -> OS B) :=
 
 (** Correctness rules for applications *)
 
-Lemma apply_rule {A B} : forall (nu : Val A) (f : A -> Val B)
+Lemma apply_rule {A B} : forall b (nu : Val A) (f : A -> Val B)
                                 (r : RlowPos)
                                 (F : OS A) (G : OS B),
           ok r nu F -> ok_fun F f (fun x => G) ->
-          ok r (bind A B nu f) G. 
+          ok r (bind A B b nu f) G. 
 Proof.
-intros nu f r F G H1 H2.
+intros b nu f r F G H1 H2.
 unfold ok_fun, ok in *.
 unfold bind.
 simpl. transitivity (mu _ nu F); trivial.
-transitivity (I (Riesz2 nu) (OpenFun A (D_op 0
+transitivity (I (Riesz2 b nu) (OpenFun A (D_op 0
                (λ x : A, OpenFun A F x)))).
-+ clear H1 H2. 
-  unfold Riesz2. 
-  rewrite I_mu_simpl.
++ clear H1 H2.
+  rewrite D_op_OpenFun.
+  About Riesz1.
+  SearchAbout Riesz2.
+  rewrite Riesz2_simpl.
+  rewrite OpenFun.
+(*
   transitivity (sum_p_r 0 (OpenFun A (D_op 0 (λ x : A,
             OpenFun A F x  ))) nu).
   - simpl.   
@@ -221,73 +152,43 @@ transitivity (I (Riesz2 nu) (OpenFun A (D_op 0
     reflexivity. 
    - apply (Rllub_lub (λ n : nat,
                           sum_p_r n (OpenFun A (D_op 0
-                      (λ x : A, OpenFun A F x))) nu) 0). 
+                      (λ x : A, OpenFun A F x))) nu) 0). *)
+  admit. 
 + apply I_mon, OpenFun_mon, D_op_mon_f.        
   intros x; trivial.
-Qed. 
+Admitted. 
 
-Lemma apply_rule_up {A B} : forall (mu : Val A) (f : A -> Val B)
+
+Lemma apply_rule_up {A B} : forall b (mu : Val A) (f : A -> Val B)
                                    (r : RlowPos)
                                 (F : OS A) (G : OS B),
     ok_up r mu F -> up_fun F f (fun x => G) ->
-    ok_up r (bind A B mu f) G. 
+    ok_up r (bind A B b mu f) G. 
 Proof.
-intros nu f r F G H1 H2. 
+intros b nu f r U V H1 H2. 
 unfold up_fun, ok_up in *. 
 unfold bind.
-simpl. unfold Riesz2. rewrite I_mu_simpl. 
-transitivity (mu _ nu F); trivial.
-transitivity (I (Riesz2 nu) (OpenFun A (D_op 0
-               (λ x : A, OpenFun A F x)))).
-+ unfold Riesz2. 
-  rewrite I_mu_simpl. apply Rllub_mon. 
+simpl; rewrite Riesz2_simpl. 
+transitivity (mu _ nu U); trivial.
+transitivity (I (Riesz2 b nu) (OpenFun A (D_op 0
+               (λ x : A, OpenFun A U x)))).
++ rewrite Riesz2_simpl.
+  apply Rllub_mon. 
   intros n. 
   unfold toRlseq. 
-  apply sum_p_r_mon_f2. 
+  apply appr_mon_f.
   apply OpenFun_mon. 
   apply D_op_mon_f. 
   intros s. 
   apply H2.  
 + clear H1 H2. 
-  unfold Riesz2. 
-  rewrite I_mu_simpl.
-  transitivity (sum_p_r 0 (OpenFun A (D_op 0 (λ x : A,
-            OpenFun A F x  ))) nu).
-  - simpl.   
-    assert (H1 : D_op 0 (OpenFun A (D_op 0
-                 (λ x : A, OpenFun A F x))) =
-                 (D_op 0 (λ x : A, OpenFun A F x))).
-    rewrite D_op_OpenFun. 
-    reflexivity.
-    rewrite H1. 
-    rewrite D_op_OpenFun. 
-    apply Rllub_le.
-    intros n. unfold toRlseq.
-    induction n. 
-    * simpl.
-      rewrite D_op_OpenFun. 
-      intros q; trivial.
-    * intros q Hq. 
-      assert (Ho :  elt Q Qlt (rl (sum_p_r 0
-                    (λ x : A, OpenFun A F x) nu)) q).
-      revert Hq.       
-      apply RC_mon with Qle. 
-      intros x y; apply (antisymmetry le). 
-      intros x y; apply orders.le_or_lt. 
-      reflexivity.
-      generalize (@toRlseq_antimon A 0 (S n) nu
-                 (fun z : A => OpenFun A F z)). 
-      intros HRL. unfold toRlseq in HRL. 
-      apply HRL.
-      apply orders.lt_le.
-      apply peano_naturals.S_gt_0. 
-      trivial. simpl in Ho. 
-      rewrite D_op_OpenFun in Ho.
-      trivial.                                  
-  - simpl.        
-     repeat rewrite D_op_OpenFun. 
-     reflexivity. 
-Qed. 
+  rewrite Riesz2_simpl.
+  rewrite D_op_OpenFun.
+  apply Rllub_le.
+  intros n.
+  unfold toRlseq.
+  apply appr_corr_inf.  
+Qed.
 
 
 (** Correctness rules for abstraction *)
@@ -351,23 +252,31 @@ exists flip_aux.
     split. 
     -- apply pred_plus_pr. apply tr. 
        exists t1,f1. 
-       repeat split.
-       apply OpenFun_join_is_join. 
+       repeat split; try trivial.
+       rewrite Join_pres_openfun.
+       apply top_le_join.
+       simpl; apply tr.
        left; trivial. 
-       apply OpenFun_join_is_join. 
+       rewrite Join_pres_openfun.
+       apply top_le_join.
+       simpl; apply tr.
        left; trivial. 
-       trivial.   
     -- repeat split; trivial.
        apply pred_plus_pr.
        apply tr.
        destruct (Qle_total t1 t2).
        --- destruct (Qle_total f1 f2). 
-           * exists t2, f2. 
+           * exists t1, f1. 
              repeat split; trivial.
-             ** apply OpenFun_meet_is_meet.             
-                repeat split; admit.          
-             ** apply OpenFun_meet_is_meet.              
-                repeat split; admit.             
+             ** rewrite Meet_pres_openfun.
+                apply top_le_meet. 
+                repeat split; trivial.
+                admit.  (* ok *)
+             ** rewrite Meet_pres_openfun.
+                apply top_le_meet. 
+                repeat split; trivial.
+                admit.  (* ok *)
+             ** admit.
            * exists t1, f2.                      
              repeat split; trivial.  
              ** apply OpenFun_meet_is_meet.   
@@ -648,4 +557,3 @@ exists (random_aux M).
     trivial.
     revert E2.
 Admitted. 
- 
