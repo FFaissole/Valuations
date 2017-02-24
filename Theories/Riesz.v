@@ -1,4 +1,5 @@
 
+
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders
                HoTTClasses.implementations.partiality
@@ -17,6 +18,7 @@ Require Export Spaces.RoundedClosed
                Theories.LowerIntegrals.
               
 Set Implicit Arguments.
+
 
 
 (** * D_op: operator which takes a function and a rational 
@@ -140,11 +142,11 @@ we have defined the lower reals as maps from Q to Sier.
 We define the OpenFun by induction on the Sierpinski sets
 *)
 
-Section OpenFun. 
-Context `{Funext} `{Univalence}. 
+
+Section S_to_RlP. 
 
 (** Map from Sier to RlowPos *)
-Definition OpenFun_aux : forall s : Sier, RlowPos.
+Definition S_to_RlP : forall s : Sier, RlowPos.
 Proof.
 apply (partial_rec Unit _ le).
 simple refine (Build_Recursors _ _ _ _ _ _ _ _ _ _ _ _);simpl.
@@ -173,93 +175,345 @@ simple refine (Build_Recursors _ _ _ _ _ _ _ _ _ _ _ _);simpl.
 Defined.
 
 (** Monotonicity of the map from Sier to RlowPos *)
-Lemma OpenFun_aux_mon : forall s1 s2, s1 <= s2
-                        -> OpenFun_aux s1 <= OpenFun_aux s2.
+Lemma S_to_RlP_mon : forall s1 s2, s1 <= s2
+                        -> S_to_RlP s1 <= S_to_RlP s2.
 Proof.
 apply (partialLe_ind0 _ _).
 + reflexivity.
-+ assert (X : OpenFun_aux (bot Unit) = RlP_0).
-  auto. rewrite X.
++ assert (X : S_to_RlP (bot Unit) = RlP_0).
+  auto; rewrite X.
   intros. apply RlowPos_pos.
 + intros f x H1 H2 n.
-  transitivity (OpenFun_aux (sup Unit f)).
-  assert (Hr : OpenFun_aux (sup Unit f) = RllubPos
-                        (fun n => OpenFun_aux (f n))).
+  transitivity (S_to_RlP (sup Unit f)).
+  assert (Hr : S_to_RlP (sup Unit f) = RllubPos
+                        (fun n => S_to_RlP (f n))).
   auto. rewrite Hr.
-  apply (Rllub_lub (fun n => OpenFun_aux (f n))); trivial.
+  apply (Rllub_lub (fun n => S_to_RlP (f n))); trivial.
   trivial.
 + intros f x H1 H2.
-  assert (Hr : OpenFun_aux (sup Unit f) = RllubPos
-                        (fun n => OpenFun_aux (f n))).
+  assert (Hr : S_to_RlP (sup Unit f) = RllubPos
+                        (fun n => S_to_RlP (f n))).
   auto. rewrite Hr.
   apply Rllub_le.
-  intros n.
+  intros n;
   apply H2.
 Qed.
-      
+  
+
+Lemma meet_pres_S_to_RlP : 
+          MeetPreserving (fun (s: Sier) => S_to_RlP s). 
+Proof. 
+intros x y;
+unfold sg_op, meet_is_sg_op, S_to_RlP. 
+revert x.
+apply (partial_ind0 _ (fun a => _)).
++ intros x.
+  assert (H1 : SierMeet (eta Unit x) y = y). 
+  admit. 
+
+  rewrite H1. 
+  assert (H2 : forall x, x <= RlP_1 -> 
+            RlPMeet RlP_1 x = x). 
+  admit. 
+
+  rewrite H2.
+  reflexivity.
+  transitivity (S_to_RlP SierTop).
+  apply S_to_RlP_mon. 
+  apply top_greatest.
+  reflexivity. 
++ assert (HsB : SierMeet (bot Unit) y  = bot Unit).
+  admit. 
+
+  assert (HrB : forall r, RlPMeet RlP_0 r = RlP_0). 
+  admit. 
+
+  rewrite HsB.
+  transitivity RlP_0.   
+  reflexivity. 
+  rewrite HrB.
+  reflexivity. 
++ intros f Hn. admit. 
+Admitted. 
+
+Lemma join_pres_S_to_RlP : 
+          JoinPreserving (fun (s: Sier) => S_to_RlP s). 
+Proof. 
+intros x y.
+unfold sg_op, join_is_sg_op, S_to_RlP. 
+revert x.
+apply (partial_ind0 _ (fun a => _)).
++ intros x.
+  assert (H1 : SierJoin (eta Unit x) y = eta Unit x). 
+  admit. 
+
+  rewrite H1. 
+  assert (H2 : forall x, x <= RlP_1 -> 
+            RlPJoin RlP_1 x = RlP_1). 
+  admit. 
+
+  rewrite H2. 
+  reflexivity.
+  transitivity (S_to_RlP SierTop).
+  apply S_to_RlP_mon. 
+  apply top_greatest.
+  reflexivity. 
++ assert (HsB : SierJoin (bot Unit) y  = y).
+  admit. 
+
+  assert (HrB : forall r, RlPJoin RlP_0 r = r). 
+  admit. 
+ 
+  rewrite HsB.
+  rewrite HrB.
+  reflexivity. 
++ intros f Hn.
+Admitted.
+
+Coercion S_to_RlP : Sier >-> RlowPos. 
+
+
+End S_to_RlP.   
+
+
+Section OpenFun. 
+
+
 (** Map from Opens to characteristic function *)
 Definition OpenFun (A : hSet) : forall (U : A -> Sier),
                                        (A -> RlowPos). 
 Proof. 
 intros s z. 
 specialize (s z).
-exact (OpenFun_aux s).
+exact (S_to_RlP s).
 Defined.
 
 (** OpenFun is definite *)
 Lemma OpenFun_def {A} : forall U:OS A, U = OS_empty
                                -> OpenFun _ U = fun x => RlP_0. 
 Proof.
-intros U HU.   
-apply path_forall. 
-intros x. 
-rewrite HU. 
-auto. 
+intros U HU; 
+apply path_forall; 
+intros x; rewrite HU; auto. 
 Qed. 
 
 (** OpenFun is sub-probabilistic*)
 Lemma OpenFun_prob {A} : forall U:OS A, U = OS_full
                                -> OpenFun _ U <= fun x => RlP_1. 
 Proof.
-intros U HU x. 
-rewrite HU. 
-auto. 
+intros U HU x;
+rewrite HU; auto.
 Qed. 
 
 (** OpenFun is monotonic *)
 Lemma OpenFun_mon {A} : forall U V:OS A, U <= V -> OpenFun _ U <= OpenFun _ V.
 Proof.
-intros U V H1 s.
-unfold OpenFun.
-apply OpenFun_aux_mon; trivial.
+intros U V H1 s;
+unfold OpenFun;
+apply S_to_RlP_mon; trivial.
 apply (H1 s).
 Qed.
+
+Lemma OpenFun_correct {A : hSet} : forall (x:A) U,
+               OpenFun A U x = RlP_1 <-> (U x) = SierTop.
+Proof. 
+intros x U. 
+split; intros Hu. 
++ unfold OpenFun, S_to_RlP in *.
+  revert Hu. generalize (U x).
+  apply (partial_ind0 _ (fun a => _->_)). 
+  - simpl; intros v Hv.
+    unfold SierTop.
+    destruct v. 
+    reflexivity. 
+  - simpl; intros Hv.
+    assert (Hf : RlP_0 = RlP_1); trivial.
+    assert (Hf' : Rllt RlP_0 RlP_1).
+    unfold Rllt, RCLt_l.  
+    apply tr.  
+    exists 0. 
+    split.
+    * simpl; unfold semi_decide. 
+      destruct (decide (0 < 1)). 
+      apply top_greatest. 
+      case n.
+      apply semirings.lt_0_1. 
+    * intros He; simpl in He;
+      unfold semi_decide in He. 
+      destruct (decide (0 < 0)).
+      apply orders.lt_not_le_flip in l.
+      case l; reflexivity.
+      apply not_bot in He; case He. 
+    * rewrite Hf in Hf'.   
+      unfold Rllt, RCLt_l in Hf'.
+      revert Hf'; apply (Trunc_ind _).       
+      intros (q,(E1,E2)).
+      case (E2 E1). 
+  - intros f Hn Hn'.
+    destruct f as (f,Hf); fold Sier in f.
+    simpl in *. 
+    assert (Hn'2 : RllubPos (fun n => (S_to_RlP (f n)))
+                   = RlP_1).
+    trivial.
+    clear Hn'.
+    unfold SierTop.
+    apply eta_is_greatest.
+    apply _.
+    fold SierTop.
+    apply top_le_sup. 
+    apply tr.
+    assert (Hne : exists n, S_to_RlP (f n) = RlP_1).
+    admit.
+
+    destruct Hne as (n,Hne).
+    exists n.     
+    assert (HeqT : {| seq := f; seq_increasing := Hf |} n =
+                   SierTop).
+    apply Hn.
+    trivial.
+    rewrite HeqT.
+    apply top_greatest.
+Admitted. 
+
+  
+Lemma OpenFun_D_op {A B : hSet}  :
+  forall (Mu_X:A -> Val B) U z, 
+    OpenFun A (D_op 0 (λ x : A, mu _ (Mu_X x) U)) z
+    = mu _ (Mu_X z) U. 
+Proof. 
+intros nu U z.
+apply (antisymmetry le).
++ intros q Hq.
+  unfold D_op in Hq; simpl in Hq. 
+  assert (Hx : (OpenFun A (D_op q (λ x : A, mu _ (nu x) U)) z)
+               = RlP_1).
+  apply OpenFun_correct.
+  unfold D_op; revert Hq; unfold OpenFun.
+  destruct (mu _ (nu z) U) as (r,rlpos).
+  intros Hq.
+  apply (antisymmetry le). 
+  - apply top_greatest.
+  - revert Hq. 
+    apply RC_mon with Qle. 
+    intros x y; apply (antisymmetry le). 
+    intros x y; apply orders.le_or_lt. 
+    reflexivity.
+    intros p;
+    unfold S_to_RlP.
+    generalize (val r 0).
+    apply (partial_ind0 _ (fun a => _ -> _)). 
+    -- simpl; unfold semi_decide.
+       intros t. 
+       destruct (decide (p < 1)). 
+       * intros T. admit. 
+       * intros T; apply not_bot in T; case T.
+    -- simpl; unfold semi_decide.
+       intros s.
+       destruct (decide (p < 0)). 
+       * apply rlpos; trivial. 
+       * apply not_bot in s; case s. 
+    -- intros f Hn Hn'.
+       assert (Hs : elt Q Qlt (rl (RllubPos (fun n =>
+                           (S_to_RlP (f n))))) p). 
+       trivial.                  
+       clear Hn'.
+       apply top_le_enumerable_sup in Hs.
+       revert Hs; apply (Trunc_ind _).
+       intros (n,Hns). 
+       unfold semi_decide in Hns.
+       unfold toRlseq in *. 
+       apply (Hn n); trivial.  
+  - apply OpenFun_correct in Hx.
+    unfold D_op in Hx.
+    red.
+    transitivity (val (let (rl, _) :=
+                            mu _ (nu z) U in rl) q).
+    rewrite Hx.
+    reflexivity.
+    reflexivity.
++ intros q Hq.
+  unfold OpenFun, D_op. 
+  destruct (nu z).
+  simpl in *.
+  assert (H1 : elt Q Qlt (rl RlP_1) q). 
+  revert Hq. 
+  apply RC_mon with Qle.
+  intros x y; apply (antisymmetry le).
+  intros x y; apply orders.le_or_lt.
+  reflexivity.
+  assert (H2 : mu U <= mu Ω).
+  apply mu_mon.
+  intros s; apply top_greatest.
+  intros K HK. 
+  specialize (H2 K).
+  specialize (mu_prob K).
+  apply mu_prob, H2, HK.
+  destruct (mu U) as (r,rlpos).
+  simpl in Hq.
+  assert (H2 : val r 0 = SierBot -> r <= RlP_0).
+  intros Hr0. 
+  admit. (* ok *) 
+
+  unfold S_to_RlP. 
+  revert H2.
+  generalize (val r 0).
+  apply (partial_ind0 _ (fun a => _ -> _ )). 
+  - intros x Hx; apply H1. 
+  - intros Hx. 
+    assert (Hx2 : r <= RlP_0).
+    apply Hx; reflexivity. 
+    simpl; unfold semi_decide. 
+    destruct (decide (q < 0)). 
+    apply top_greatest. 
+    case n.
+    assert (H3 : elt Q Qlt (rl RlP_0) q). 
+    revert Hq; apply RC_mon with Qle. 
+    intros x y; apply (antisymmetry le).
+    intros x y; apply orders.le_or_lt.
+    reflexivity.
+    apply Hx2. 
+    simpl in H3; unfold semi_decide in *.
+    destruct (decide (q < 0)). 
+    case (n l).     
+    apply not_bot in H3; case H3. 
+  -  
+Admitted. 
 
 (** OpenFun on the Meet *)
 Definition OpenFun_meet {A} (U V : OS A) := OpenFun _ (OS_meet U V).
 
+
 Lemma Meet_pres_openfun {A:hSet}: forall z s,
           MeetPreserving (fun (U: OS A) => val (rl (OpenFun A U z)) s). 
 Proof.
-intros z s x y.
-apply (antisymmetry le).
-+ apply meet_glb;
-  apply imply_le;
-  apply OpenFun_mon;
-  intros k; apply SierMeet_is_meet.
-+ Admitted. 
+intros z s x y;
+unfold OpenFun, sg_op, meet_is_sg_op.
+assert (H1 : (x ⋂ y) z = meet (x z) (y z)).
+unfold OS_meet, meet.
+apply (antisymmetry le);
+apply imply_le; intros Hs;
+apply top_le_meet in Hs; 
+apply top_le_meet; trivial. 
+rewrite H1. 
+rewrite meet_pres_S_to_RlP. 
+reflexivity. 
+Qed. 
 
 Lemma Join_pres_openfun {A:hSet}: forall z s,
           JoinPreserving (fun (U: OS A) => val (rl (OpenFun A U z)) s). 
 Proof.
-intros z s x y.
-apply (antisymmetry le).
-+ admit. 
-+ apply join_lub;
-  apply imply_le;
-  apply OpenFun_mon;
-  intros k; apply SierJoin_is_join.
-Admitted.
+intros z s x y;
+unfold OpenFun, sg_op, join_is_sg_op.
+assert (H1 : (x ∪ y) z = join (x z) (y z)).
+unfold OS_join, join.
+apply (antisymmetry le);
+apply imply_le; intros Hs;
+apply top_le_join in Hs; 
+apply top_le_join; trivial. 
+rewrite H1. 
+rewrite join_pres_S_to_RlP.
+reflexivity. 
+Qed. 
 
 
 (** OpenFun is modular : more tricky... *)
@@ -459,6 +713,8 @@ induction N.
   reflexivity.
 Admitted.
 
+
+(* to change : it's false... *)
 Lemma appr_add {A : hSet} : forall (f g : mf A) N b m,
          appr (fplus f g) N b m = appr f N b m + appr g N b m. 
 Proof. 
@@ -697,12 +953,42 @@ exists (fun f => RllubPos (fun n => appr f n b mm)); red.
 + admit. 
 Admitted. 
  
-(* will become useless as soon as Riesz2 is defined *)
+
 Lemma Riesz2_simpl (A : hSet) (b:Q+) : forall Nu,
     I (Riesz2 b Nu) = fun f:mf A =>
                         RllubPos (fun n => appr f n b Nu). 
 Admitted.
 
+
+(*
+Lemma appr_openfun (A : hSet) : forall N (nu : Val A) U,
+       N <> 0 ->  appr (OpenFun A U) N 1 nu = mu _ nu U. 
+Proof. 
+intros N mu U HN. 
+induction N. 
++ case HN. 
+  reflexivity.
++ simpl.
+  induction N. 
+  - simpl.
+    rewrite Rlow_mult_q_RlP_0.
+    unfold plus. 
+    rewrite RlPPlus_left_id.
+    admit. 
+  - assert (S N  ≠ 0).
+    intros HF. 
+    pose (HpN := peano_naturals.S_gt_0 N).  
+    rewrite HF in HpN.
+    apply orders.lt_iff_le_ne in HpN. 
+    case (snd (HpN)).
+    reflexivity. 
+    specialize (IHN X). 
+    rewrite IHN.
+Admitted.*)
+
+Lemma appr_corr_inf {A} : forall b (nu:Val A) U n,
+                  appr (OpenFun A U) b n nu <= mu _ nu U.
+Admitted.
 
 
 Lemma Riesz_hom1 (A : hSet) : forall (Mu :Val A) U,
@@ -715,7 +1001,9 @@ apply (antisymmetry le).
 + apply Rllub_le; intros n.
   unfold toRlseq.
   apply appr_corr_inf.
-+ admit. 
++ 
+
+  admit. 
 Admitted. 
 
 Definition Riesz_hom2 (A : hSet) : forall (It : IntPos A) f,
@@ -730,13 +1018,9 @@ apply (antisymmetry le).
   induction n. 
   - simpl.
     destruct (I It f).
-    intros s hs; simpl; apply rlpos.
-    simpl in hs; unfold semi_decide in hs.
-    destruct (decide (s < 0)); trivial.
-    apply not_bot in hs; case hs. 
+    admit.
   - simpl. 
-    unfold qP.
+    unfold qP.      
 Admitted.
- 
 
 
