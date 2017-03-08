@@ -1,5 +1,3 @@
-
-
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders
                HoTTClasses.implementations.sierpinsky
@@ -987,6 +985,7 @@ apply Hrk.
 trivial.
 Qed.
 
+
 (** Lub of a set of lower reals isomorphic to Q (TODO : general enumerable set) *)
 Definition RllubQ (f : Q -> Rlow)  : Rlow. 
 exists (fun q => semi_decide (exists n, (val (f n) q))). 
@@ -1003,7 +1002,8 @@ exists (fun q => semi_decide (exists n, (val (f n) q))).
     intros (q,Hn). 
     assert (Ho : merely (exists n:Q, val (f n) q)).
     apply tr; exists 0; trivial. 
-    generalize ((@top_le_enumerable_sup _ _ _ Qenum) (fun n => val (f n) q)).
+    generalize ((@top_le_enumerable_sup _ _ _ Qenum)
+                  (fun n => val (f n) q)).
     intros HG. 
     apply HG in Ho.             
     apply tr. exists q. 
@@ -1013,8 +1013,9 @@ exists (fun q => semi_decide (exists n, (val (f n) q))).
    * unfold semi_decide, SDseq_Rlow in *. 
      unfold semi_decide_exists in *.
      unfold semi_decide in *. 
-     assert (Hnn : forall n, val (f n) q -> merely (exists r, Qlt q r 
-                                                      ∧  val (f n) r)).
+     assert (Hnn : forall n, val (f n) q ->
+                          merely (exists r, Qlt q r 
+                               ∧  val (f n) r)).
      intros n. 
      destruct (f n). 
      destruct elt_RC0. 
@@ -1079,7 +1080,8 @@ apply (HG _ _ (fun n => val (fr n) q) 0).
 trivial.
 Qed.
 
-Lemma RllubQ_lub : forall (fr : Q -> Rlow) n, Rlle (fr n) (RllubQ fr).
+Lemma RllubQ_lub : forall (fr : Q -> Rlow) n, Rlle (fr n)
+                                                   (RllubQ fr).
 Proof.
 intros fr n q Hq.
 unfold Rllub; simpl.
@@ -1095,7 +1097,8 @@ apply (HG _ _ (fun n => val (fr n) q) 0).
 Qed.
 
 Lemma RllubQ_le 
-  : forall (fr : Q -> Rlow) r, (forall n, Rlle (fr n)  r) -> Rlle (RllubQ fr) r.
+  : forall (fr : Q -> Rlow) r, (forall n, Rlle (fr n)  r)
+                               -> Rlle (RllubQ fr) r.
 Proof.
 intros fr r Hn.
 intros q Hq.  
@@ -1133,6 +1136,159 @@ reflexivity.
 apply Hrk.
 trivial.
 Qed.
+
+
+(** Lub of a set of lower reals isomorphic to Q (TODO : general enumerable set) *)
+Definition RllubQP (f : Q+ -> Rlow)  : Rlow.
+exists (fun q => semi_decide (merely (exists n, (val (f n) q)))). 
++ split. 
+  - unfold semi_decide in *.
+    unfold SDseq_Rlow in *.
+    unfold semi_decide_exists in *.
+    unfold semi_decide, semi_decide_sier in *.
+    assert (Hn : forall n, merely (exists qn, val (f n) qn)). 
+    intros n.
+    destruct (f n). 
+    destruct elt_RC0. simpl. trivial. 
+    specialize (Hn 1). revert Hn; apply (Trunc_ind _). 
+    intros (q,Hn). 
+    assert (Ho : merely (exists n:Q+, val (f n) q)).
+    apply tr; exists 1; trivial.
+    generalize ((@top_le_enumerable_sup _ _ _ Qpos_enumerable)
+                  (fun n => val (f n) q)).
+    intros HG. 
+    apply HG in Ho.             
+    apply tr. exists q;trivial.    
+ - intros q. 
+   split; intros H'.    
+   * unfold semi_decide, SDseq_Rlow in *. 
+     unfold semi_decide_exists in *.
+     unfold semi_decide in *. 
+     assert (Hnn : forall n, val (f n) q ->
+                          merely (exists r, Qlt q r 
+                               ∧  val (f n) r)).
+     intros n. 
+     destruct (f n). 
+     destruct elt_RC0. 
+     simpl. intros Hh. 
+     apply is_rounded0 in Hh. trivial.
+     apply top_le_enumerable_sup' in H'.
+     revert H'; apply (Trunc_ind _); intros (z,H').
+     specialize (Hnn z).
+     specialize (Hnn H').
+     revert Hnn. apply (Trunc_ind _).
+     intros (r,(Hr1,Hr2)).
+     apply tr.
+     exists r.
+     split; try trivial.
+     revert Hr2.
+     apply SierLe_imply.
+     generalize enumerable_sup_ub'.
+     intros HG.
+     apply (HG _ _ (fun n => val (f n) r) 0).
+   * unfold semi_decide in *. 
+     unfold SDseq_RlowQ in *. 
+     unfold semi_decide_exists in *.
+     unfold semi_decide in *.
+     revert H'; apply (Trunc_ind _).      
+     intros (rr,(H',H'')). 
+     assert (Qle q rr).         
+     apply orders.lt_le.
+     unfold PropHolds.
+     trivial.
+     apply top_le_enumerable_sup.
+     apply top_le_enumerable_sup in H''.
+     revert H''; apply (Trunc_ind _); intros (s,H'').
+     apply tr.
+     exists s.
+     unfold semi_decide in *.    
+     apply RC_le with Qle rr; try trivial.
+     intros x y; apply (antisymmetry le).
+     intros x y; apply le_or_lt.
+Defined.
+
+(** Properties of RllubQ *)
+Lemma RllubQP_case 
+  : forall (fr : Q+ -> Rlow) n p, val (fr n) p -> val (RllubQP fr) p.
+Proof.
+intros fr n p Hp.
+apply RC_mon with Qle (fr n) p.
+intros x y; apply (antisymmetry le).
+intros x y; apply le_or_lt.
+reflexivity.
+unfold RCLe_l.
+unfold Rllub. simpl.
+intros q Hq.
+unfold semi_decide.
+unfold SDseq_Rlow.
+unfold semi_decide_exists.
+unfold semi_decide.
+revert Hq.
+apply SierLe_imply. 
+generalize enumerable_sup_ub'.
+intros HG.
+apply (HG _ _ (fun n => val (fr n) q) 0).
+trivial.
+Qed.
+
+Lemma RllubQP_lub : forall (fr : Q+ -> Rlow) n, Rlle (fr n)
+                                                   (RllubQP fr).
+Proof.
+intros fr n q Hq.
+unfold Rllub; simpl.
+unfold semi_decide.
+unfold SDseq_Rlow.
+unfold semi_decide_exists.
+unfold semi_decide.
+revert Hq.
+apply SierLe_imply. 
+generalize enumerable_sup_ub'.
+intros HG.
+apply (HG _ _ (fun n => val (fr n) q) 0).
+Qed.
+
+Lemma RllubQP_le 
+  : forall (fr : Q+ -> Rlow) r, (forall n, Rlle (fr n)  r)
+                               -> Rlle (RllubQP fr) r.
+Proof.
+intros fr r Hn.
+intros q Hq.  
+unfold Rllub in *; simpl in *.
+unfold semi_decide in Hq.
+unfold SDseq_Rlow in Hq.
+unfold semi_decide_exists in Hq.
+unfold semi_decide in Hq.
+revert Hq.
+apply SierLe_imply.
+apply enumerable_sup_least_ub.
+unfold Rlle, RCLe_l in Hn.
+intros x.
+apply imply_le.
+apply Hn.
+Qed.
+
+Lemma RllubQP_mon : forall (fr fk : Q+ -> Rlow),
+    (forall n, Rlle (fr n) (fk n)) -> Rlle (RllubQP fr) (RllubQP fk).
+Proof. 
+intros fr fk Hrk q Hq.
+unfold Rllub in *; simpl in *.
+unfold semi_decide in *.
+unfold SDseq_Rlow in *.
+unfold semi_decide_exists in *.
+unfold semi_decide in *.
+apply top_le_enumerable_sup'.
+apply top_le_enumerable_sup' in Hq.
+revert Hq. apply (Trunc_ind _).
+intros (z,Hq); apply tr.
+exists z.
+apply RC_mon with Qle (fr z) q.
+intros x y; apply (antisymmetry le).
+intros x y; apply le_or_lt.
+reflexivity.
+apply Hrk.
+trivial.
+Qed.
+
 
 
 (** Positive lower reals: a lower real is said to be positive if 
@@ -1181,14 +1337,23 @@ Defined.
 
 
 Lemma RCP_eq0 : forall a b : RlowPos, val (rl a) = val (rl b)
-                                      -> a = b.  
+                                      -> a = b.
 Proof.  
-intros (a,Ha) (b,Hb); simpl; intros E. destruct E.
-admit.
-Admitted. 
+intros (a,Ha) (b,Hb); simpl; intros E.
+apply RlP_eq.
+intros q; simpl. 
+rewrite E. 
+split; trivial.  
+Qed. 
 
 Global Instance RCP_isset :  IsHSet RlowPos. 
-Admitted. 
+Proof.
+apply (@HSet.isset_hrel_subpaths _
+  (fun a b => val (rl a) = val (rl b))).
+- intros a;split;reflexivity.
+- apply _.
+- intros a b E;apply RCP_eq0;apply E.
+Qed.
 
 Lemma RCP_eq : forall a b : RlowPos,
     (forall q, val (rl a) q <-> val (rl b) q) -> a = b.
@@ -1320,6 +1485,42 @@ Lemma RllubPosQ_mon : forall (fr fk : Q -> RlowPos),
 Proof.
 intros fr fk. apply RllubQ_mon. 
 Qed.
+
+
+(** Lub of a set of RlowPos isomorphic to Q+  *)
+Definition RllubPosQP (fr : Q+ -> RlowPos) : RlowPos.
+exists (RllubQP fr).
+intros p Hp.
+apply RllubQP_case with 1.
+apply rlpos. trivial.
+Defined.
+
+Lemma RllubPosQP_case 
+  : forall (fr : Q+ -> RlowPos) n p, val (rl (fr n)) p -> val (rl (RllubPosQP fr)) p.
+Proof.
+intros fr.
+apply RllubQP_case.
+Qed.
+
+Lemma RllubPosQP_lub : forall (fr : Q+ -> RlowPos) n, Rlle (fr n) (RllubPosQP fr).
+Proof.
+intros fr.
+apply RllubQP_lub.
+Qed.
+
+Lemma RllubPosQP_le 
+  : forall (fr : Q+ -> RlowPos) r, (forall n, Rlle (fr n) r) -> Rlle (RllubPosQP fr) r.
+intros fr.
+apply RllubQP_le.
+Qed. 
+
+Lemma RllubPosQP_mon : forall (fr fk : Q+ -> RlowPos),
+    (forall n, Rlle (fr n) (fk n)) -> Rlle (RllubPosQP fr) (RllubPosQP fk).
+Proof.
+intros fr fk. apply RllubQP_mon. 
+Qed.
+
+
 
 (** Any lower real r such that 0%Rlow <= r is positive *)
 Definition Rlow_RlowPos (r : Rlow) : (Rlle (' 0)  r) -> RlowPos.
@@ -1701,21 +1902,12 @@ intros a p;split.
     apply tr.
     destruct Hq as (r,(Hr1,Hr2)).
     exists (r / (pos p)).
-    split.
-    -- admit.
-    -- assert (Hr : (pos p * (r / pos p) = r)).
-       admit.      
-
-       rewrite Hr; trivial.
+    admit. 
   - apply (Trunc_ind _). intros (r,(E1,E2)).
     unfold pred_multQ in *.
     destruct (Qle_total 0 q).
     destruct (Qdec 0 q).
     rewrite <- p0.
-    admit. (* ok *)
-
-    admit.
-    admit.
 Admitted.
 
 Global Definition Rlow_mult_q' : Q+ -> RlowPos -> Rlow. 
@@ -1785,11 +1977,10 @@ simpl in Hq.
 unfold pred_multQ in Hq.
 unfold semi_decide in Hq.
 destruct (decide (pos r * q < 0)).
-
-admit.
-
+Focus 2. 
 apply not_bot in Hq.
 case Hq.
+Focus 2. 
 unfold Rllepos.
 intros q Hq.
 unfold Rlow_mult_q.
@@ -1797,9 +1988,6 @@ simpl.
 unfold pred_multQ.
 unfold semi_decide.
 destruct (decide (pos r * q < 0)).
-admit.
-
-admit.
 Admitted. 
 
 (** Join of two RlowPos *)
@@ -1843,17 +2031,7 @@ split; trivial.
 Defined.   
 
 Arguments RlPMeet _ _ /.
-(*
-Global Instance RlowLattice : Lattice Rlow. 
-Proof. 
-split.
-+ split. 
-  - split. 
-    -- split. 
-       * apply _.
-       * unfold sg_op.
-         unfold join_is_sg_op.*)
-         
+
       
 
 End LowerReals. 
