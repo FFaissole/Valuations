@@ -1,5 +1,4 @@
 
-
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders
                HoTTClasses.implementations.sierpinsky
@@ -43,10 +42,10 @@ Definition Mpos {A} (I : M A) :=
 Definition Mmon {A} (I : M A) := 
    forall f g : mf A,  f <= g -> (I f) <= (I g).
 
+
 Definition Mcont {A} (I : M A) :=
-  forall f : mf A, (I f = RllubPos (fun n:nat =>
-                                I (fun x => RlP_minus_q2 (f x)
-                                       (pos_of_nat n)))). 
+  forall f : mf A, (I f <= RllubPosQP (fun q:Q+ =>
+                                I (fun x => RlP_minus_q2 (f x) q))). 
 
 Global Instance MPos_semi_group {A} : SemiGroup (M A)
                                           (Aop := @Mplus A). 
