@@ -86,7 +86,6 @@ Defined.
 Notation "U ⋂ V" := (OS_meet U V) (at level 80). 
 Notation "U ∪ V" := (OS_join U V) (at level 80).
 Notation "∅" := (OS_empty).
-Notation "'Ω'" := (OS_full).
 Notation "U ⊆ V" := (Osle U V) (at level 90).
 Notation "∞ Un" := ((lub OS_cpo) Un) (at level 85). 
 
