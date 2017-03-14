@@ -1,5 +1,3 @@
-
-
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders
                HoTTClasses.implementations.sierpinsky
@@ -9,9 +7,9 @@ Require Import HoTTClasses.interfaces.abstract_algebra
 Require Import HoTT.HSet HoTT.Basics.Trunc HProp HSet
                Types.Universe FunextAxiom
                TruncType UnivalenceAxiom Types.Sigma
-               hit.quotient. 
+               HIT.quotient. 
 
-Require Import Spaces.RoundedClosed.
+Require Import RoundedClosed.
 
 Set Implicit Arguments.  
 
@@ -127,3 +125,67 @@ split.
   rewrite fplus_assoc. 
   reflexivity.   
 Defined. 
+
+
+Record mfb (A : hSet) := mk_mfb {
+    ff :> A -> RlowPos;
+    Hfb : merely (exists b, forall x, Rlle (ff x) (QRlow b))
+}.
+
+Definition ffzero (A : hSet) : Zero (mfb A).
+Proof.
+exists (fzero A).
+apply tr; exists 0.
+intros x s; trivial.
+Qed.
+
+Definition ffone (A : hSet) : One (mfb A).
+Proof. 
+exists (fone A). 
+apply tr; exists 1.
+intros x s; trivial. 
+Qed. 
+
+Definition ffplus (A : hSet) : Plus (mfb A).
+Proof.
+intros f g; exists (fun x => (fplus f g) x).
+destruct f as (f,Hf).
+destruct g as (g,Hg).
+revert Hf; apply (Trunc_ind _); intros (bf,Hf).
+revert Hg; apply (Trunc_ind _); intros (bg,Hg).
+apply tr; exists (bf + bg); intros x.
+simpl; intros s Hs.
+rewrite RlPlus_Q. 
+revert Hs; apply RC_mon with Qle. 
+intros u v; apply (antisymmetry le).
+intros u v; apply orders.le_or_lt. 
+reflexivity.
+assert (H2 : Rlle (RlPlus (f x) (g x)) 
+                  (RlPlus (f x) (QRlow bg))).
+apply RlPlus_le_preserving.
+apply Hg.
+assert (H3 : Rlle (RlPlus (f x) (QRlow bg)) 
+                  (RlPlus (QRlow bf) (QRlow bg))).
+rewrite RlPlus_comm.
+rewrite (RlPlus_comm (QRlow bf)).
+apply RlPlus_le_preserving.
+apply Hf.
+intros k H4.
+apply H3, H2, H4.
+Qed.
+
+
+Global Instance fble {A}: Le (mfb A) := 
+                     fun f g => fle f g.
+
+Global Instance Hfb_hprop@{} {A} : forall f, 
+       IsHProp (merely (exists b, forall x:A, Rlle (f x) (QRlow b))).
+Proof.
+apply _. 
+Qed.
+
+Lemma fble_eq_ext {A} : forall f g : mfb A, ff f = ff g -> f = g.
+Proof.
+intros (f,Hf) (g,Hg); simpl; intros E. destruct E. apply ap.
+apply path_ishprop. 
+Qed. 
