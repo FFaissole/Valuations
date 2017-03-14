@@ -5,10 +5,10 @@ Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.orders.orders. 
 Require Import HoTT.HSet HoTT.Basics.Trunc HProp HSet
                Types.Universe UnivalenceImpliesFunext
-               TruncType UnivalenceAxiom hit.quotient
+               TruncType UnivalenceAxiom HIT.quotient
                Basics.FunextVarieties FunextAxiom.
 
-Require Export Spaces.RoundedClosed Spaces.Opens.
+Require Export RoundedClosed Opens.
 
 Section Val. 
 
@@ -44,13 +44,14 @@ Definition mon_opens  {A} (m : Mes A) :=
      - definite : mu ∅ = 0
      - monotonicity 
      - sub-probability : mu A <= 1 *)
-Record Val  (A : hSet) : Type :=
-  {mu :> @Mes A;
+Record Val (A : hSet) : Type :=
+  {mu :> OS A -> RlowPos;
    mu_modular : modular mu; 
    mu_empty_op : empty_op mu;
    mu_mon : mon_opens mu;
-   mu_prob : (mu Ω) <= (RlP_1)
+   mu_prob : (mu (fun x => SierTop)) <= (RlP_1)
 }.
+
 
 Hint Resolve mu_modular mu_prob mu_empty_op mu_mon.
 
@@ -63,8 +64,8 @@ Hint Resolve mu_monotonic.
 
 (** eq stable *)
 
-Lemma mu_stable_eq : forall  {A} (m: Val A) (U V : OS A),
-    U = V -> (mu A m U) = (mu A m V).
+Lemma mu_stable_eq : forall {A} (m: Val A) (U V : OS A),
+    U = V -> m U = m V.
 Proof. 
 intros A m U V H2.
 rewrite H2. 
@@ -74,7 +75,7 @@ Qed.
 Hint Resolve mu_stable_eq.
 
 (** mu m (fone A) <= 1%RlPos *)
-Lemma mu_one : forall  {A} (m: Val A), (mu A m Ω) <=  RlP_1.
+Lemma mu_one : forall  {A} (m: Val A), m (fun x => SierTop)  <=  RlP_1.
 Proof. auto. Qed. 
 
 Hint Resolve mu_one.
