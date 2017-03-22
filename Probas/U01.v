@@ -1,3 +1,4 @@
+
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders
                HoTTClasses.implementations.sierpinsky
@@ -62,6 +63,7 @@ Definition closed_interval (p q : Q) : Cut -> Type :=
 
 Notation "] p ; q [" := (open_interval p q) (at level 50).
 Notation "[ p ; q ]" := (closed_interval p q) (at level 50).
+
 
 Definition covers_open_int : forall U: OS (U01), exists W : nat -> Q*Q, 
                              (forall n, snd (W n) <= snd (W (S n))) /\
@@ -147,52 +149,252 @@ induction N.
   reflexivity. 
   trivial.
 Admitted. 
-  
+              
 
-Section Open_rats. 
+Definition os_open_int (p q : Q) : OS U01 := 
+              fun x => (semi_decide ((open_interval p q) x)).
 
-Axiom WSO : forall (U : OS U01) x, U x -> exists p q, ] p , q [ x 
-                                                  /\ (] p , q [ ⊆ U).
-                                                  
-            (* let to define *)                                      
-Definition m01 : OS U01 -> RlowPos.
-Admitted.
-Lemma val_op_rat : forall p q, rl (m01 (op_rat p q)) 
-                                 = QRlow (p - q).
-Admitted.  
-Lemma m01_mon : forall U V, U <= V -> m01 U <= m01 V.
+Notation "] p ; q [" := (os_open_int p q) (at level 50).
+
+Axiom WSO : forall (U : OS U01) x, U x -> exists p q, ] p ; q [ x /\
+                                                     (] p ; q [ ⊆ U).
+
+Axiom WSO_strong : forall (U : OS U01), exists (W : nat -> Q*Q), forall x, 
+                  (U x -> exists n, (] fst (W n) ; snd (W n) [ x)) /\
+                               (forall k, ] fst (W k) ; snd (W k) [ ⊆ U).
+
+
+Fixpoint W_sum (A B : nat -> Q) (n : nat) : Rlow := match n with 
+   | O => match (Qle_total (A 0) (B 0)) with 
+               | left _ => QRlow (B 0 - A 0)
+               | right _ => 0
+          end
+   | S p  => W_sum A B p + QRlow (B n - (Qjoin (A n) (B p)))
+end.
+
+Lemma W_sum_pos : forall A B n, Rl0 <= W_sum A B n.
 Admitted. 
+
+Definition m01 : OS U01 -> RlowPos.
+Proof.
+intros U; generalize (WSO_strong U); intros (W,H).
+pose (A := fun n => fst (W n)).
+pose (B := fun n => snd (W n)).  
+exists (Rllub (fun n => W_sum A B n)).
+intros p Hp.
+assert (h0 : val Rl0 p).
+unfold Rl0; simpl; unfold semi_decide; 
+destruct (decide (p < 0)).
+apply top_greatest.
+case (n Hp). 
+revert h0; apply RC_mon with Qle. 
+intros a b; apply (antisymmetry le). 
+intros a b; apply orders.le_or_lt. 
+reflexivity.
+intros k Hk; 
+apply Rllub_lub with 0; 
+apply W_sum_pos; trivial.
+Defined. 
+
+Lemma m01_rat : forall p q, rl (m01 (] p ; q [)) = QRlow (q - p).
+Proof.
+intros p q; unfold m01; simpl. 
+assert (AntiSymmetric Rlle).
+admit.
+
+apply (antisymmetry Rlle).
++ apply Rllub_le.
+  intros n z Hnq.
+  simpl in Hnq.
+Admitted.
+
+Lemma m01_mon : forall U V, U ⊆ V -> m01 U <= m01 V. 
+Proof.
+intros U V HUV q Hq.
+unfold m01 in *.
+simpl in *; unfold semi_decide, SDseq_Rlow, 
+semi_decide_exists in *.
+unfold semi_decide in *.
+destruct (WSO_strong U) as (WU,HU). 
+destruct (WSO_strong V) as (WV,HV).
+assert (H' : ∀ x : U01, U x -> (∃ n : nat, 
+             (] fst (WV n); snd (WV n) [) x) ∧
+             (forall k, ] fst (WV k); snd (WV k) [ ⊆ V)).
+intros x Hx. split; apply HV.
+revert Hx; apply SierLe_imply. 
+apply HUV; trivial. trivial. 
+apply top_le_enumerable_sup in Hq; 
+apply top_le_enumerable_sup.
+revert Hq; apply (Trunc_ind _); 
+intros (m,Hq); apply tr.
+unfold semi_decide in *; simpl in *.
+Admitted.
+
+Lemma m01_def : m01 ∅ = RlP_0.
+Proof.
+apply (antisymmetry le).
++ intros s Hs.
+  simpl; unfold semi_decide;
+  destruct (decide (s < 0)).
+  apply top_greatest.
+  unfold m01 in Hs.
+  simpl in Hs.
+  unfold semi_decide, SDseq_Rlow, 
+         semi_decide_exists, 
+         semi_decide in *.
+  apply top_le_enumerable_sup in Hs. 
+  revert Hs; apply (Trunc_ind _). 
+  intros (m,Hm).
+  assert (H0 : (W_sum
+          (λ n : nat,
+           fst ((let (proj1_sig, _) 
+             := WSO_strong ∅ in proj1_sig) n))
+          (λ n : nat,
+           snd ((let (proj1_sig, _) 
+             := WSO_strong ∅ in proj1_sig) n)) 
+          m) = RlP_0).
+  simpl; destruct (WSO_strong ∅) as (W,(HW,Hi)).
+  specialize (Hi m).
+  assert (Hj : ] fst (W m); snd (W m) [ = ∅).
+  apply (antisymmetry le).
+  intros r; apply Hi.
+  intros r; apply imply_le; intros Hr.
+  simpl in Hr; apply not_bot in Hr; 
+  case Hr.
+  induction m.
+  - simpl.
+    destruct (Qle_total (fst (W 0)) (snd (W 0))).
+    assert (H2 : fst (W 0) = snd (W 0)).
+    apply (antisymmetry le); trivial.
+    apply le_iff_not_lt_flip.
+    intros HF.
+    assert (Hj2 : forall x,  ] fst (W 0); snd (W 0) [ x 
+                           <-> Empty).
+    intros x. rewrite Hj.
+    split; intros F. 
+    apply not_bot in F; case F. 
+    case F. SearchAbout rationals.Q.
+    assert (mean : U01).
+    exists (QCut (fst (W 0) + snd (W 0)/2)).
+    admit.
+
+    apply (Hj2 mean).
+    admit.
+
+    rewrite H2.
+    admit.
+    reflexivity. 
+  - simpl; rewrite IHm.
+    destruct (WSO_strong ∅).
+    simpl in *.
+    destruct (Qle_total (fst (W (S m))) 
+                        (snd (W m))).
+     
+     
+    
+
+ admit. admit.  
+  - rewrite H0 in Hm. clear H0.
+    simpl in Hm; unfold semi_decide in Hm; 
+    destruct (decide (s < 0)); trivial.
+    case (n l).
++ intros s Hs.
+  destruct (m01 ∅).
+  apply rlpos.
+  simpl in Hs; unfold semi_decide in Hs; 
+  destruct (decide (s < 0)); trivial.
+  apply not_bot in Hs; case Hs.
+Admitted. 
+ 
+Lemma m01_mod : forall U V, m01 U + m01 V = m01 (U ∪ V) + m01 (U ⋂ V).
+Proof. 
+Admitted.
+
+Lemma m01_prob :  m01 (fun x => SierTop) <= RlP_1.
+Proof.
+intros s Hs.
+unfold m01 in Hs.
+simpl in Hs.
+unfold semi_decide, SDseq_Rlow, 
+       semi_decide_exists, 
+       semi_decide in Hs. 
+simpl in Hs.
+apply top_le_enumerable_sup in Hs.
+revert Hs; apply (Trunc_ind _); 
+intros (m,Hm).
+induction m.
++ simpl in Hm.
+  admit.
++ clear IHm.
+  simpl in Hm.   apply IHm.
+      
+
+
+destruct (WSO_strong 
+           (λ _ : U01, SierTop)) as (W,HW).
+assert (H : ∀ x : U01, ∃ n : nat,
+       (] fst (W n); snd (W n) [) x).
+assert (Ht: IsTop SierTop).
+apply top_greatest.
+intros x; specialize (HW x Ht).
+clear Ht.
+destruct HW as (n,(Hn,_)).
+exists n; trivial.
+ 
+
+
+ 
+apply top_greatest.
+specialize (   
+(SierTop_is_top))).
+ 
+
+ 
+
+
+
+Admitted.   
 
 Definition V01 : Val U01.
 Proof.
 exists m01.
-+ admit. 
-+ assert (H0 : forall p q, m01 ∅ <= m01 (op_rat p q)).  
-  intros p q; apply m01_mon.
-  intros s; apply imply_le; intros Hs; 
-  apply not_bot in Hs; case Hs.
-  specialize (H0 0 0).
-  red in H0; unfold Rllepos, Rl_pos_Le in H0.
-  rewrite val_op_rat in H0.
-  assert (H1 : Rlle (QRlow (0 - 0)) RlP_0). 
-  assert (Hz : (0 - 0) = Qzero).
-  apply rings.plus_negate_r.
-  rewrite Hz.
-  intros s; trivial. 
-  apply (antisymmetry le).
-  - red; unfold Rl_pos_Le, Rlle, RCLe_l in *.  
-    intros q Hq.
-    apply H1, H0, Hq.
-  - intros s Hs; simpl in Hs; 
-    unfold semi_decide in Hs; apply rlpos.
-    destruct (decide (s < 0)); try trivial.
-    apply not_bot in Hs; case Hs.
-+ red; apply m01_mon.
-+ admit. 
-Admitted.
++ intros U V; apply (m01_mod U V).
++ apply m01_def.
++ intros U V; apply m01_mon.
++ apply m01_prob. 
+Defined.  
 
-Theorem V01_U01_1 : V01 Ω = RlP_1.                               
-Proof. 
-Admitted.
 
-End Open_rats.
+Definition compact (U : OS U01) := forall (W : nat -> Q*Q),
+             (forall x, U x -> exists n, ] fst (W n) ; snd (W n) [ x) 
+             -> 
+             (exists N, forall x, U x -> exists n, n <= N /\ 
+                            ] fst (W n) ; snd (W n) [ x). 
+                        
+Axiom U01_compact : compact (fun x => SierTop).
+
+Theorem V01_U01_1 : V01 (fun x => SierTop) = RlP_1.                               
+Proof.
+apply (antisymmetry le).
++ apply V01.
++ intros s Hs.
+  unfold V01; simpl.
+  unfold semi_decide, SDseq_Rlow, semi_decide_exists.
+  unfold semi_decide; simpl.
+  apply top_le_enumerable_sup.
+  apply tr; simpl.
+  generalize U01_compact; intros Hcp.
+  unfold compact in Hcp.
+  destruct (WSO_strong (fun x => SierTop)) as (W,H).
+  specialize (Hcp W).
+  assert (H' : ∀ x : U01, (IsTop SierTop) 
+        -> ∃ n : nat, (] fst (W n); snd (W n) [) x).
+  intros x Ht; specialize (H x Ht).
+  destruct H as (m,(H,_)).
+  exists m; apply H.
+  specialize (Hcp H').
+  clear H H'.   
+  destruct Hcp as (N,HcN).
+  exists N.
+  
+Admitted.
