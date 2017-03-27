@@ -84,4 +84,33 @@ intros x; trivial.
 rewrite Hfg; reflexivity.
 Qed.
 
+Lemma IntPos_eq0 {A} (J H : IntPos A) :
+          I J = I H -> J = H.
+Proof. 
+intros Hx.
+destruct J; destruct H; simpl in Hx;
+destruct Hx.
+assert (Hdef : I_def0 = I_def1).
+apply path_ishprop.
+assert (Hadd : I_add0 = I_add1).
+apply path_ishprop.
+assert (Hmon : I_mon0 = I_mon1).
+apply path_ishprop.
+assert (Hprob : I_prob0 = I_prob1).
+apply path_ishprop.
+assert (Hcont : I_cont0 = I_cont1).
+apply path_ishprop.
+rewrite Hdef, Hadd, Hmon, Hcont, Hprob.
+reflexivity. 
+Qed. 
+ 
+Instance IntPos_isset@{} {A} : IsHSet (IntPos A).
+Proof.
+apply (@HSet.isset_hrel_subpaths _
+  (fun a b => I a = I b)).
+- intros a;split;reflexivity.
+- apply _.
+- intros a b E;apply IntPos_eq0;apply E.
+Qed.
+
 End Integrals. 
