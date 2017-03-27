@@ -357,3 +357,118 @@ exists (fun f => (RlP_plus (Rlow_mult_q (1 / 2) (f true))
 + admit. 
 Admitted. 
 
+Definition Nat_s : hSet := default_TruncType 0 nat hset_nat. 
+
+Definition valn (n : Nat_s) : nat := n.
+
+Definition OSn (N : OS (Nat_s)) : nat -> RlowPos :=
+        fun n => (OpenFun Nat_s N) n. 
+
+
+Fixpoint sum_n_moy_aux (p : nat) (f : nat -> RlowPos) : RlowPos := match p with
+          |O => RlP_0
+          |S p0 => RlP_plus (f (S p0)) (sum_n_moy_aux p0 f)
+end.
+
+Definition O_Sp (p : nat) : Q+. 
+Proof. 
+refine (1 / qnp (S p)). 
+Defined. 
+
+Fixpoint sum_n_moy (p : nat) f : RlowPos := Rlow_mult_q (O_Sp p)
+                              (sum_n_moy_aux p f). 
+
+Definition random_aux (M : nat) : Mes Nat_s. 
+Proof.
+intros N.
+pose (N' := OSn N).
+exists (rl (sum_n_moy M N')).
+apply (sum_n_moy M). 
+Defined. 
+
+Definition random (M : nat) :  Val Nat_s.  
+Proof. 
+exists (random_aux M).  
++ unfold modular. intros U V.
+  apply (antisymmetry Rllepos).   
+  unfold Rllepos; simpl. 
+  intros q Hq. 
+  - unfold OSn in *. 
+    apply pred_plus_pr. 
+    apply pred_plus_pr in Hq. 
+    revert Hq; apply (Trunc_ind _). 
+    intros (r,(s,(E1,(E2,E3)))).
+    apply tr. 
+    exists r, s. 
+    admit. 
+  - admit. 
++ unfold empty_op. 
+  apply (antisymmetry Rllepos). 
+  - intros p Hp.
+    simpl in Hp.
+    induction M. 
+    -- simpl in Hp.
+       unfold semi_decide in Hp.
+       unfold pred_multQ in Hp.
+       destruct (decide ((rationals.pos (O_Sp 0) * p)%mc < 0)).
+       simpl. unfold semi_decide.
+       destruct (decide (p < 0)). 
+       apply top_greatest. 
+       unfold O_Sp in l. 
+       simpl in l. 
+       admit. (* ok *)
+       apply not_bot in Hp. 
+       case Hp. 
+    -- assert (Hnn : elt Q Qlt (rl (sum_n_moy M (OSn ∅))) p).
+       revert Hp. 
+       apply RC_mon with Qle.   
+       intros x y; apply (antisymmetry Qle). 
+       intros x y; apply orders.le_or_lt. 
+       reflexivity. 
+       intros q Hq. 
+       unfold sum_n_moy in *. 
+       simpl in Hq.        
+       unfold pred_multQ in Hq. 
+       apply pred_plus_pr in Hq.
+       revert Hq; apply (Trunc_ind _).
+       intros (r,(s,(H1,(H2,H3)))).
+       unfold OSn.  
+       admit. (* ok but cumbersome *)
+
+       apply IHM; trivial.
+  - intros q Hq.
+    apply rlpos. 
+    simpl in Hq; 
+    unfold semi_decide in Hq;
+    destruct (decide (q < 0)); try trivial.  
+    apply not_bot in Hq.     
+    case Hq. 
++ unfold mon_opens. 
+  intros U V HUV.
+  intros q Hq. 
+  unfold random_aux in *; simpl in *.
+  induction M.
+  - simpl in *. 
+    trivial.
+  - simpl.    
+    simpl in Hq.     
+    unfold pred_multQ in Hq. 
+    unfold pred_multQ. 
+    apply pred_plus_pr. 
+    apply pred_plus_pr in Hq. 
+    revert Hq; apply (Trunc_ind _). 
+    intros (r,(s,(E1,(E2,E3)))).
+    apply tr. 
+    exists r, s.     
+    repeat split; trivial. 
+    revert E1. 
+    apply RC_mon with Qle. 
+    intros x y; apply (antisymmetry Qle). 
+    intros x y; apply orders.le_or_lt.
+    reflexivity.
+    apply OpenFun_mon. 
+    trivial.
+    revert E2.
+Admitted. 
+
+
