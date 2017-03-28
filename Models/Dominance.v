@@ -16,16 +16,16 @@ Require Import HoTT.HSet HoTT.Basics.Trunc HProp HSet
                Types.Prod HIT.Truncations.
 
 
-Definition weak_dominance (D : Type0) (is_top : D -> Type) := 
-           forall (u:hProp) (s:D),
-             hexists (fun z:D => is_top s -> is_top z = u) -> 
-             hexists (fun m:D => merely (is_top m) 
+Definition weak_dominance (Σ : Type0) (is_top : Σ -> Type) := 
+           forall (u:hProp) (s:Σ),
+             hexists (fun z:Σ => is_top s -> is_top z = u) -> 
+             hexists (fun m:Σ => merely (is_top m) 
                                = merely (u /\ (is_top s))).
 
-Definition dominance (D : Type0) (is_top : D -> Type) := 
-           forall (u:hProp) (s:D),
-             (is_top s -> hexists (fun z:D => is_top z = u)) -> 
-             hexists (fun m:D => merely (is_top m) 
+Definition dominance (Σ : Type0) (is_top : Σ -> Type) := 
+           forall (u:hProp) (s:Σ),
+             (is_top s -> hexists (fun z:Σ => is_top z = u)) -> 
+             hexists (fun m:Σ => merely (is_top m) 
                                = merely (u /\ (is_top s))).
 
 Lemma weak_dominance_sier : weak_dominance Sier IsTop.
@@ -81,7 +81,7 @@ Definition Countable_choice := forall (A : Type) (R : nat -> A -> Type),
                
 
 Lemma dominance_sier (HCC : Countable_choice) 
-                       : dominance Sier IsTop.
+                             : dominance Sier IsTop.
 Proof.
 intros p u.
 revert u.
