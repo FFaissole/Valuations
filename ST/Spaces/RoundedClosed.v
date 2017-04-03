@@ -1,5 +1,6 @@
 
 
+
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders
                HoTTClasses.implementations.sierpinsky
@@ -1891,9 +1892,31 @@ intros a p;split.
   apply (Trunc_ind _).  
   intros (q,Hq). apply tr.
   exists (q/(pos p)).
-  assert (pos p * (q / pos p) = q).
-  admit.
-
+  assert (X: pos p * (q / pos p) = q).
+  transitivity (q*(pos p / pos p)).
+  rewrite mult_assoc.
+  rewrite mult_comm.
+  rewrite mult_assoc.
+  rewrite mult_comm.
+  rewrite (mult_comm (pos p)).
+  reflexivity. 
+  assert (Hp1 : pos p / pos p = 1).
+  transitivity (1/1).
+  apply equal_dec_quotients.
+  apply not_le_ne.
+  intros HF.
+  apply le_iff_not_lt_flip in HF. 
+  assert (Hp : 0 < pos p).
+  apply p.
+  case (HF Hp).
+  generalize rational_1_neq_0.
+  apply apartness.apart_ne.
+  rewrite mult_comm; reflexivity.
+  rewrite dec_recip_1.
+  rewrite mult_1_r; reflexivity.  
+  rewrite Hp1.
+  rewrite mult_1_r.
+  reflexivity.   
   rewrite X.
   trivial.
 + split.
@@ -1906,7 +1929,52 @@ intros a p;split.
     apply tr.
     destruct Hq as (r,(Hr1,Hr2)).
     exists (r / (pos p)).
-    admit. 
+    split.
+    generalize (equal_dec_quotients q Qone r (pos p)).
+    intros Hg.
+    assert (H10 : Qone ≠ 0).
+    generalize rational_1_neq_0.
+    apply apartness.apart_ne.
+    assert (Hp0 : pos p ≠ 0).
+    apply not_le_ne.
+    intros HF.
+    apply le_iff_not_lt_flip in HF. 
+    assert (Hp : 0 < pos p).
+    apply p.
+    case (HF Hp).
+    specialize (Hg H10 Hp0).
+    assert (Hj :  q * pos p < r * Qone ↔ 
+                  q / Qone < r / pos p).
+    split; intros H'.
+    SearchAbout lt le. 
+    apply lt_iff_le_apart.
+    apply lt_iff_le_apart in H'.
+    destruct H' as (A,B).
+    split; admit.
+     
+    rewrite mult_assoc.
+    rewrite mult_comm.
+    rewrite mult_assoc.
+    rewrite mult_comm.
+    rewrite (mult_comm _ (pos p)).
+    assert (Hp1 : pos p / pos p = 1).
+    transitivity (1/1).
+    apply equal_dec_quotients.
+    apply not_le_ne.
+    intros HF.
+    apply le_iff_not_lt_flip in HF. 
+    assert (Hp : 0 < pos p).
+    apply p.
+    case (HF Hp).
+    generalize rational_1_neq_0.
+    apply apartness.apart_ne.
+    rewrite mult_comm; reflexivity.
+    rewrite dec_recip_1.
+    rewrite mult_1_r.
+    reflexivity.
+    rewrite Hp1.
+    rewrite mult_1_r. 
+    trivial. 
   - apply (Trunc_ind _). intros (r,(E1,E2)).
     unfold pred_multQ in *.
     destruct (Qle_total 0 q).
@@ -1948,6 +2016,7 @@ refine (@Rlow_RlowPos (Rlow_mult_q' q r) X).
 Defined.
 
 Lemma Rlow_mult_q1 : forall r, Rlow_mult_q 1 r = r. 
+Proof.
 intros r.
 apply (antisymmetry Rllepos).
 unfold Rllepos.
@@ -1970,8 +2039,9 @@ rewrite X; clear X.
 rewrite mult_1_l.
 trivial.
 Qed.
- 
+
 Lemma Rlow_mult_q_RlP_0 : forall q, Rlow_mult_q q RlP_0 = RlP_0.
+Proof.
 intros r.
 apply (antisymmetry Rllepos).
 unfold Rllepos.
@@ -1981,10 +2051,22 @@ simpl in Hq.
 unfold pred_multQ in Hq.
 unfold semi_decide in Hq.
 destruct (decide (pos r * q < 0)).
-Focus 2. 
+assert (H0q : q < 0).
+apply neg_mult_decompose in l.
+destruct l.
+destruct p as (F,_).
+assert (Hrp : 0 <= pos r). 
+apply lt_le, r.
+apply le_iff_not_lt_flip in Hrp.
+case (Hrp F).
+destruct p as (_,T). 
+trivial.
+simpl; unfold semi_decide; 
+destruct (decide (q < 0)). 
+trivial.
+case (n H0q).   
 apply not_bot in Hq.
-case Hq.
-Focus 2. 
+case Hq.  
 unfold Rllepos.
 intros q Hq.
 unfold Rlow_mult_q.
@@ -1992,7 +2074,16 @@ simpl.
 unfold pred_multQ.
 unfold semi_decide.
 destruct (decide (pos r * q < 0)).
-Admitted. 
+apply top_greatest.
+assert (hr : q < 0).
+simpl in Hq; unfold semi_decide in *; 
+destruct (decide (q < 0)); trivial.
+apply not_bot in Hq; case Hq.
+assert (Hr : pos r * q < 0).
+apply pos_neg_mult; trivial.
+apply r.
+case (n Hr).  
+Qed. 
 
 (** Join of two RlowPos *)
 
