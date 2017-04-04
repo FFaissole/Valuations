@@ -1929,28 +1929,74 @@ intros a p;split.
     destruct Hq as (r,(Hr1,Hr2)).
     exists (r / (pos p)).
     split.
-    generalize (equal_dec_quotients q Qone r (pos p)).
-    intros Hg.
-    assert (H10 : Qone ≠ 0).
-    generalize rational_1_neq_0.
-    apply apartness.apart_ne.
-    assert (Hp0 : pos p ≠ 0).
+    assert (H1 : Qlt (pos p *q) 
+                (pos p *(r / pos p))).
+    rewrite (mult_comm _ (r / pos p)). 
+    rewrite <- mult_assoc.
+    rewrite (mult_comm _ (pos p)).
+    assert (Hp1 : pos p / pos p = 1).
+    transitivity (1/1).
+    apply equal_dec_quotients.
     apply not_le_ne.
     intros HF.
     apply le_iff_not_lt_flip in HF. 
     assert (Hp : 0 < pos p).
     apply p.
     case (HF Hp).
-    specialize (Hg H10 Hp0).
-    assert (Hj :  q * pos p < r * Qone ↔ 
-                  q / Qone < r / pos p).
-    split; intros H'.
-    SearchAbout lt le. 
-    apply lt_iff_le_apart.
-    apply lt_iff_le_apart in H'.
-    destruct H' as (A,B).
-    split; admit.
-     
+    generalize rational_1_neq_0.
+    apply apartness.apart_ne.
+    rewrite mult_comm; reflexivity.
+    rewrite dec_recip_1.
+    rewrite mult_1_r; reflexivity.  
+    rewrite Hp1.
+    rewrite mult_1_r; trivial. 
+    assert (Hq : q = /pos p * (pos p * q)).
+    rewrite mult_assoc.
+    rewrite mult_comm.
+    rewrite (mult_comm (/ pos p)).
+    assert (Hp1 : pos p / pos p = 1).
+    transitivity (1/1).
+    apply equal_dec_quotients.
+    apply not_le_ne.
+    intros HF.
+    apply le_iff_not_lt_flip in HF. 
+    assert (Hp : 0 < pos p).
+    apply p.
+    case (HF Hp).
+    generalize rational_1_neq_0.
+    apply apartness.apart_ne.
+    rewrite mult_comm; reflexivity.
+    rewrite dec_recip_1.
+    rewrite mult_1_r; reflexivity.  
+    rewrite Hp1.
+    rewrite mult_1_r.
+    reflexivity.
+    assert (Hq2 : (r / pos p) = 
+            /pos p * (pos p * (r / pos p))).
+    rewrite mult_assoc. 
+    rewrite mult_assoc. 
+    rewrite (mult_comm (/ pos p)).
+    assert (Hp1 : pos p / pos p = 1).
+    transitivity (1/1).
+    apply equal_dec_quotients.
+    apply not_le_ne.
+    intros HF.
+    apply le_iff_not_lt_flip in HF. 
+    assert (Hp : 0 < pos p).
+    apply p.
+    case (HF Hp).
+    generalize rational_1_neq_0.
+    apply apartness.apart_ne.
+    rewrite mult_comm; reflexivity.
+    rewrite dec_recip_1.
+    rewrite mult_1_r; reflexivity.  
+    rewrite Hp1.
+    rewrite mult_1_l.
+    reflexivity.
+    rewrite Hq, Hq2.
+    apply (strictly_order_preserving 
+                ((/pos p) *.)).
+    apply H1.
     rewrite mult_assoc.
     rewrite mult_comm.
     rewrite mult_assoc.
@@ -1979,7 +2025,42 @@ intros a p;split.
     destruct (Qle_total 0 q).
     destruct (Qdec 0 q).
     rewrite <- p0.
-Admitted.
+    rewrite mult_0_r.
+    revert E2.
+    apply RC_mon with Qle.
+    intros x y; apply (antisymmetry le).
+    intros x y; apply orders.le_or_lt.
+    transitivity (0*0).
+    rewrite mult_0_r;reflexivity.  
+    apply mult_le_compat; try reflexivity.
+    apply lt_le; apply p.
+    transitivity q; trivial.
+    apply lt_le; trivial.
+    reflexivity.
+    revert E2.
+    apply RC_mon with Qle.
+    intros x y; apply (antisymmetry le).
+    intros x y; apply orders.le_or_lt.
+    apply mult_le_compat; trivial.
+    apply lt_le, p.
+    reflexivity.
+    apply lt_le; trivial.
+    reflexivity.
+    revert E2.
+    apply RC_mon with Qle.
+    intros x y; apply (antisymmetry le).
+    intros x y; apply orders.le_or_lt.
+    apply flip_le_negate.
+    rewrite negate_mult_distr_l.
+    rewrite negate_mult_distr_l.
+    apply flip_nonpos_mult_l.
+    apply flip_le_negate.
+    SearchAbout negate. 
+    rewrite negate_0, negate_involutive.
+    apply lt_le, p.
+    apply lt_le; trivial.
+    reflexivity. 
+Qed.
 
 Global Definition Rlow_mult_q' : Q+ -> RlowPos -> Rlow. 
 Proof.
