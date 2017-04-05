@@ -1,11 +1,22 @@
+Add Rec LoadPath "~/Documents/HoTTClasses/".
+Add Rec LoadPath "~/Documents/SyntheticTopology/Spaces".
+Add Rec LoadPath "~/Documents/SyntheticTopology/Theories".
+Add Rec LoadPath "~/Documents/SyntheticTopology/Models".
+Add Rec LoadPath "~/Documents/SyntheticTopology/Probas".
 
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders
+               HoTTClasses.interfaces.rationals
                HoTTClasses.implementations.partiality
                HoTTClasses.implementations.sierpinsky
                HoTTClasses.implementations.dedekind
                HoTTClasses.theory.rationals
-               HoTTClasses.theory.premetric. 
+               HoTTClasses.theory.premetric
+               HoTTClasses.theory.rings
+               HoTTClasses.orders.semirings
+               HoTTClasses.orders.rings
+               HoTTClasses.theory.dec_fields.
+
 Require Import HoTT.HSet HoTT.Basics.Trunc HProp HSet
                Types.Universe
                TruncType Types.Sigma
@@ -56,14 +67,6 @@ apply IntPos_eq0; apply path_forall.
 intros h; unfold im_distr; simpl; 
 reflexivity. 
 Qed.
-
-
-
-
-
-
-
-
 
 
 
@@ -183,8 +186,7 @@ Definition flip : IntPos Bool_s.
 Proof.
 exists (fun f => (RlP_plus (Rlow_mult_q (1 / 2) (f true))
        (Rlow_mult_q (1 / 2) (f false)))).
-+ unfold Mdef.
-  apply (antisymmetry Rllepos). 
++ apply (antisymmetry Rllepos). 
   - intros p Hp.
     simpl in Hp.
     unfold pred_multQ, semi_decide in Hp.
@@ -203,9 +205,35 @@ exists (fun f => (RlP_plus (Rlow_mult_q (1 / 2) (f true))
     apply pred_plus_pr. 
     apply tr.
     exists (p/2), (p/2).
-    destruct (decide ((' 1 * ' (/ 2) * (p/2))%mc < 0)%mc);
-    admit. 
-(*field *)
+    destruct (decide ((' 1 * ' (/ 2) * (p/2))%mc < 0)%mc).
+    repeat split; try (apply top_greatest).
+    rewrite dec_quotients.
+    rewrite <- (semiring_distr Q p 2 2).
+    rewrite <- mult_assoc.
+    assert (H22 : (2 + 2) / (2 * 2) = 1).
+    admit.
+
+    rewrite H22.
+    rewrite mult_1_r.
+    reflexivity.
+    admit. admit.
+
+    split.
+    admit.
+    split. 
+    admit.
+    assert (Ht : ' 1 * ' (/ 2) * (p / 2) < 0).
+    rewrite mult_comm.
+    apply (neg_pos_mult (p/2) (' 1 * ' (/ 2))).
+    admit.
+    
+    apply le_lt_trans with (' 1 * 0).
+    rewrite mult_0_r.
+    reflexivity. 
+    apply pos_mult_lt_l.
+    apply lt_0_1.
+    admit.
+    case (n Ht).          
 + intros f g.
   apply (antisymmetry le).
   - intros q Hq.

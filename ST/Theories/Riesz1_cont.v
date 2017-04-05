@@ -16,8 +16,8 @@ Require Import HoTT.HSet HoTT.Basics.Trunc HProp HSet
                HIT.quotient. 
 
 Require Export RoundedClosed Opens Functions 
-               Valuations LowerIntegrals
-               D_op OpenFun.
+               ContinuousValuations ContinuousLowerIntegrals
+               D_op OpenFun Riesz1.
               
 Set Implicit Arguments.
 
@@ -29,28 +29,15 @@ locales *)
 
 (** From Integrals to Valuations: 
   mu_I (U)  = I (1_U) *)
-Definition Riesz1 (A : hSet) : IntPos A -> Val A. 
+Definition Riesz1_cont (A : hSet) : ContIntPos A -> ContVal A. 
 Proof. 
-intros J. 
-exists (fun U:OS A => (I J (OpenFun A U))). 
-+ red. intros U V.  
-  transitivity (I J (OpenFun _ U) + I J (OpenFun _ V)).
-  unfold plus; reflexivity. 
-  rewrite <- (I_add J (OpenFun _ U) (OpenFun _ V)). 
-  transitivity
-     ((I J( OpenFun _ (OS_join U V)))+
-      (I J (OpenFun _ (OS_meet U V)))); 
-  try reflexivity.
-  rewrite <- (I_add J (OpenFun _ (OS_join U V))
-                    (OpenFun _ (OS_meet U V))).
-  rewrite OpenFun_mod, fplus_comm. reflexivity.  
-+ red. destruct J. 
-  assert (HO : OpenFun A OS_empty = fun x => RlP_0).
-  apply path_forall; intros z.
-  rewrite OpenFun_def; reflexivity.  
-  rewrite HO. simpl. unfold Mdef in I_def. apply I_def. 
-+ red. intros U V H. 
-  apply I_mon. 
-  apply OpenFun_mon; trivial.
-+ unfold OS_full; apply I_prob. 
+intros J.   
+split with (Riesz1 (cI J)). 
+intros f.
+destruct J as (J,JC); 
+simpl.
+rewrite JC.
+reflexivity.  
 Defined.
+
+

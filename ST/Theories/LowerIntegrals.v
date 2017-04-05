@@ -1,4 +1,7 @@
-
+Add Rec LoadPath "~/Documents/HoTTClasses/".
+Add Rec LoadPath "~/Documents/SyntheticTopology/Spaces".
+Add Rec LoadPath "~/Documents/SyntheticTopology/Theories".
+Add Rec LoadPath "~/Documents/SyntheticTopology/Models".
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders
                HoTTClasses.implementations.sierpinsky
@@ -66,11 +69,10 @@ Record IntPos (A : hSet) : Type :=
    I_def : Mdef I;
    I_add : Mstable_add I;
    I_prob : Mprob I;
-   I_mon : Mmon I;
-   I_cont : Mcont I 
+   I_mon : Mmon I
 }.
 
-Hint Resolve I_def I_add I_prob I_mon I_cont. 
+Hint Resolve I_def I_add I_prob I_mon. 
 
 Lemma Ieq_ext {A} (f g : mf A) (It : IntPos A) :
          (forall x, f x = g x) -> It f = It g. 
@@ -95,9 +97,7 @@ assert (Hmon : I_mon0 = I_mon1).
 apply path_ishprop.
 assert (Hprob : I_prob0 = I_prob1).
 apply path_ishprop.
-assert (Hcont : I_cont0 = I_cont1).
-apply path_ishprop.
-rewrite Hdef, Hadd, Hmon, Hcont, Hprob.
+rewrite Hdef, Hadd, Hmon, Hprob.
 reflexivity. 
 Qed. 
  

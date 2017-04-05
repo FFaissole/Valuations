@@ -1,3 +1,9 @@
+
+Add Rec LoadPath "~/Documents/HoTTClasses/".
+Add Rec LoadPath "~/Documents/CoqPL/Spaces".
+Add Rec LoadPath "~/Documents/CoqPL/Theories".
+
+
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders
                HoTTClasses.implementations.sierpinsky

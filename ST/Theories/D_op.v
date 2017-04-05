@@ -1,4 +1,7 @@
-
+Add Rec LoadPath "~/Documents/HoTTClasses/".
+Add Rec LoadPath "~/Documents/SyntheticTopology/Spaces".
+Add Rec LoadPath "~/Documents/SyntheticTopology/Theories".
+Add Rec LoadPath "~/Documents/SyntheticTopology/Models".
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders
                HoTTClasses.implementations.partiality
@@ -11,8 +14,7 @@ Require Import HoTT.HSet HoTT.Basics.Trunc HProp HSet
                TruncType Types.Sigma
                HIT.quotient. 
 
-Require Export RoundedClosed Opens Functions 
-               Valuations LowerIntegrals.
+Require Export RoundedClosed Opens Functions.
               
 Set Implicit Arguments.
 

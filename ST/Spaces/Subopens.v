@@ -1,5 +1,8 @@
 
-
+Add Rec LoadPath "~/Documents/HoTTClasses/".
+Add Rec LoadPath "~/Documents/SyntheticTopology/Spaces".
+Add Rec LoadPath "~/Documents/SyntheticTopology/Theories".
+Add Rec LoadPath "~/Documents/SyntheticTopology/Models".
 
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders

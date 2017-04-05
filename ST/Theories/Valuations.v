@@ -1,4 +1,7 @@
-
+Add Rec LoadPath "~/Documents/HoTTClasses/".
+Add Rec LoadPath "~/Documents/SyntheticTopology/Spaces".
+Add Rec LoadPath "~/Documents/SyntheticTopology/Theories".
+Add Rec LoadPath "~/Documents/SyntheticTopology/Models".
 
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders
@@ -80,5 +83,33 @@ Lemma mu_one : forall  {A} (m: Val A), m Ω <=  RlP_1.
 Proof. auto. Qed. 
 
 Hint Resolve mu_one.
+
+
+Lemma Val_eq0 {A} (J H : Val A) :
+          mu _ J = mu _ H -> J = H.
+Proof. 
+intros Hx.
+destruct J; destruct H; simpl in Hx;
+destruct Hx.
+assert (Hmod : mu_modular0 = mu_modular1).
+apply path_ishprop.
+assert (Hempty : mu_empty_op0 = mu_empty_op1).
+apply path_ishprop.
+assert (Hmon : mu_mon0 = mu_mon1).
+apply path_ishprop.
+assert (Hprob : mu_prob0 = mu_prob1).
+apply path_ishprop.
+rewrite Hmod, Hempty, Hmon, Hprob.
+reflexivity. 
+Qed. 
+ 
+Instance Val_isset@{} {A} : IsHSet (Val A).
+Proof.
+apply (@HSet.isset_hrel_subpaths _
+  (fun a b => mu _ a = mu _  b)).
+- intros a;split;reflexivity.
+- apply _.
+- intros a b E;apply Val_eq0;apply E.
+Qed.
 
 End Val. 
