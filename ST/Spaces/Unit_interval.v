@@ -1,8 +1,4 @@
 
-Add Rec LoadPath "~/Documents/HoTTClasses/".
-Add Rec LoadPath "~/Documents/CoqPL/Spaces".
-Add Rec LoadPath "~/Documents/CoqPL/Theories".
-
 
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders
@@ -18,17 +14,6 @@ Require Import HoTT.HSet HoTT.Basics.Trunc HProp HSet
                Types.Prod.
 
 Require Export RoundedClosed Opens Valuations LowerIntegrals.
-
-Definition Riesz1 (A : hSet) : IntPos A -> Val A. Admitted.
-Definition Riesz2 (A : hSet) : Val A -> IntPos A. Admitted.
-
-Lemma monad1 (A : hSet) : 
-
-
-
-Definition bind' (A B : hSet) (mu : Val A) (F : A -> Val B) : M B 
-                   := Riesz1 (bind A B (Riesz2 A mu) (fun x => Riesz2 B F x)).   
-
 
 
 Section Unit_int.

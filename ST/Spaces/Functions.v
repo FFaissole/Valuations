@@ -1,5 +1,4 @@
-Add Rec LoadPath "~/Documents/HoTTClasses/".
-Add Rec LoadPath "~/Documents/SyntheticTopology/Spaces".
+
 
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders

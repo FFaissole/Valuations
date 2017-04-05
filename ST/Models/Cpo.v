@@ -1,6 +1,4 @@
 
-Add Rec LoadPath "~/Documents/HoTTClasses/".
-Add Rec LoadPath "~/Documents/CoqPL/".
 
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders
