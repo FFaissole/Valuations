@@ -177,8 +177,8 @@ Qed.
 
 Definition flip : IntPos Bool_s. 
 Proof.
-exists (fun f => (RlP_plus (Rlow_mult_q (1 / 2) (f true))
-       (Rlow_mult_q (1 / 2) (f false)))).
+exists (fun f => (RlP_plus (Rlow_mult_q 2 (f true))
+       (Rlow_mult_q 2 (f false)))).
 + unfold Mdef. 
   assert (ho : forall (A:hSet) x, 
        (fzero A x) = RlP_0).
@@ -303,21 +303,21 @@ exists (fun f => (RlP_plus (Rlow_mult_q (1 / 2) (f true))
   - rewrite <- Hdistr.
     rewrite <- Hdistr.
     rewrite (RlPPlus_comm 
-     (Rlow_mult_q (1 / 2) (g true)) 
-     (Rlow_mult_q (1 / 2) (g false))).
+     (Rlow_mult_q 2 (g true)) 
+     (Rlow_mult_q 2 (g false))).
     unfold plus.
     rewrite RlPPlus_assoc.
     rewrite  <- (RlPPlus_assoc (Rlow_mult_q 
-                   (1 / Qpos_plus 1 1) (f true))
-        (Rlow_mult_q (1 / Qpos_plus 1 1) (g true))
-        (Rlow_mult_q (1 / Qpos_plus 1 1) (f false))).
+                   (Qpos_plus 1 1) (f true))
+        (Rlow_mult_q (Qpos_plus 1 1) (g true))
+        (Rlow_mult_q (Qpos_plus 1 1) (f false))).
     rewrite (RlPPlus_comm 
-     (Rlow_mult_q (1 / Qpos_plus 1 1) (g false))
-     (Rlow_mult_q (1 / Qpos_plus 1 1) (g true))).
+     (Rlow_mult_q (Qpos_plus 1 1) (g false))
+     (Rlow_mult_q (Qpos_plus 1 1) (g true))).
     rewrite <- RlPPlus_assoc. 
     rewrite (RlPPlus_comm 
-     (Rlow_mult_q (1 / Qpos_plus 1 1) (g true))
-     (Rlow_mult_q (1 / Qpos_plus 1 1) (f false))).
+     (Rlow_mult_q (Qpos_plus 1 1) (g true))
+     (Rlow_mult_q (Qpos_plus 1 1) (f false))).
     rewrite RlPPlus_assoc.
     rewrite RlPPlus_assoc.
     rewrite RlPPlus_assoc.
@@ -334,10 +334,88 @@ exists (fun f => (RlP_plus (Rlow_mult_q (1 / 2) (f true))
   unfold Rlow_mult_q in *; simpl in *; 
   unfold pred_multQ in *.
   unfold semi_decide in *.
-  admit. 
+  destruct (decide (pos 2 * a < 1)).
+  destruct (decide (pos 2 * b < 1)).
+  destruct (decide (s < 1)).
+  apply top_greatest.
+  assert (Hs1 : s < 1).
+  rewrite E3.
+  apply le_lt_trans with ((1/2)*(pos 2 * a) +
+                          (1/2)*(pos 2 * b)).
+  apply plus_le_compat.
+  rewrite mult_assoc.
+  rewrite mult_comm.
+  rewrite (mult_1_l).
+  rewrite (mult_comm (/2)).
+  assert (H2 : (pos 2 / 2) = 1).
+  transitivity (1/1).
+  apply equal_dec_quotients.
+  apply not_le_ne.
+  intros HF.
+  apply le_iff_not_lt_flip in HF. 
+  assert (Hp : Qzero < 2).
+  apply lt_0_2.
+  case (HF Hp).
+  generalize rational_1_neq_0.
+  apply apartness.apart_ne.
+  rewrite mult_comm; reflexivity.
+  rewrite dec_recip_1.
+  rewrite mult_1_r; reflexivity.  
+  rewrite H2.
+  rewrite mult_1_r; reflexivity.
+  rewrite mult_assoc.
+  rewrite mult_comm.
+  rewrite (mult_1_l).
+  rewrite (mult_comm (/2)).
+  assert (H2 : (pos 2 / 2) = 1).
+  transitivity (1/1).
+  apply equal_dec_quotients.
+  apply not_le_ne.
+  intros HF.
+  apply le_iff_not_lt_flip in HF. 
+  assert (Hp : Qzero < 2).
+  apply lt_0_2.
+  case (HF Hp).
+  generalize rational_1_neq_0.
+  apply apartness.apart_ne.
+  rewrite mult_comm; reflexivity.
+  rewrite dec_recip_1.
+  rewrite mult_1_r; reflexivity.  
+  rewrite H2.
+  rewrite mult_1_r; reflexivity.
+  rewrite <- (semiring_distr Q).
+  apply lt_le_trans with (1 / 2 * (1 + 1)).
+  apply pos_mult_lt_l.
+  rewrite mult_1_l.
+  apply dec_fields.pos_dec_recip_compat.
+  apply lt_0_2.
+  apply plus_lt_compat; trivial.
+  rewrite mult_comm.
+  rewrite mult_assoc.
+  rewrite mult_1_r.
+  assert (Hp2 : 2 / 2 = 1).
+  transitivity (1/1).
+  apply equal_dec_quotients.
+  apply not_le_ne.
+  intros HF.
+  apply le_iff_not_lt_flip in HF. 
+  assert (Hp : (Qzero < 2)).
+  apply lt_0_2.
+  case (HF Hp).
+  apply lt_ne_flip.
+  apply lt_0_1.
+  rewrite mult_comm.
+  reflexivity.
+  rewrite dec_recip_1.
+  rewrite mult_1_r; reflexivity.
+  rewrite Hp2.
+  reflexivity. 
+  case (n Hs1).
+  apply not_bot in E2; case E2.
+  apply not_bot in E1; case E1.
 + intros f g Hfg.
-  transitivity (RlP_plus (Rlow_mult_q (1 / 2) 
-      (f true)) (Rlow_mult_q (1 / 2) (g false))). 
+  transitivity (RlP_plus (Rlow_mult_q 2 
+      (f true)) (Rlow_mult_q 2 (g false))). 
   apply RlPlus_le_preserving.
   intros s Hs.
   unfold Rlow_mult_q in *.
@@ -349,7 +427,7 @@ exists (fun f => (RlP_plus (Rlow_mult_q (1 / 2) (f true))
   apply Hfg.
   rewrite RlPPlus_comm.
   rewrite (RlPPlus_comm 
-       (Rlow_mult_q (1 / 2) (g true))).    
+       (Rlow_mult_q 2 (g true))).    
   apply RlPlus_le_preserving.
   intros s Hs.
   unfold Rlow_mult_q in *.
@@ -359,10 +437,8 @@ exists (fun f => (RlP_plus (Rlow_mult_q (1 / 2) (f true))
   intros x y; apply orders.le_or_lt. 
   reflexivity.
   apply Hfg.
-Admitted.  
+Defined.  
  
-
-
 
 Definition QRlow_qpos (q : Q+)  : RlowPos. 
 Proof.
@@ -400,7 +476,8 @@ Definition OSn (N : OS (Nat_s)) : nat -> RlowPos :=
         fun n => (OpenFun Nat_s N) n. 
 
 
-Fixpoint sum_n_moy_aux (p : nat) (f : nat -> RlowPos) : RlowPos := match p with
+Fixpoint sum_n_moy_aux (p : nat) (f : nat -> RlowPos) : RlowPos := 
+       match p with
           |O => RlP_0
           |S p0 => RlP_plus (f (S p0)) (sum_n_moy_aux p0 f)
 end.
@@ -434,6 +511,74 @@ induction p.
   apply Rllepos_plus_le_preserving.
   apply Hfg.
 Qed.  
+
+Lemma sum_n_moy_aux_prob (n : nat) :
+               Rlle (sum_n_moy_aux n (fone Nat_s))
+                    (match n with |O => 0
+                                  |_ => QRlow n end).
+Proof.
+induction n.
++ intros q; trivial.  
++ intros q. simpl in *.
+  intros H.
+  unfold semi_decide in *.
+  apply pred_plus_pr in H.
+  destruct (decide (q < S n)).
+  apply top_greatest.
+  assert (hq : q < S n).
+  revert H; apply (Trunc_ind _); 
+  intros (a,(b,(E1,(E2,E3)))).
+  rewrite E3.
+  specialize (IHn b).
+  induction n.
+  - clear IHn.
+    simpl in E2.
+    unfold semi_decide in *. 
+    destruct (decide (b < 0)).
+    destruct (decide (a < 1)).
+    apply lt_le_trans with ((1 + 0)%mc).
+    apply plus_lt_compat; trivial. 
+    rewrite (plus_0_r Qone).
+    reflexivity.
+    apply not_bot in E1; case E1.
+    apply not_bot in E2; case E2.
+  - apply IHn in E2.
+    destruct (decide (a < 1)).
+    assert (Hpp : val (RlPlus (QRlow (S n)) 
+                      (QRlow 1)) (a + b)%mc).
+    apply pred_plus_pr.
+    apply tr.
+    exists b, a.
+    repeat split; try trivial.
+    simpl; unfold semi_decide.
+    destruct (decide (a < 1)).
+    apply top_greatest.
+    case (n1 l).
+    rewrite plus_comm.
+    reflexivity.
+    apply pred_plus_pr in Hpp.
+    revert Hpp; apply (Trunc_ind _);
+    intros (u,(v,(F1,(F2,F3)))).
+    rewrite F3.
+    simpl in F1, F2.
+    unfold semi_decide in *.
+    destruct (decide (u < S n)).
+    destruct (decide (v < 1)).
+    apply lt_le_trans with ((qn (S n) + 1)%mc).
+    apply plus_lt_compat; trivial.
+    transitivity (qn (S n) + qn (S 0))%mc.
+    simpl. unfold qn.
+    apply plus_le_compat.
+    reflexivity.
+    reflexivity.
+    rewrite (peano_naturals.S_nat_plus_1 (S n)).
+    simpl.
+    admit. 
+    apply not_bot in F2; case F2.
+    apply not_bot in F1; case F1.
+    apply not_bot in E1; case E1.
+  - case (n0 hq). 
+Admitted.  
 
 Lemma sum_n_moy_aux_add (p : nat) f g : 
       sum_n_moy_aux p (fplus f g) =  RlP_plus (sum_n_moy_aux p f) 
@@ -477,6 +622,19 @@ unfold sum_n_moy.
 rewrite sum_n_moy_aux_def.
 apply Rlow_mult_q_RlP_0.
 Qed.
+
+Lemma sum_n_moy_prob (n : nat) : 
+   Rlle (sum_n_moy n (fone Nat_s)) RlP_1.
+Proof.
+unfold sum_n_moy.
+induction n.
++ generalize (sum_n_moy_aux_prob 0).
+  intros Hh.
+  simpl. simpl in Hh.
+  unfold Rlow_mult_q'.
+Admitted.
+
+
  
 
 Definition random_aux (N : nat) : M Nat_s. 
@@ -609,7 +767,7 @@ exists (random_aux N).
     rewrite E3.
     rewrite (semiring_distr Q).
     reflexivity. 
-+ admit.
++ apply sum_n_moy_prob.
 + unfold mon_opens. 
   intros f g Hfg.
   intros q Hq. 
@@ -622,5 +780,4 @@ exists (random_aux N).
   reflexivity.
   apply sum_n_moy_aux_mon.
   trivial.
-Admitted.   
-     
+Defined.   
