@@ -1,5 +1,4 @@
 
-
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders
                HoTTClasses.interfaces.rationals
@@ -63,8 +62,6 @@ apply IntPos_eq0; apply path_forall.
 intros h; unfold im_distr; simpl; 
 reflexivity. 
 Qed.
-
-
 
 
 (**  Conditional distribution *)
@@ -182,188 +179,162 @@ Definition flip : IntPos Bool_s.
 Proof.
 exists (fun f => (RlP_plus (Rlow_mult_q (1 / 2) (f true))
        (Rlow_mult_q (1 / 2) (f false)))).
-+ apply (antisymmetry Rllepos). 
-  - intros p Hp.
-    simpl in Hp.
-    unfold pred_multQ, semi_decide in Hp.
-    simpl in Hp.
-    apply pred_plus_pr in Hp. 
-    revert Hp; apply (Trunc_ind _). 
-    intros (r,(s,(H1,(H2,H3)))).
-    destruct (decide ((' 1 * ' (/ 2) * r)%mc < 0)).
-    destruct (decide ((' 1 * ' (/ 2) * s)%mc < 0)).
-    -- apply RlP_0. 
-       admit. (* ok *)
-    -- apply not_bot in H2; case H2. 
-    -- apply not_bot in H1; case H1. 
-  - intros p Hp; simpl;   
-    unfold pred_multQ, semi_decide; simpl.
-    apply pred_plus_pr. 
++ unfold Mdef. 
+  assert (ho : forall (A:hSet) x, 
+       (fzero A x) = RlP_0).
+  intros A x; reflexivity.
+  repeat rewrite ho.
+  rewrite Rlow_mult_q_RlP_0.
+  rewrite RlPPlus_left_id.
+  reflexivity. 
++ intros f g.
+  assert (Hdistr : forall (A:hSet) p f g (x:A), 
+           RlP_plus (Rlow_mult_q p (f x)) 
+                    (Rlow_mult_q p (g x)) = 
+           Rlow_mult_q p (f x + g x)).
+  intros A p ff gg x.
+  apply (antisymmetry le).
+  - intros s Hs.
+    apply pred_plus_pr in Hs.
+    unfold Rlow_mult_q. simpl.
+    unfold pred_multQ; simpl.
+    apply pred_plus_pr.
+    revert Hs; apply (Trunc_ind _).
+    intros (rr,(ss,(E1,(E2,E3)))).
+    unfold Rlow_mult_q in *; simpl in *; 
+    unfold pred_multQ in *; simpl in *.
     apply tr.
-    exists (p/2), (p/2).
-    destruct (decide ((' 1 * ' (/ 2) * (p/2))%mc < 0)%mc).
-    repeat split; try (apply top_greatest).
+    exists (pos p * rr), (pos p * ss).
+    repeat split; trivial.
+    rewrite E3.
+    rewrite (semiring_distr Q).
+    reflexivity.
+  - intros s Hs.
+    unfold Rlow_mult_q in Hs; simpl in Hs; 
+    unfold pred_multQ in Hs; 
+    apply pred_plus_pr in Hs.
+    apply pred_plus_pr.
+    revert Hs; apply (Trunc_ind _).
+    intros (rr,(ss,(E1,(E2,E3)))).
+    apply tr.
+    exists (rr * / pos p), (ss * / pos p).
+    repeat split.
+    unfold Rlow_mult_q; simpl; 
+    unfold pred_multQ; simpl.
+    rewrite mult_assoc.
+    rewrite mult_comm.
+    rewrite mult_assoc.
+    rewrite mult_comm.
+    rewrite (mult_comm _ (pos p)).
+    assert (Hp1 : pos p / pos p = 1).
+    transitivity (1/1).
+    apply equal_dec_quotients.
+    apply not_le_ne.
+    intros HF.
+    apply le_iff_not_lt_flip in HF. 
+    assert (Hp : 0 < pos p).
+    apply p.
+    case (HF Hp).
+    generalize rational_1_neq_0.
+    apply apartness.apart_ne.
+    rewrite mult_comm; reflexivity.
+    rewrite dec_recip_1.
+    rewrite mult_1_r; reflexivity.  
+    rewrite Hp1.
+    rewrite mult_1_r; trivial.
+    unfold Rlow_mult_q; simpl; 
+    unfold pred_multQ; simpl.
+    rewrite mult_assoc.
+    rewrite mult_comm.
+    rewrite mult_assoc.
+    rewrite mult_comm.
+    rewrite (mult_comm _ (pos p)).
+    assert (Hp1 : pos p / pos p = 1).
+    transitivity (1/1).
+    apply equal_dec_quotients.
+    apply not_le_ne.
+    intros HF.
+    apply le_iff_not_lt_flip in HF. 
+    assert (Hp : 0 < pos p).
+    apply p.
+    case (HF Hp).
+    generalize rational_1_neq_0.
+    apply apartness.apart_ne.
+    rewrite mult_comm; reflexivity.
+    rewrite dec_recip_1.
+    rewrite mult_1_r; reflexivity.  
+    rewrite Hp1.
+    rewrite mult_1_r; trivial.
     rewrite dec_quotients.
-    rewrite <- (semiring_distr Q p 2 2).
+    rewrite (mult_comm rr _).
+    rewrite (mult_comm ss _).
+    rewrite <- (semiring_distr Q).
+    rewrite <- E3.
+    rewrite mult_comm.
+    rewrite mult_assoc.
+    rewrite mult_comm.
+    rewrite mult_comm.
+    rewrite mult_assoc.
+    rewrite mult_comm.
+    assert (H1: (/ (pos p * pos p) * 
+                  pos p * pos p) = 1).
     rewrite <- mult_assoc.
-    assert (H22 : (2 + 2) / (2 * 2) = 1).
-    admit.
-
-    rewrite H22.
+    rewrite mult_comm.
+    transitivity (1/1).
+    apply equal_dec_quotients.
+    apply not_le_ne.
+    intros HF.
+    apply le_iff_not_lt_flip in HF. 
+    assert (Hp : 0 < pos p *  pos p).
+    apply pos_mult_compat; apply p.
+    case (HF Hp).
+    generalize rational_1_neq_0.
+    apply apartness.apart_ne.
+    rewrite mult_comm; reflexivity.
+    rewrite dec_recip_1.
+    rewrite mult_1_r; reflexivity. 
+    rewrite H1.
     rewrite mult_1_r.
     reflexivity.
-    admit. admit.
-
-    split.
-    admit.
-    split. 
-    admit.
-    assert (Ht : ' 1 * ' (/ 2) * (p / 2) < 0).
-    rewrite mult_comm.
-    apply (neg_pos_mult (p/2) (' 1 * ' (/ 2))).
-    admit.
-    
-    apply le_lt_trans with (' 1 * 0).
-    rewrite mult_0_r.
-    reflexivity. 
-    apply pos_mult_lt_l.
-    apply lt_0_1.
-    admit.
-    case (n Ht).          
-+ intros f g.
-  apply (antisymmetry le).
-  - intros q Hq.
-    apply pred_plus_pr in Hq; 
-    apply pred_plus_pr.
-    revert Hq; apply (Trunc_ind _); 
-    intros (r,(s,(Hrs1,(Hrs2,Hrs3)))). 
-    assert (Hrs1' : val (RlP_plus 
-                         (Rlow_mult_q (1 / 2) (f true))  
-                         (Rlow_mult_q (1 / 2) (g true))) r).
-    admit.
- 
-    assert (Hrs2' : val (RlP_plus 
-                         (Rlow_mult_q (1 / 2) (f false))  
-                         (Rlow_mult_q (1 / 2) (g false))) s).
-    admit.
-
-    apply pred_plus_pr in Hrs1'.
-    apply pred_plus_pr in Hrs2'.
-    revert Hrs1'; apply (Trunc_ind _); 
-    intros (r1,(s1,(H11,(H12,H13)))).
-    revert Hrs2'; apply (Trunc_ind _); 
-    intros (r2,(s2,(H21,(H22,H23)))).
-    apply tr.
-    exists (r1 + r2).
-    exists (s1 + s2).
-    repeat split.
-    -- apply pred_plus_pr.
-       apply tr.
-       exists r1, r2.
-       repeat split; trivial.
-    -- apply pred_plus_pr.
-       apply tr.
-       exists s1, s2.
-       repeat split; trivial.
-    -- rewrite H13, H23 in Hrs3;
-       rewrite <- rings.plus_assoc;
-       rewrite (rings.plus_comm r2 (s1 + s2));
-       rewrite <- rings.plus_assoc;
-       rewrite (rings.plus_comm s2 r2);
-       rewrite rings.plus_assoc;
-       rewrite rings.plus_assoc;
-       rewrite rings.plus_assoc in Hrs3;
-       trivial.
-  - intros q Hq.
-    apply pred_plus_pr in Hq; 
-    apply pred_plus_pr.
-    revert Hq; apply (Trunc_ind _); 
-    intros (r,(s,(Hrs1,(Hrs2,Hrs3)))).
-    apply pred_plus_pr in Hrs1.
-    apply pred_plus_pr in Hrs2.
-    revert Hrs1; apply (Trunc_ind _); 
-    intros (r1,(s1,(H11,(H12,H13)))).
-    revert Hrs2; apply (Trunc_ind _); 
-    intros (r2,(s2,(H21,(H22,H23)))).
-    apply tr.
-    exists (r1 + r2).
-    exists (s1 + s2).
-    repeat split.
-    -- assert (H1' : val (RlP_plus (Rlow_mult_q (1 / 2) (f true)) 
-                                   (Rlow_mult_q (1 / 2) (g true)))
-                       (r1 + r2)).
-       apply pred_plus_pr.
-       apply tr.
-       exists r1, r2.
-       repeat split; trivial.   
-       admit.
-    -- assert (H2' : val (RlP_plus (Rlow_mult_q (1 / 2) (f false)) 
-                                   (Rlow_mult_q (1 / 2) (g false)))
-                       (s1 + s2)).
-       apply pred_plus_pr.
-       apply tr.
-       exists s1, s2.
-       repeat split; trivial.   
-       admit.
-    -- 
-    assert (Hrs1' : val (RlP_plus  *)
-                         (Rlow_mult_q (1 / 2) (f true))  
-                         (Rlow_mult_q (1 / 2) (g true))) r).
-    admit.
- 
-    assert (Hrs2' : val (RlP_plus 
-                         (Rlow_mult_q (1 / 2) (f false))  
-                         (Rlow_mult_q (1 / 2) (g false))) s).
-    admit.
-
-    apply pred_plus_pr in Hrs1'.
-    apply pred_plus_pr in Hrs2'.
-    revert Hrs1'; apply (Trunc_ind _); 
-    intros (r1,(s1,(H11,(H12,H13)))).
-    revert Hrs2'; apply (Trunc_ind _); 
-    intros (r2,(s2,(H21,(H22,H23)))).
-    apply tr.
-    exists (r1 + r2).
-    exists (s1 + s2).
-    repeat split.
-    -- apply pred_plus_pr.
-       apply tr.
-       exists r1, r2.
-       repeat split; trivial.
-    -- apply pred_plus_pr.
-       apply tr.
-       exists s1, s2.
-       repeat split; trivial.
-    -- rewrite H13, H23 in Hrs3;
-       rewrite <- rings.plus_assoc;
-       rewrite (rings.plus_comm r2 (s1 + s2));
-       rewrite <- rings.plus_assoc;
-       rewrite (rings.plus_comm s2 r2);
-       rewrite rings.plus_assoc;
-       rewrite rings.plus_assoc;
-       rewrite rings.plus_assoc in Hrs3;
-       trivial.    
-
-    
-    exists r, s.
-    repeat split. 
-    -- unfold fplus in Hrs1.
-       assert (Hrs1' : val (RlP_plus 
-                             (Rlow_mult_q (1 / 2) (f true))  
-                             (Rlow_mult_q (1 / 2) (g true))) r).
-       admit.
-
-        
-  
-       
-     
-  
-    -- 
-      
-
-
- 
-+ admit. 
+    apply lt_ne_flip.
+    apply p.
+    apply lt_ne_flip.
+    apply p.
+  - rewrite <- Hdistr.
+    rewrite <- Hdistr.
+    rewrite (RlPPlus_comm 
+     (Rlow_mult_q (1 / 2) (g true)) 
+     (Rlow_mult_q (1 / 2) (g false))).
+    unfold plus.
+    rewrite RlPPlus_assoc.
+    rewrite  <- (RlPPlus_assoc (Rlow_mult_q 
+                   (1 / Qpos_plus 1 1) (f true))
+        (Rlow_mult_q (1 / Qpos_plus 1 1) (g true))
+        (Rlow_mult_q (1 / Qpos_plus 1 1) (f false))).
+    rewrite (RlPPlus_comm 
+     (Rlow_mult_q (1 / Qpos_plus 1 1) (g false))
+     (Rlow_mult_q (1 / Qpos_plus 1 1) (g true))).
+    rewrite <- RlPPlus_assoc. 
+    rewrite (RlPPlus_comm 
+     (Rlow_mult_q (1 / Qpos_plus 1 1) (g true))
+     (Rlow_mult_q (1 / Qpos_plus 1 1) (f false))).
+    rewrite RlPPlus_assoc.
+    rewrite RlPPlus_assoc.
+    rewrite RlPPlus_assoc.
+    reflexivity.
++ unfold Mprob.
+  assert (H1 : forall (A : hSet) x, 
+                fone A x = RlP_1).
+  intros A x; reflexivity.
+  repeat rewrite H1. 
+  intros s Hs.
+  apply pred_plus_pr in Hs.
+  revert Hs; apply (Trunc_ind _).
+  intros (a,(b,(E1,(E2,E3)))).
+  unfold Rlow_mult_q in *; simpl in *; 
+  unfold pred_multQ in *.
+  unfold semi_decide in *.
+  admit. 
 + intros f g Hfg.
   transitivity (RlP_plus (Rlow_mult_q (1 / 2) 
       (f true)) (Rlow_mult_q (1 / 2) (g false))). 
@@ -388,8 +359,9 @@ exists (fun f => (RlP_plus (Rlow_mult_q (1 / 2) (f true))
   intros x y; apply orders.le_or_lt. 
   reflexivity.
   apply Hfg.
-+ admit. 
-Admitted. 
+Admitted.  
+ 
+
 
 
 Definition QRlow_qpos (q : Q+)  : RlowPos. 
@@ -433,103 +405,222 @@ Fixpoint sum_n_moy_aux (p : nat) (f : nat -> RlowPos) : RlowPos := match p with
           |S p0 => RlP_plus (f (S p0)) (sum_n_moy_aux p0 f)
 end.
 
+Lemma sum_n_moy_aux_def (p : nat) : 
+      sum_n_moy_aux p (fzero Nat_s) = RlP_0.
+Proof.
+induction p.
++ simpl; reflexivity.
++ simpl.
+  rewrite IHp.
+  assert (H0 : (fzero Nat_s (S p)) = RlP_0). 
+  reflexivity.
+  rewrite H0.
+  rewrite RlPPlus_left_id; 
+  reflexivity. 
+Qed.
+
+Lemma sum_n_moy_aux_mon (p : nat) f g : fle f g ->
+      sum_n_moy_aux p f <= sum_n_moy_aux p g.
+Proof.
+intros Hfg.
+induction p.
++ simpl; reflexivity.
++ simpl.
+  transitivity (RlP_plus (f (S p)) 
+                   (sum_n_moy_aux p g)).
+  apply Rllepos_plus_le_preserving; exact IHp.
+  rewrite (RlPPlus_comm _ (sum_n_moy_aux p g)).
+  rewrite (RlPPlus_comm _ (sum_n_moy_aux p g)).
+  apply Rllepos_plus_le_preserving.
+  apply Hfg.
+Qed.  
+
+Lemma sum_n_moy_aux_add (p : nat) f g : 
+      sum_n_moy_aux p (fplus f g) =  RlP_plus (sum_n_moy_aux p f) 
+                                             (sum_n_moy_aux p g).
+Proof.
+induction p.
++ simpl; rewrite RlPPlus_left_id;
+  reflexivity.
++ simpl.
+  rewrite IHp.
+  assert (H0 : (fplus f g (S p)) = 
+        RlP_plus (f (S p)) (g (S p))).
+  reflexivity.
+  rewrite H0.
+  rewrite RlPPlus_assoc.
+  rewrite RlPPlus_assoc.
+  rewrite RlPPlus_comm.
+  rewrite RlPPlus_comm.
+  rewrite <- (RlPPlus_assoc (f (S p)) (g (S p)) 
+             (sum_n_moy_aux p f)).
+  rewrite (RlPPlus_comm (g (S p)) 
+     (sum_n_moy_aux p f)).
+  rewrite RlPPlus_assoc.
+  reflexivity.  
+Qed.
+
+  
 Definition O_Sp (p : nat) : Q+. 
 Proof. 
 refine (1 / qnp (S p)). 
 Defined. 
+Coercion O_Sp : nat >-> Qpos.
 
-Fixpoint sum_n_moy (p : nat) f : RlowPos := Rlow_mult_q (O_Sp p)
-                              (sum_n_moy_aux p f). 
+Definition sum_n_moy (p : nat) (f : nat -> RlowPos) : RlowPos 
+             := Rlow_mult_q p (sum_n_moy_aux p f).
 
-Definition random_aux (M : nat) : Mes Nat_s. 
+Lemma sum_n_moy_def (p : nat) : 
+      sum_n_moy p (fzero Nat_s) = RlP_0.
 Proof.
-intros N.
-pose (N' := OSn N).
-exists (rl (sum_n_moy M N')).
-apply (sum_n_moy M). 
+unfold sum_n_moy.
+rewrite sum_n_moy_aux_def.
+apply Rlow_mult_q_RlP_0.
+Qed.
+ 
+
+Definition random_aux (N : nat) : M Nat_s. 
+Proof.
+intros f.
+exists (rl (sum_n_moy N f)).
+apply (sum_n_moy N). 
 Defined. 
 
-Definition random (M : nat) :  Val Nat_s.  
+Definition random (N : nat) :  IntPos Nat_s.  
 Proof. 
-exists (random_aux M).  
-+ unfold modular. intros U V.
-  apply (antisymmetry Rllepos).   
-  unfold Rllepos; simpl. 
-  intros q Hq. 
-  - unfold OSn in *. 
-    apply pred_plus_pr. 
-    apply pred_plus_pr in Hq. 
-    revert Hq; apply (Trunc_ind _). 
-    intros (r,(s,(E1,(E2,E3)))).
-    apply tr. 
-    exists r, s. 
-    admit. 
-  - admit. 
-+ unfold empty_op. 
-  apply (antisymmetry Rllepos). 
-  - intros p Hp.
-    simpl in Hp.
-    induction M. 
-    -- simpl in Hp.
-       unfold semi_decide in Hp.
-       unfold pred_multQ in Hp.
-       destruct (decide ((rationals.pos (O_Sp 0) * p)%mc < 0)).
-       simpl. unfold semi_decide.
-       destruct (decide (p < 0)). 
-       apply top_greatest. 
-       unfold O_Sp in l. 
-       simpl in l. 
-       admit. (* ok *)
-       apply not_bot in Hp. 
-       case Hp. 
-    -- assert (Hnn : elt Q Qlt (rl (sum_n_moy M (OSn ∅))) p).
-       revert Hp. 
-       apply RC_mon with Qle.   
-       intros x y; apply (antisymmetry Qle). 
-       intros x y; apply orders.le_or_lt. 
-       reflexivity. 
-       intros q Hq. 
-       unfold sum_n_moy in *. 
-       simpl in Hq.        
-       unfold pred_multQ in Hq. 
-       apply pred_plus_pr in Hq.
-       revert Hq; apply (Trunc_ind _).
-       intros (r,(s,(H1,(H2,H3)))).
-       unfold OSn.  
-       admit. (* ok but cumbersome *)
-
-       apply IHM; trivial.
-  - intros q Hq.
-    apply rlpos. 
-    simpl in Hq; 
-    unfold semi_decide in Hq;
-    destruct (decide (q < 0)); try trivial.  
-    apply not_bot in Hq.     
-    case Hq. 
+exists (random_aux N).
++ unfold Mdef, random_aux.
+  apply RCP_eq0.
+  rewrite sum_n_moy_def.
+  simpl; reflexivity. 
++ intros f g.
+  unfold random_aux; simpl.
+  apply RCP_eq0; simpl.
+  transitivity (pred_multQ (val (RlP_plus (sum_n_moy_aux N f)  
+                                 (sum_n_moy_aux N g))) N).
+  assert (Hsum : sum_n_moy_aux N (fplus f g) = RlP_plus
+             (sum_n_moy_aux N f) (sum_n_moy_aux N g)).
+  apply sum_n_moy_aux_add. 
+  rewrite Hsum.
+  reflexivity.
+  apply path_forall.
+  intros x. 
+  apply (antisymmetry SierLe).
+  - apply imply_le.
+    intros Hx.
+    unfold pred_multQ in Hx.
+    apply pred_plus_pr.
+    apply pred_plus_pr in Hx.
+    revert Hx; apply (Trunc_ind _); 
+    intros (a,(b,(E1,(E2,E3)))).
+    apply tr.
+    exists (a / pos N), (b / pos N).
+    repeat split.
+    unfold pred_multQ.
+    assert (Ha : (pos N * (a / pos N))%mc = a).
+    rewrite mult_comm.
+    rewrite <- mult_assoc.
+    rewrite (mult_comm _ (pos N)).
+    assert (Hn : (pos N / pos N) = 1).
+    transitivity (1/1).
+    apply equal_dec_quotients.
+    apply not_le_ne.
+    intros HF.
+    apply le_iff_not_lt_flip in HF. 
+    assert (Hp : 0 < pos N).
+    apply (pos_is_pos).
+    case (HF Hp).
+    generalize rational_1_neq_0.
+    apply apartness.apart_ne.
+    rewrite mult_comm; reflexivity.
+    rewrite dec_recip_1.
+    rewrite mult_1_r; reflexivity.  
+    rewrite Hn.
+    rewrite mult_1_r.
+    reflexivity.
+    rewrite Ha; trivial.
+    unfold pred_multQ.
+    assert (Hb : (pos N * (b / pos N))%mc = b).
+    rewrite mult_comm.
+    rewrite <- mult_assoc.
+    rewrite (mult_comm _ (pos N)).
+    assert (Hn : (pos N / pos N) = 1).
+    transitivity (1/1).
+    apply equal_dec_quotients.
+    apply not_le_ne.
+    intros HF.
+    apply le_iff_not_lt_flip in HF. 
+    assert (Hp : 0 < pos N).
+    apply (pos_is_pos).
+    case (HF Hp).
+    generalize rational_1_neq_0.
+    apply apartness.apart_ne.
+    rewrite mult_comm; reflexivity.
+    rewrite dec_recip_1.
+    rewrite mult_1_r; reflexivity.  
+    rewrite Hn.
+    rewrite mult_1_r.
+    reflexivity.
+    rewrite Hb; trivial.
+    rewrite dec_quotients.
+    rewrite (mult_comm a _).
+    rewrite (mult_comm b _).
+    rewrite <- (semiring_distr Q).
+    rewrite <- E3.
+    rewrite mult_assoc.
+    rewrite (mult_comm _ x).
+    rewrite <- mult_assoc.
+    assert (H1 : (Qmult (pos N) (pos N))
+                / (Qmult (pos N) (pos N)) = 1).
+    transitivity (1/1).
+    apply equal_dec_quotients.
+    apply not_le_ne.
+    intros HF.
+    apply le_iff_not_lt_flip in HF. 
+    assert (Hp : 0 < Qmult (pos N) (pos N)).
+    apply pos_mult_compat; apply pos_is_pos.
+    case (HF Hp).
+    generalize rational_1_neq_0.
+    apply apartness.apart_ne.
+    rewrite mult_comm; reflexivity.
+    rewrite dec_recip_1.
+    rewrite mult_1_r; reflexivity. 
+    rewrite H1.
+    rewrite mult_1_r.
+    reflexivity.
+    apply lt_ne_flip.
+    apply pos_is_pos.
+    apply lt_ne_flip.
+    apply pos_is_pos.
+  - apply imply_le.
+    intros Hx.
+    unfold pred_multQ.
+    apply pred_plus_pr.
+    apply pred_plus_pr in Hx.
+    revert Hx; apply (Trunc_ind _); 
+    intros (a,(b,(E1,(E2,E3)))).
+    apply tr.
+    exists (Qmult (pos N) a), (Qmult (pos N) b).
+    repeat split.
+    unfold pred_multQ in E1.
+    trivial.
+    unfold pred_multQ in E2.
+    trivial.
+    rewrite E3.
+    rewrite (semiring_distr Q).
+    reflexivity. 
++ admit.
 + unfold mon_opens. 
-  intros U V HUV.
+  intros f g Hfg.
   intros q Hq. 
   unfold random_aux in *; simpl in *.
-  induction M.
-  - simpl in *. 
-    trivial.
-  - simpl.    
-    simpl in Hq.     
-    unfold pred_multQ in Hq. 
-    unfold pred_multQ. 
-    apply pred_plus_pr. 
-    apply pred_plus_pr in Hq. 
-    revert Hq; apply (Trunc_ind _). 
-    intros (r,(s,(E1,(E2,E3)))).
-    apply tr. 
-    exists r, s.     
-    repeat split; trivial. 
-    revert E1. 
-    apply RC_mon with Qle. 
-    intros x y; apply (antisymmetry Qle). 
-    intros x y; apply orders.le_or_lt.
-    reflexivity.
-    apply OpenFun_mon. 
-    trivial.
-    revert E2.
-Admitted. 
+  unfold pred_multQ in *.
+  revert Hq. 
+  apply RC_mon with Qle.
+  intros x y; apply (antisymmetry Qle). 
+  intros x y; apply orders.le_or_lt.
+  reflexivity.
+  apply sum_n_moy_aux_mon.
+  trivial.
+Admitted.   
+     
