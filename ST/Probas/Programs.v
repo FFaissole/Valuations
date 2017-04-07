@@ -512,10 +512,31 @@ induction p.
   apply Hfg.
 Qed.  
 
+Definition QRlow_nat_pos : nat -> RlowPos.
+Proof.
+intros n.
+induction n.
++ exists RlP_0. intros p Hp; simpl.
+  unfold semi_decide; destruct (decide (p < 0)).
+  apply top_greatest.
+  case (n Hp).
++ exists (QRlow (qn (S n))).
+  intros p Hp.
+  simpl; unfold semi_decide.
+  destruct (decide (p < S n)).
+  apply top_greatest.
+  assert (Hpn : p < (S n)).
+  apply lt_le_trans with 0; trivial.
+  unfold qn. apply lt_le.
+  destruct ((pos_of_nat (S n))).
+  apply rationals.is_pos.
+  case (n0 Hpn).
+Defined.  
+          
+
 Lemma sum_n_moy_aux_prob (n : nat) :
                Rlle (sum_n_moy_aux n (fone Nat_s))
-                    (match n with |O => 0
-                                  |_ => QRlow n end).
+                    (QRlow_nat_pos n).
 Proof.
 induction n.
 + intros q; trivial.  
@@ -530,56 +551,27 @@ induction n.
   intros (a,(b,(E1,(E2,E3)))).
   rewrite E3.
   specialize (IHn b).
+  apply IHn in E2.
   induction n.
-  - clear IHn.
-    simpl in E2.
-    unfold semi_decide in *. 
+  - simpl in E2; unfold semi_decide in E2.
+    destruct (decide (a < 1)). 
     destruct (decide (b < 0)).
-    destruct (decide (a < 1)).
-    apply lt_le_trans with ((1 + 0)%mc).
-    apply plus_lt_compat; trivial. 
-    rewrite (plus_0_r Qone).
-    reflexivity.
-    apply not_bot in E1; case E1.
-    apply not_bot in E2; case E2.
-  - apply IHn in E2.
-    destruct (decide (a < 1)).
-    assert (Hpp : val (RlPlus (QRlow (S n)) 
-                      (QRlow 1)) (a + b)%mc).
-    apply pred_plus_pr.
-    apply tr.
-    exists b, a.
-    repeat split; try trivial.
-    simpl; unfold semi_decide.
-    destruct (decide (a < 1)).
-    apply top_greatest.
-    case (n1 l).
-    rewrite plus_comm.
-    reflexivity.
-    apply pred_plus_pr in Hpp.
-    revert Hpp; apply (Trunc_ind _);
-    intros (u,(v,(F1,(F2,F3)))).
-    rewrite F3.
-    simpl in F1, F2.
-    unfold semi_decide in *.
-    destruct (decide (u < S n)).
-    destruct (decide (v < 1)).
-    apply lt_le_trans with ((qn (S n) + 1)%mc).
+    apply lt_le_trans with (1 + 0)%mc.
     apply plus_lt_compat; trivial.
-    transitivity (qn (S n) + qn (S 0))%mc.
-    simpl. unfold qn.
-    apply plus_le_compat.
+    rewrite plus_0_r.
     reflexivity.
-    reflexivity.
-    rewrite (peano_naturals.S_nat_plus_1 (S n)).
-    simpl.
-    admit. 
-    apply not_bot in F2; case F2.
-    apply not_bot in F1; case F1.
+    apply not_bot in E2; case E2.
+    apply not_bot in E1; case E1.
+  - simpl in E2; unfold semi_decide in *.
+    destruct (decide (a < 1)).
+    destruct (decide (b < S n)).
+    apply plus_lt_compat; trivial.
+    apply not_bot in E2; case E2.
     apply not_bot in E1; case E1.
   - case (n0 hq). 
-Admitted.  
-
+Qed.    
+    
+    
 Lemma sum_n_moy_aux_add (p : nat) f g : 
       sum_n_moy_aux p (fplus f g) =  RlP_plus (sum_n_moy_aux p f) 
                                              (sum_n_moy_aux p g).
@@ -605,12 +597,12 @@ induction p.
   reflexivity.  
 Qed.
 
-  
+ (* 
 Definition O_Sp (p : nat) : Q+. 
 Proof. 
 refine (1 / qnp (S p)). 
 Defined. 
-Coercion O_Sp : nat >-> Qpos.
+Coercion O_Sp : nat >-> Qpos.*)
 
 Definition sum_n_moy (p : nat) (f : nat -> RlowPos) : RlowPos 
              := Rlow_mult_q p (sum_n_moy_aux p f).
@@ -627,16 +619,86 @@ Lemma sum_n_moy_prob (n : nat) :
    Rlle (sum_n_moy n (fone Nat_s)) RlP_1.
 Proof.
 unfold sum_n_moy.
+assert (H : Rlle 
+       (Rlow_mult_q n (sum_n_moy_aux n (fone Nat_s))) 
+       (Rlow_mult_q n (QRlow_nat_pos n))).
+intros q Hq.
+unfold Rlow_mult_q in *; simpl in *.
+unfold pred_multQ in *; simpl in *.
+revert Hq; apply RC_mon with Qle.
+intros x y; apply (antisymmetry Qle).
+intros x y; apply orders.le_or_lt.
+reflexivity.
+apply sum_n_moy_aux_prob.     
+assert (H2 : Rlle (Rlow_mult_q n (QRlow_nat_pos n)) 
+                  RlP_1).
+intros q Hq.
+simpl in Hq.
+unfold pred_multQ in Hq.
 induction n.
-+ generalize (sum_n_moy_aux_prob 0).
-  intros Hh.
-  simpl. simpl in Hh.
-  unfold Rlow_mult_q'.
-Admitted.
-
-
++ simpl in Hq. simpl.
+  unfold semi_decide in *; simpl in *.
+  clear H. 
+  rewrite mult_1_l in Hq.
+  destruct (decide (q < 0)).
+  destruct (decide (q < 1)).
+  trivial.
+  assert (Hf : q < 1).
+  transitivity Qzero.
+  trivial.
+  apply lt_0_1.
+  case (n Hf).
+  destruct (decide (q < 1)).
+  apply top_greatest.
+  trivial.         
++ clear IHn. simpl.
+  unfold semi_decide in *.
+  destruct (decide ((naturals.naturals_to_semiring 
+              nat Q (S n) * q)%mc < S n)).
+  destruct (decide (q < 1)); trivial.
+  apply top_greatest.
+  assert (Hf : q < 1). 
+  assert (Hu : 
+   ((1 / qn (S n))* ((qn (S n))*q))%mc <
+    ((1 / qn (S n)) * (qn (S n)))%mc).
+  apply pos_mult_lt_l.
+  rewrite mult_1_l.
+  apply dec_fields.pos_dec_recip_compat.
+  apply rationals.is_pos.
+  apply l.
+  rewrite mult_assoc in Hu.
+  rewrite mult_comm in Hu.
+  rewrite (mult_comm _ (qn (S n))) in Hu.
+  rewrite mult_1_l in Hu.
+  assert (Hsn : qn (S n) / qn (S n) = 1). 
+  transitivity (1/1).
+  apply equal_dec_quotients.
+  apply not_le_ne.
+  intros HF.
+  apply le_iff_not_lt_flip in HF. 
+  assert (Hp : 0 < pos (S n)).
+  apply rationals.is_pos.
+  case (HF Hp).
+  generalize rational_1_neq_0.
+  apply apartness.apart_ne.
+  rewrite mult_comm; reflexivity.
+  rewrite dec_recip_1.
+  rewrite mult_1_r; reflexivity. 
+  rewrite Hsn in Hu.
+  rewrite mult_1_r in Hu; trivial. 
+  case (n0 Hf).
+  destruct (decide (q < 1)).
+  apply top_greatest.
+  simpl in Hq.
+  unfold semi_decide in Hq.
+  destruct (decide ((naturals.naturals_to_semiring 
+              nat Q (S n) * q)%mc < S n)).
+  case (n0 l).
+  trivial.  
++ intros q hq; apply H2.
+  apply H; trivial.
+Qed.   
  
-
 Definition random_aux (N : nat) : M Nat_s. 
 Proof.
 intros f.
