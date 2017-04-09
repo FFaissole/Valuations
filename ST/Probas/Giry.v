@@ -13,7 +13,7 @@ Require Import HoTT.HSet HoTT.Basics.Trunc HProp HSet
 
 Require Export RoundedClosed Opens Functions 
                Valuations LowerIntegrals
-               D_op OpenFun Riesz1 Riesz2.
+               D_op OpenFun Riesz1.
               
 Set Implicit Arguments.
 
@@ -27,28 +27,6 @@ exists (fun f : mf A => f x).
 + intros f g; reflexivity.
 + unfold Mprob; reflexivity.
 + intros f g Hfg; apply Hfg.
-+ intros f. unfold RllubPosQP.
-  simpl. intros s Hs. simpl.
-  unfold semi_decide.
-  apply top_le_enumerable_sup.
-  unfold pred_minusQ_l2.
-  destruct (f x) as (r,Hp).
-  simpl in *.
-  destruct r as (P,H).
-  simpl in *.
-  destruct H.
-  apply is_rounded in Hs.
-  revert Hs; apply (Trunc_ind _). 
-  intros (k,(Hk1,Hk2)).
-  apply tr.
-  assert (Pk : 0 < k - s).
-  apply T1; trivial.
-  pose (k' := mkQpos (k-s) Pk).
-  exists k'.
-  apply top_le_join.
-  unfold hor; apply tr.
-  left; simpl.
-  rewrite T2; trivial.
 Defined.
 
 (** bind operator *)
@@ -76,14 +54,6 @@ split with (fun f => I (fun x => (M x) f)).
   apply I_prob.
 + red; intros f g Hfg.
   apply I_mon. intros x; apply I_mon; trivial.
-+ red; intros f.
-  transitivity (RllubPosQP (λ q : Q+, I (λ x : A, RlP_minus_q2 
-                      ((M x) f) q))).
-  apply I_cont.
-  apply RllubPosQP_mon.
-  intros q; apply I_mon.
-  intros x. 
-  apply Riesz2.T3.
 Defined. 
 
 (** Monadic properties *)
