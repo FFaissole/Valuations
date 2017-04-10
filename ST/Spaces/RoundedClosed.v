@@ -2206,4 +2206,276 @@ Defined.
 
 Arguments RlPMeet _ _ /.
 
+
+Global Instance RlPSemiGroup_plus : @CommutativeSemiGroup 
+                                 RlowPos RlP_plus.
+Proof.
+constructor.
++ constructor. 
+  - apply _.
+  - intros x y z.
+    unfold sg_op.
+    rewrite RlPPlus_assoc.
+    reflexivity.
++ unfold sg_op; 
+  apply RlPPlus_comm.
+Defined.
+
+Global Instance RlPSemiGroup_join : @CommutativeSemiGroup 
+                                     RlowPos RlPJoin.
+Proof.
+constructor.
++ constructor. 
+  - apply _.
+  - intros x y z.
+    unfold sg_op, join_is_sg_op.
+    apply (antisymmetry Rllepos).
+    * intros q Hq.
+      simpl in *; unfold semi_decide in *.
+      destruct x, y, z.
+      apply top_le_join in Hq.
+      apply top_le_join.
+      unfold hor in *.
+      simpl in *.
+      revert Hq; apply (Trunc_ind _).
+      intros E.
+      destruct E.
+      apply tr; left; apply top_le_join; unfold hor.
+      apply tr; left; trivial.
+      apply top_le_join in i.
+      unfold hor in i.
+      revert i; apply (Trunc_ind _); intros E.
+      apply tr.
+      destruct E.
+      left.
+      apply top_le_join; unfold hor.
+      apply tr; right; trivial.
+      right; trivial.
+    * intros q Hq.
+      simpl in *; unfold semi_decide in *.
+      destruct x, y, z.
+      apply top_le_join in Hq.
+      apply top_le_join.
+      unfold hor in *.
+      simpl in *.
+      revert Hq; apply (Trunc_ind _).
+      intros E.
+      destruct E. 
+      apply top_le_join in i; 
+      unfold hor in *.
+      revert i; apply (Trunc_ind _); intros E.
+      destruct E.
+      apply tr; left; trivial.
+      apply tr; right.
+      apply top_le_join; unfold hor.
+      apply tr; left; trivial.
+      apply tr; right.
+      apply top_le_join; unfold hor.
+      apply tr; right; trivial.
++ unfold sg_op, join_is_sg_op.
+  intros x y.
+  apply (antisymmetry Rllepos).
+    * intros q Hq.
+      simpl in *; unfold semi_decide in *.
+      destruct x, y.
+      apply top_le_join in Hq.
+      apply top_le_join.
+      unfold hor in *.
+      revert Hq; apply (Trunc_ind _).
+      intros E; destruct E.
+      apply tr.
+      right; trivial.
+      apply tr. 
+      left; trivial.
+    * intros q Hq.
+      simpl in *; unfold semi_decide in *.
+      destruct x, y.
+      apply top_le_join in Hq.
+      apply top_le_join.
+      unfold hor in *.
+      revert Hq; apply (Trunc_ind _).
+      intros E; destruct E.
+      apply tr.
+      right; trivial.
+      apply tr. 
+      left; trivial.
+Defined.
+
+Global Instance RlPSemiGroup_meet : @CommutativeSemiGroup 
+                                     RlowPos RlPMeet.
+Proof.
+constructor.
++ constructor. 
+  - apply _.
+  - intros x y z.
+    unfold sg_op, join_is_sg_op.
+    apply (antisymmetry Rllepos).
+    * intros q Hq.
+      simpl in *; unfold semi_decide in *.
+      destruct x, y, z.
+      apply top_le_meet in Hq.
+      apply top_le_meet.
+      simpl in *.
+      split.
+      apply top_le_meet.
+      destruct Hq as (E1,E2).
+      apply top_le_meet in E2.
+      destruct E2 as (E2,E3).
+      split; trivial.
+      destruct Hq as (E1,E2).
+      apply top_le_meet in E2.
+      destruct E2 as (E2,E3).
+      trivial.
+    * intros q Hq.
+      simpl in *; unfold semi_decide in *.
+      destruct x, y, z.
+      apply top_le_meet in Hq.
+      apply top_le_meet.
+      simpl in *.
+      split.
+      destruct Hq as (E1,E2).
+      apply top_le_meet in E1.
+      destruct E1 as (E1,E3).
+      trivial.
+      destruct Hq as (E1,E2).
+      apply top_le_meet in E1.
+      destruct E1 as (E1,E3).
+      apply top_le_meet; split; trivial.
++ unfold sg_op, join_is_sg_op.
+  intros x y.
+  apply (antisymmetry Rllepos).
+    * intros q Hq.
+      simpl in *; unfold semi_decide in *.
+      destruct x, y.
+      apply top_le_meet in Hq.
+      apply top_le_meet.
+      destruct Hq; split; trivial. 
+    * intros q Hq.
+      simpl in *; unfold semi_decide in *.
+      destruct x, y.
+      apply top_le_meet in Hq.
+      apply top_le_meet.
+      destruct Hq; split; trivial. 
+Defined.
+
+Global Instance RlLattice : DistributiveLattice RlowPos.
+Proof.
+constructor.
++ constructor.
+  - constructor.
+    * apply RlPSemiGroup_join.
+    * intros x; red.
+      unfold sg_op, join_is_sg_op.
+      apply (antisymmetry le).
+      ** intros q Hq.
+         simpl in Hq.
+         unfold semi_decide in Hq.
+         destruct x; simpl in *.
+         apply top_le_join in Hq; 
+         unfold hor in Hq.
+         revert Hq; apply (Trunc_ind _).
+         intros Hq.
+         destruct Hq; trivial.
+      ** intros q Hq.
+         simpl in Hq.
+         unfold semi_decide.
+         destruct x; simpl.
+         apply top_le_join; 
+         unfold hor. simpl in Hq.
+         unfold semi_decide; apply tr.
+         left; trivial.
+  - constructor.
+    * apply RlPSemiGroup_meet.
+    * intros x; red.
+      unfold sg_op, join_is_sg_op.
+      apply (antisymmetry le).
+      ** intros q Hq.
+         simpl in Hq.
+         unfold semi_decide in Hq.
+         destruct x; simpl in *.
+         apply top_le_meet in Hq; 
+         destruct Hq; trivial.
+      ** intros q Hq.
+         simpl in *.
+         unfold semi_decide in *.
+         destruct x; simpl in *.
+         apply top_le_meet; 
+         split; trivial.
+  - intros x y.
+    apply (antisymmetry le).
+    * intros q Hq.
+      simpl in Hq; unfold semi_decide in Hq.
+      destruct x, y; simpl in *.
+      apply top_le_join in Hq; 
+      unfold hor in Hq.
+      revert Hq; apply (Trunc_ind _).
+      intros E; destruct E.
+      trivial.
+      apply top_le_meet in i; destruct i; 
+      trivial.
+    * intros q Hq.
+      simpl in *; unfold semi_decide in *.
+      destruct x, y; simpl in *.
+      apply top_le_join. 
+      unfold hor.
+      apply tr; left; trivial. 
+  - intros x y.
+    apply (antisymmetry le).
+    * intros q Hq.
+      simpl in Hq; unfold semi_decide in Hq.
+      destruct x, y; simpl in *.
+      apply top_le_meet in Hq.
+      destruct Hq; trivial.
+    * intros q Hq.
+      simpl in *; unfold semi_decide in *.
+      destruct x, y; simpl in *.
+      apply top_le_meet.
+      split; trivial.
+      apply top_le_join; unfold hor; 
+      apply tr; left; trivial.
++ intros x y z.
+  apply (antisymmetry le).
+  * intros q Hq.
+    simpl in *; unfold semi_decide in *.
+    destruct x, y, z; simpl in *.
+    apply top_le_join in Hq; unfold hor in Hq.
+    apply top_le_meet.
+    split.
+    revert Hq; apply (Trunc_ind _). 
+    intros E; destruct E.
+    apply top_le_join; unfold hor; 
+    apply tr; left; trivial.
+    apply top_le_meet in i.
+    destruct i as (E1,E2). 
+    apply top_le_join; unfold hor; 
+    apply tr; right; trivial.
+    apply top_le_join; unfold hor.
+    revert Hq; apply (Trunc_ind _); 
+    intros E; destruct E.
+    apply tr; left; trivial.
+    apply top_le_meet in i; 
+    destruct i as (E1,E2).
+    apply tr; right; trivial.
+  * intros q Hq.
+    simpl in *; unfold semi_decide in *.
+    destruct x, y, z; simpl in *.
+    apply top_le_join; unfold hor.
+    apply top_le_meet in Hq.
+    destruct Hq as (E1,E2).
+    apply top_le_join in E1; unfold hor in E1; 
+    revert E1; apply (Trunc_ind _); intros E1.
+    apply top_le_join in E2; unfold hor in E2; 
+    revert E2; apply (Trunc_ind _); intros E2.
+    apply tr.
+    destruct E1.
+    destruct E2.
+    left; trivial.
+    left; trivial.
+    destruct E2.
+    left; trivial.
+    right. 
+    apply top_le_meet; split; 
+    trivial.
+Defined.   
+
 End LowerReals. 
