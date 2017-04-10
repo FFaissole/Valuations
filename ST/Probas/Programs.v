@@ -65,41 +65,44 @@ Qed.
 
 
 (**  Conditional distribution *)
+Definition bool : hSet := default_TruncType 0 bool hset_bool.
 
-Definition DH (A : Type) (hset_A : IsHSet A) := 
-                             Val (default_TruncType 0 A hset_A).
-
-Definition Bool_s : hSet := default_TruncType 0 bool hset_bool. 
-
-Definition valb (b : Bool_s) : bool := b.
-
-Definition OSb (B : OS (Bool_s)) : bool -> RlowPos :=
-        fun b => (OpenFun Bool_s B) b. 
-
-
-(** Boundedness of OSb *)
- 
-Lemma OSb_prob : forall B x, OSb B x <= RlP_1. 
-Proof. 
-intros B x. 
-unfold OSb.
-transitivity (OpenFun Bool_s Ω x).
-apply OpenFun_mon.
-unfold OS_full.
-simpl; intros s. 
-apply top_greatest. 
-apply OpenFun_prob. 
-reflexivity. 
-Qed. 
-
-
-Definition Mif (A:hSet) (b: IntPos Bool_s) (m1 m2:IntPos A) : Mes A. 
-Proof.                          
-intros X.
-exists ((bind b (fun x:Bool => if x then m1 else m2)) X).
-intros p Hp. 
-apply ((bind b (λ x : Bool, if x then m1 else m2)) X); 
-trivial. 
+Definition Mif (A:hSet) (b: IntPos bool) (m1 m2:IntPos A) : IntPos A. 
+Proof.                         
+exists (fun X => (bind b (fun x:bool => if x then m1 else m2)) X).
++ hnf; unfold bind; simpl. 
+  assert (Hb : (λ y : bool, (if y then m1 else m2) (fzero A)) = 
+               λ y : bool, RlP_0).
+  apply path_forall; intros y.
+  destruct y; rewrite I_def; reflexivity.
+  rewrite Hb, I_def; reflexivity.
++ intros f g; unfold bind; simpl.
+  rewrite <- I_add.
+  assert (H : (λ x : bool, (if x then m1 else m2) (fplus f g)) = 
+             (fplus (λ x : bool, (if x then m1 else m2) f)
+                    (λ x : bool, (if x then m1 else m2) g))).
+  apply path_forall; intros y. unfold fplus. 
+  simpl; destruct y;
+  apply I_add.
+  rewrite H; reflexivity.  
++ intros q Hq.
+  unfold bind in Hq.
+  simpl in Hq.
+  assert (H : val (b (fone bool)) q).
+  revert Hq; apply RC_mon with Qle.
+  intros x y; apply (antisymmetry le).
+  intros x y; apply orders.le_or_lt.
+  reflexivity.
+  apply I_mon.
+  intros y; destruct y;
+  apply I_prob.
+  revert H; apply RC_mon with Qle.
+  intros x y; apply (antisymmetry le).
+  intros x y; apply orders.le_or_lt.
+  reflexivity.
+  apply I_prob.     
++ intros f g Hfg.
+  apply I_mon; trivial. 
 Defined. 
 
 (** * Correctness judgements *)
@@ -175,17 +178,17 @@ Qed.
                            (1/2) (f false)
 *)
 
-Definition flip : IntPos Bool_s. 
+Definition flip : IntPos bool. 
 Proof.
-exists (fun f => (RlP_plus (Rlow_mult_q 2 (f true))
-       (Rlow_mult_q 2 (f false)))).
+exists (fun f => (Rlow_mult_q 2 (f true) +
+                  Rlow_mult_q 2 (f false))).
 + unfold Mdef. 
   assert (ho : forall (A:hSet) x, 
        (fzero A x) = RlP_0).
   intros A x; reflexivity.
   repeat rewrite ho.
   rewrite Rlow_mult_q_RlP_0.
-  rewrite RlPPlus_left_id.
+  unfold plus; rewrite RlPPlus_left_id.
   reflexivity. 
 + intros f g.
   assert (Hdistr : forall (A:hSet) p f g (x:A), 
@@ -302,10 +305,10 @@ exists (fun f => (RlP_plus (Rlow_mult_q 2 (f true))
     apply p.
   - rewrite <- Hdistr.
     rewrite <- Hdistr.
-    rewrite (RlPPlus_comm 
-     (Rlow_mult_q 2 (g true)) 
-     (Rlow_mult_q 2 (g false))).
-    unfold plus.
+    unfold plus. rewrite (RlPPlus_comm 
+     (Rlow_mult_q (Qpos_plus 1 1) (g true)) 
+     (Rlow_mult_q (Qpos_plus 1 1) (g false))).
+    unfold plus;
     rewrite RlPPlus_assoc.
     rewrite  <- (RlPPlus_assoc (Rlow_mult_q 
                    (Qpos_plus 1 1) (f true))
@@ -426,8 +429,8 @@ exists (fun f => (RlP_plus (Rlow_mult_q 2 (f true))
   reflexivity.
   apply Hfg.
   rewrite RlPPlus_comm.
-  rewrite (RlPPlus_comm 
-       (Rlow_mult_q 2 (g true))).    
+  unfold plus; rewrite (RlPPlus_comm 
+       (Rlow_mult_q (Qpos_plus 1 1) (g true))).    
   apply RlPlus_le_preserving.
   intros s Hs.
   unfold Rlow_mult_q in *.
@@ -468,13 +471,8 @@ Defined.
 
 Require Export Spaces.Nat.  
 Close Scope nat. 
-Definition Nat_s : hSet := default_TruncType 0 nat hset_nat. 
 
-Definition valn (n : Nat_s) : nat := n.
-
-Definition OSn (N : OS (Nat_s)) : nat -> RlowPos :=
-        fun n => (OpenFun Nat_s N) n. 
-
+Definition nat : hSet := default_TruncType 0 nat hset_nat. 
 
 Fixpoint sum_n_moy_aux (p : nat) (f : nat -> RlowPos) : RlowPos := 
        match p with
@@ -483,13 +481,13 @@ Fixpoint sum_n_moy_aux (p : nat) (f : nat -> RlowPos) : RlowPos :=
 end.
 
 Lemma sum_n_moy_aux_def (p : nat) : 
-      sum_n_moy_aux p (fzero Nat_s) = RlP_0.
+      sum_n_moy_aux p (fzero nat) = RlP_0.
 Proof.
 induction p.
 + simpl; reflexivity.
 + simpl.
   rewrite IHp.
-  assert (H0 : (fzero Nat_s (S p)) = RlP_0). 
+  assert (H0 : (fzero nat (S p)) = RlP_0). 
   reflexivity.
   rewrite H0.
   rewrite RlPPlus_left_id; 
@@ -535,7 +533,7 @@ Defined.
           
 
 Lemma sum_n_moy_aux_prob (n : nat) :
-               Rlle (sum_n_moy_aux n (fone Nat_s))
+               Rlle (sum_n_moy_aux n (fone nat))
                     (QRlow_nat_pos n).
 Proof.
 induction n.
@@ -597,18 +595,11 @@ induction p.
   reflexivity.  
 Qed.
 
- (* 
-Definition O_Sp (p : nat) : Q+. 
-Proof. 
-refine (1 / qnp (S p)). 
-Defined. 
-Coercion O_Sp : nat >-> Qpos.*)
-
 Definition sum_n_moy (p : nat) (f : nat -> RlowPos) : RlowPos 
              := Rlow_mult_q p (sum_n_moy_aux p f).
 
 Lemma sum_n_moy_def (p : nat) : 
-      sum_n_moy p (fzero Nat_s) = RlP_0.
+      sum_n_moy p (fzero nat) = RlP_0.
 Proof.
 unfold sum_n_moy.
 rewrite sum_n_moy_aux_def.
@@ -616,11 +607,11 @@ apply Rlow_mult_q_RlP_0.
 Qed.
 
 Lemma sum_n_moy_prob (n : nat) : 
-   Rlle (sum_n_moy n (fone Nat_s)) RlP_1.
+   Rlle (sum_n_moy n (fone nat)) RlP_1.
 Proof.
 unfold sum_n_moy.
 assert (H : Rlle 
-       (Rlow_mult_q n (sum_n_moy_aux n (fone Nat_s))) 
+       (Rlow_mult_q n (sum_n_moy_aux n (fone nat))) 
        (Rlow_mult_q n (QRlow_nat_pos n))).
 intros q Hq.
 unfold Rlow_mult_q in *; simpl in *.
@@ -694,19 +685,23 @@ induction n.
   destruct (decide ((naturals.naturals_to_semiring 
               nat Q (S n) * q)%mc < S n)).
   case (n0 l).
-  trivial.  
+  destruct (decide
+        ((naturals.naturals_to_semiring 
+      Datatypes.nat Q (S n) * q)%mc < S n)).
+  case (n2 l).
+  trivial. 
 + intros q hq; apply H2.
   apply H; trivial.
 Qed.   
  
-Definition random_aux (N : nat) : M Nat_s. 
+Definition random_aux (N : nat) : M nat. 
 Proof.
 intros f.
 exists (rl (sum_n_moy N f)).
 apply (sum_n_moy N). 
 Defined. 
 
-Definition random (N : nat) :  IntPos Nat_s.  
+Definition random (N : nat) :  IntPos nat.  
 Proof. 
 exists (random_aux N).
 + unfold Mdef, random_aux.
