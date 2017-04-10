@@ -48,4 +48,12 @@ simple refine (Build_Recursors _ _ _ _ _ _ _ _ _ _ _ _);simpl.
   simpl; apply lub_le; trivial. 
 Defined.
 
+Lemma factorization_compl : forall f a, f a = (completion_map f) (eta A a).
+Proof.
+intros f a.
+unfold completion_map; simpl.
+reflexivity. 
+Qed. 
+
+
 End wCpo_compl.
