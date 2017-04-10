@@ -11,7 +11,7 @@ Require Import HoTT.HSet HoTT.Basics.Trunc HProp HSet
                TruncType UnivalenceAxiom Types.Sigma
                HIT.quotient. 
 
-Require Import RoundedClosed.
+Require Import RoundedClosed Cpo.
 
 Set Implicit Arguments.  
 
@@ -191,6 +191,27 @@ Proof.
 intros (f,Hf) (g,Hg); simpl; intros E. destruct E. apply ap.
 apply path_ishprop. 
 Qed. 
+
+(** mf A is a cpo *)
+Global Instance mf_cpo {A} : cpo (mf A) fle. 
+Proof.
+split with (fzero A) (fun f : (nat -> mf A) => (fun x =>
+                 RllubPos (fun n => f n x))).
++ intros f n a. 
+  apply (Rllub_lub (fun n => f n a)). 
++ intros f x H. assert (HL : forall n a, f n a <= x a).  
+  apply H. intros a. 
+  apply Rllub_le; trivial.
+  intros n; unfold toRlseq.
+  apply HL.
++ intros x Hx s Hs.
+  simpl in Hs.
+  unfold semi_decide in Hs; 
+  destruct (decide (s < 0)).
+  apply rlpos; trivial.
+  apply not_bot in Hs; case Hs.
+Defined. 
+
 
 
 

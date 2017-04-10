@@ -1,4 +1,5 @@
 
+
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders
                HoTTClasses.implementations.partiality
@@ -70,16 +71,16 @@ Global Instance OS_full {A} : One (OS A) := fun x : A => ⊤.
 
 (** OS A is has a cpo *)
 Global Instance OS_cpo {A} : cpo (OS A) Osle. 
-Proof.   
-exists (fun f : (nat -> OS A) => (fun x =>
+Proof.  
+exists (OS_empty) (fun f : (nat -> OS A) => (fun x =>
                  CountableSup (fun n => f n x))). 
-refine OS_empty. 
 + intros f n a. 
   apply (countable_sup_ub (fun n => f n a)). 
-+ Search CountableSup.
-  intros f x H. assert (HL : forall n a, f n a <= x a).  
++ intros f x H. assert (HL : forall n a, f n a <= x a).  
   apply H. intros a. 
-  apply (countable_sup_least_ub (fun n => f n a)); trivial. 
+  apply (countable_sup_least_ub (fun n => f n a)); trivial.
++ intros x s; unfold OS_empty; simpl.
+  apply bot_least. 
 Defined. 
 
 (** Notations *)
