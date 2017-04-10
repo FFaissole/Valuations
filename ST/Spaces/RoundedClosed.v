@@ -2358,7 +2358,7 @@ constructor.
       destruct Hq; split; trivial. 
 Defined.
 
-Global Instance RlLattice : DistributiveLattice RlowPos.
+Global Instance RlPDLattice : DistributiveLattice RlowPos.
 Proof.
 constructor.
 + constructor.
