@@ -1,4 +1,3 @@
-
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders
                HoTTClasses.interfaces.rationals
@@ -19,9 +18,22 @@ Require Import HoTT.HSet HoTT.Basics.Trunc HProp HSet
 
 Require Export RoundedClosed Opens Functions 
                Valuations LowerIntegrals
-               D_op OpenFun Riesz1 Giry.
+               D_op OpenFun Riesz1 Giry Cpo.
               
 Set Implicit Arguments.
+
+
+Definition qnp (n : nat) := pos_of_nat n.
+Definition qn (n : nat) := pos (pos_of_nat n).
+
+Definition qP (n : nat) := ((qnp n) * (1 / qnp (S n))).
+Definition qbp (n : nat) (b : Q+) := b * (1 / qnp n). 
+Definition qb (n : nat) (b : Q) := (qn n) * b. 
+Definition qfc (n : nat) := pos (qP n).
+
+
+Coercion qn : nat >-> Q.
+Coercion qnp : nat >-> Qpos.
 
 (** * Interpretation of probabilistic programs *)
 (**
@@ -169,6 +181,7 @@ Proof.
 intros f F G HO. 
 unfold up_fun, ok_up in *; trivial. 
 Qed. 
+
 
 (** * Little examples of probabilistic programs *)
 
@@ -441,7 +454,72 @@ exists (fun f => (Rlow_mult_q 2 (f true) +
   reflexivity.
   apply Hfg.
 Defined.  
- 
+
+Lemma flip_cont : forall F : IncreasingSequence (mf bool), 
+                   flip (lub F) <=
+                     RllubPos (fun n => flip (F n)).
+Proof.
+intros F q Hq.
+apply top_le_enumerable_sup in Hq.
+apply top_le_enumerable_sup.
+revert Hq; apply (Trunc_ind _); 
+intros (m,E).
+unfold semi_decide, semi_decide_exists, 
+       semi_decide, semi_decide_conj in *.
+apply top_le_enumerable_sup in E.
+revert E; apply (Trunc_ind _); intros (p,Hp).
+unfold semi_decide, semi_decide_sier in Hp.
+apply top_le_meet in Hp.
+destruct Hp as (E1,E2).
+apply top_le_meet in E2. 
+destruct E2 as (E2,E3).
+unfold decidable_semi_decide in *.
+unfold Rlow_mult_q in E1,E2.
+simpl in *.
+unfold pred_multQ in *.
+unfold semi_decide, SDseq_Rlow,
+ semi_decide_exists in *.
+apply top_le_enumerable_sup in E1.
+apply top_le_enumerable_sup in E2.
+revert E1; apply (Trunc_ind _); intros (e1,E1).
+revert E2; apply (Trunc_ind _); intros (e2,E2).
+apply tr; unfold toRlseq.
+unfold semi_decide, toRlseq in *.
+destruct (decide (e1 < e2)).
+exists e2.
+apply pred_plus_pr.
+apply tr.
+exists m, p.
+repeat split; trivial.
+revert E1; apply RC_mon with Qle.
+intros x y; apply (antisymmetry le).
+intros x y; apply orders.le_or_lt.
+reflexivity. 
+assert (H : F e1 <= F e2).
+apply seq_increasing_le.
+apply lt_le; trivial.
+apply H.
+destruct (decide (q = m + p)).
+trivial.
+apply not_bot in E3; case E3.
+exists e1.
+apply pred_plus_pr.
+apply tr.
+exists m, p.
+repeat split; trivial.
+revert E2; apply RC_mon with Qle.
+intros x y; apply (antisymmetry le).
+intros x y; apply orders.le_or_lt.
+reflexivity. 
+assert (H : F e2 <= F e1).
+apply seq_increasing_le.
+apply not_lt_le_flip in n; trivial.
+apply H.
+destruct (decide (q = m + p)).
+trivial.
+apply not_bot in E3; case E3.
+Qed.
+
 
 Definition QRlow_qpos (q : Q+)  : RlowPos. 
 Proof.
@@ -838,3 +916,281 @@ exists (random_aux N).
   apply sum_n_moy_aux_mon.
   trivial.
 Defined.   
+
+Lemma random_cont N : forall F : IncreasingSequence (mf nat), 
+                   random N (lub F) <=
+                     RllubPos (fun n => random N (F n)).
+Proof.
+intros F q Hq.
+simpl in Hq; unfold pred_multQ in Hq.
+apply top_le_enumerable_sup.
+assert (H : (sum_n_moy_aux N
+           (λ x, RllubPos (λ n, F n x))) = 
+             RllubPos (fun n => sum_n_moy_aux N 
+           (λ x, F n x))).
+apply (antisymmetry Rllepos).
++ clear Hq.
+  induction N; 
+  intros v Hv.
+  apply top_le_enumerable_sup.
+  unfold semi_decide, toRlseq.
+  - simpl in Hv.
+    apply tr.
+    exists 0.
+    simpl; trivial.
+  - simpl in Hv.
+    unfold semi_decide, toRlseq in *.
+    unfold SDseq_Rlow, semi_decide_exists, 
+     semi_decide in *.
+    apply pred_plus_pr in Hv.
+    revert Hv; apply (Trunc_ind _).
+    intros (e1,(e2,(E1,(E2,E3)))).
+    apply top_le_enumerable_sup in E1.
+    apply IHN in E2.
+    apply top_le_enumerable_sup in E2.
+    unfold semi_decide, toRlseq in E2.
+    apply top_le_enumerable_sup.
+    unfold semi_decide, toRlseq.
+    revert E1; apply (Trunc_ind _); 
+    intros (k1,E1).
+    revert E2; apply (Trunc_ind _); 
+    intros (k2,E2).
+    apply tr.
+    simpl.  
+    destruct (decide (k1 < k2)).
+    exists k2.
+    apply pred_plus_pr.
+    apply tr; exists e1, e2.
+    repeat split; trivial.
+    revert E1; apply RC_mon with Qle.
+    intros x y; apply (antisymmetry Qle). 
+    intros x y; apply orders.le_or_lt.
+    reflexivity.
+    assert (H : F k1 <= F k2).
+    apply seq_increasing_le.
+    apply lt_le; trivial.
+    apply H.
+    exists k1.
+    apply pred_plus_pr.
+    apply tr; exists e1, e2.
+    repeat split; trivial.
+    revert E2; apply RC_mon with Qle.
+    intros x y; apply (antisymmetry Qle). 
+    intros x y; apply orders.le_or_lt.
+    reflexivity.
+    apply sum_n_moy_aux_mon.
+    assert (H : F k2 <= F k1).
+    apply seq_increasing_le.
+    apply not_lt_le_flip in n; trivial.
+    apply H.
++ clear Hq.
+  induction N; 
+  intros v Hv.
+  apply top_le_enumerable_sup in Hv.
+  unfold semi_decide, toRlseq in *.
+  - simpl. 
+    revert Hv; apply (Trunc_ind _).
+    intros (n,Hn).
+    simpl in Hn; trivial.
+  - simpl.
+    unfold semi_decide, toRlseq in *.
+    unfold SDseq_Rlow, semi_decide_exists, 
+     semi_decide in *.
+    apply pred_plus_pr.
+    apply top_le_enumerable_sup in Hv.
+    unfold semi_decide, toRlseq in Hv.
+    revert Hv; apply (Trunc_ind _).
+    intros (e,E). simpl in E.
+    apply pred_plus_pr in E.
+    revert E; apply (Trunc_ind _); 
+    intros (e1,(e2,(E1,(E2,E3)))).
+    apply tr.
+    exists e1, e2.
+    repeat split. 
+    apply top_le_enumerable_sup.
+    apply tr; exists e; trivial.
+    revert E2; apply RC_mon with Qle.
+    intros x y; apply (antisymmetry Qle). 
+    intros x y; apply orders.le_or_lt.
+    reflexivity.
+    apply sum_n_moy_aux_mon.
+    intros x.
+    apply (RllubPos_lub (fun n => F n x) e).
+    trivial.
++ rewrite H in Hq.
+  apply top_le_enumerable_sup in Hq.
+  unfold semi_decide, toRlseq in Hq.
+  unfold semi_decide, toRlseq.
+  simpl; unfold pred_multQ; simpl.
+  trivial.
+Qed.
+
+     
+(** ** Fixpoints *)
+Section Fixpoints. 
+
+Context {P : Type} {lP : Le P}
+        {wCP : cpo P}.
+
+Context {A : hSet}.
+
+Fixpoint iter (f : P -> P) n : P := match n with 
+                       | O => cpobot 
+                       | S m => f (iter f m) end.
+
+Definition fixp f : P := lub (iter f).
+(*
+Lemma fixp_le f : fixp <= (f fixp).
+unfold fixp.
+apply Ole_trans with (lub (fmon_comp f iter)); auto.
+Save.
+Hint Resolve fixp_le.
+
+Lemma fixp_eq : fixp == f fixp.
+apply Ole_antisym; auto.
+unfold fixp.
+apply Ole_trans with (1:= fcont iter).
+rewrite (lub_lift_left iter (S O)); auto.
+Save.
+
+Lemma fixp_inv : forall g, f g <= g -> fixp <= g.
+unfold fixp; intros.
+apply lub_le.
+induction n; intros; auto.
+simpl; apply Ole_trans with (f g); auto.
+Save.*)
+
+End Fixpoints.
+
+Global Instance Le_fun_IntPos {A B:hSet} : Le (A -> IntPos B).
+Proof.
+intros f g.
+refine (forall x u, (f x) u <= (g x) u).
+Defined.
+
+Lemma fun_IntPos_eq0 {A B:hSet}: forall (f g : A -> IntPos B), 
+                       f = g <-> forall x, f x = g x.
+Proof.
+intros f g.  
+split.
+intros H.
+rewrite H; trivial.
+intros Hx.
+apply path_forall; trivial. 
+Qed.
+
+Global Instance le_Intpos {A:hSet} : Le (IntPos A) := 
+             fun I J => forall f, I f <= J f.
+
+Definition IntPos_cpobot  {A:hSet} : IntPos A.
+Proof.
+exists (fun f => RlP_0).
++ hnf; reflexivity.
++ intros J K.
+  transitivity (RlP_plus RlP_0 RlP_0).
+  rewrite RlPPlus_left_id.
+  reflexivity.
+  reflexivity.  
++ hnf.
+  intros q Hq; unfold semi_decide in *. 
+  simpl in *; unfold semi_decide in *.
+  destruct (decide (q < 0)).
+  destruct (decide (q < 1)).
+  trivial.
+  assert (Hnn : q < 1).
+  transitivity Qzero.
+  trivial.
+  apply lt_0_1.
+  case (n Hnn).
+  destruct (decide (q < 1)).
+  apply top_greatest.
+  trivial.
++ intros a b C.
+  reflexivity. 
+Defined.
+
+Definition IntPos_cpolub  {A:hSet} : (nat -> IntPos A) 
+                                      -> IntPos A.
+Proof.
+intros F.
+exists (fun f => RllubPos (fun n => F n f)).
++ hnf. 
+  apply (antisymmetry Rllepos).
+  - apply Rllub_le.
+    intros n; unfold toRlseq.
+    rewrite I_def.
+    intros H; trivial.
+  - transitivity ((F 0) (fzero A)).
+    rewrite I_def; simpl.
+    reflexivity.
+    apply (RllubPos_lub 
+       (fun n => (F n) (fzero A)) 0).
++ intros f g.
+  apply (antisymmetry Rllepos).
+  admit. admit.
++ hnf.
+  intros q Hq.
+  apply top_le_enumerable_sup in Hq.
+  revert Hq; simpl; apply (Trunc_ind _).
+  intros (n,Hn); unfold semi_decide, toRlseq in *.
+  assert (Hk : val RlP_1 q).
+  revert Hn; apply RC_mon with Qle.
+  intros x y; apply (antisymmetry Qle).
+  intros x y; apply orders.le_or_lt.
+  reflexivity.
+  apply I_prob.
+  simpl in Hk; trivial.
++ intros f g Hfg.
+  apply Rllub_mon.
+  intros n; unfold toRlseq.
+  apply I_mon; trivial.      
+Admitted. 
+
+Global Instance Cpo_IntPos {A:hSet} : cpo (IntPos A).
+Proof.
+exists IntPos_cpobot IntPos_cpolub.
++ intros f n.
+  admit.
++ admit.
++ intros x; simpl.
+  unfold IntPos_cpobot.
+  intros z; simpl.
+  intros q Hq.
+  simpl in Hq; unfold semi_decide in Hq.
+  destruct (decide (q < 0)).
+  apply rlpos; trivial.
+  apply not_bot in Hq; case Hq.   
+Admitted. 
+  
+Global Instance Cpo_fun_IntPos {A B:hSet} : cpo (A -> IntPos B).
+Proof.
+exists (fun x:A => cpobot)
+       (fun f:(nat -> (A -> IntPos B)) => 
+       (fun x:A => lub (fun n => f n x))).
++ intros f n.
+  intros x u.
+  generalize (@le_lub (IntPos B) le_Intpos Cpo_IntPos
+             (fun n => f n x)).
+  intros XG; apply XG.
++ intros f n.
+  intros Hx x u.
+  generalize (@lub_le (IntPos B) le_Intpos Cpo_IntPos
+             (fun n => f n x)).
+  intros XG; apply XG.
+  intros m.
+  specialize (Hx m x).
+  trivial.
++ intros X.
+  intros f u.
+  assert (Hu : cpobot <= X f).
+  apply cpobot_bot.
+  apply Hu.
+Defined.
+
+Definition Mfix {A B:hSet} (F: (A -> IntPos B) -> A -> IntPos B) 
+                 : A -> IntPos B := fixp F.
+
+Definition Fiter  : (nat -> IntPos nat) -> (nat -> IntPos nat)
+    := (fun f x => Mif flip (f (S x)) (unit nat x)).
+
+Definition iterflip : nat -> IntPos nat := Mfix Fiter.
