@@ -35,6 +35,7 @@ Proof.
   refine (forall x:A, SierLe (O1 x) (O2 x)).
 Defined.
 
+(** Osle is a partial order *)
 Global Instance Osle_ord {A} : PartialOrder (@Osle A). 
 Proof. 
 split. 
@@ -70,7 +71,7 @@ Global Instance OS_empty {A} : Zero (OS A) := fun x : A => ⊥.
 Global Instance OS_full {A} : One (OS A) := fun x : A => ⊤.
 
 (** OS A is has a cpo *)
-Global Instance OS_cpo {A} : cpo (OS A) Osle. 
+Global Instance OS_cpo {A} : cpo (OS A). 
 Proof.  
 exists (OS_empty) (fun f : (nat -> OS A) => (fun x =>
                  CountableSup (fun n => f n x))). 
@@ -87,9 +88,8 @@ Defined.
 Notation "U ⋂ V" := (OS_meet U V) (at level 80). 
 Notation "U ∪ V" := (OS_join U V) (at level 80).
 Notation "∅" := (OS_empty).
-Notation "'Ω'" := (OS_full).
 Notation "U ⊆ V" := (Osle U V) (at level 90).
-Notation "∞ Un" := ((lub OS_cpo) Un) (at level 85). 
+
 
 (** Lattice properties of the order *)
 Lemma os_lattice_order  {A} : LatticeOrder (@Osle A).

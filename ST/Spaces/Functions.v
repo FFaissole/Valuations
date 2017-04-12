@@ -1,5 +1,4 @@
 
-
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders
                HoTTClasses.implementations.sierpinsky
@@ -15,9 +14,9 @@ Require Import RoundedClosed Cpo.
 
 Set Implicit Arguments.  
 
-(** * Positive integrable functions from A to RlowPos *)
+(** * Positive 'integrable functions from A to RlowPos *)
 
-
+(** Definitions *)
 Definition mf (A:hSet) : Type := A -> RlowPos.
 
 Definition ffle {A} : mf A -> mf A -> Type. 
@@ -41,6 +40,7 @@ intros x y.
 refine (ffle_hProp x y).   
 Defined.  
 
+(** fle is a partial order *)
 Global Instance fle_ord {A} : PartialOrder (@fle A). 
 Proof. 
 split. 
@@ -128,6 +128,23 @@ split.
   reflexivity.   
 Defined. 
 
+(** Semiring structure on mf with sg_op = plus 
+     - sg_op associative
+     - mf A is an hset *)
+
+
+
+Global Instance mf_semi_ring {A} : SemiRing (mf A). 
+Proof. 
+split. 
++ apply _.   
++ hnf. intros x y z.
+  unfold sg_op, plus_is_sg_op.  
+  rewrite fplus_assoc. 
+  reflexivity.   
+Defined. 
+
+(** Bounded functions *)
 
 Record mfb (A : hSet) := mk_mfb {
     ff :> A -> RlowPos;
@@ -193,7 +210,7 @@ apply path_ishprop.
 Qed. 
 
 (** mf A is a cpo *)
-Global Instance mf_cpo {A} : cpo (mf A) fle. 
+Global Instance mf_cpo {A} : cpo (mf A). 
 Proof.
 split with (fzero A) (fun f : (nat -> mf A) => (fun x =>
                  RllubPos (fun n => f n x))).
