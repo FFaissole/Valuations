@@ -1,5 +1,4 @@
 
-
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders
                HoTTClasses.implementations.sierpinsky
@@ -14,6 +13,8 @@ Require Import HoTT.HSet HoTT.Basics.Trunc HProp HSet
                Types.Prod.
 
 Require Export RoundedClosed Opens. 
+
+(** * Compactness and local compactness in synthetic topology *)
 
 Definition cover {A : hSet} (U : OS A) (f : nat -> OS A) := 
                     forall x, U x -> exists n, (f n) x. 

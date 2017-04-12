@@ -17,15 +17,18 @@ Require Import HoTT.HSet HoTT.Basics.Trunc HProp HSet
                TruncType Types.Sigma
                HIT.quotient. 
 
+(** * Partial type as free wCpo *)
+
 Require Export Cpo.
 
 Section wCpo_compl.
 
 Context {P : Type} {lP : Le P} {PP : PartialOrder lP}
-        {wCP : cpo P lP}.
+        {wCP : cpo P}.
 
 Context {A : hSet}.
 
+(** free wCpo completion *)
 Definition completion_map (f : A -> P) : partial A -> P.
 Proof.
 apply (partial_rec A _ le).
@@ -48,12 +51,46 @@ simple refine (Build_Recursors _ _ _ _ _ _ _ _ _ _ _ _);simpl.
   simpl; apply lub_le; trivial. 
 Defined.
 
+(** factorization lemma *)
 Lemma factorization_compl : forall f a, f a = (completion_map f) (eta A a).
 Proof.
 intros f a.
 unfold completion_map; simpl.
 reflexivity. 
-Qed. 
+Qed.
 
+(** unique map Partial A -> Partial Unit *) 
+
+Definition Punique : partial A -> Sier.
+Proof.
+apply (partial_rec A _ le).
+simple refine (Build_Recursors _ _ _ _ _ _ _ _ _ _ _ _);simpl.
++ intros _. exact SierTop. 
++ exact SierBot. 
++ intros f Hn.
+  generalize (Build_IncreasingSequence f Hn).
+  intros ff.
+  refine (sup Unit ff). 
++ reflexivity.
++ intros x.
+  apply imply_le; intros b.
+  apply not_bot in b.
+  case b. 
++ intros s Hp x Hi n.
+  simpl in Hi.
+  transitivity (sup Unit (Build_IncreasingSequence s Hp)).
+  apply imply_le; intros H.
+  apply top_le_sup.
+  apply tr; exists n.
+  apply H. trivial.
++ intros s Hi x Hn.
+  simpl; apply imply_le.
+  intros H.
+  apply top_le_sup in H.
+  revert H.
+  apply (Trunc_ind _); intros (m,Hm).
+  revert Hm; apply SierLe_imply.
+  apply Hn. 
+Defined.
 
 End wCpo_compl.

@@ -17,12 +17,17 @@ Require Import HoTT.HSet HoTT.Basics.Trunc HProp HSet
                Basics.FunextVarieties FunextAxiom
                Types.Prod HIT.Truncations HIT.unique_choice. 
 
+
+(** * Dominance *)
+
+(** Definition of dominance *)
 Definition dominance (Σ : Type0) (is_top : Σ -> Type) := 
            forall (u:hProp) (s:Σ),
              (is_top s -> hexists (fun z:Σ => is_top z = u)) -> 
              hexists (fun m:Σ => merely (is_top m) 
                                = merely (u /\ (is_top s))).
 
+(** Sier is a dominance *)
 Lemma dominance_sier : dominance Sier IsTop.
 Proof.
 intros p u.
