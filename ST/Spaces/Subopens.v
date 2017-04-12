@@ -15,6 +15,8 @@ Require Import HoTT.HSet HoTT.Basics.Trunc HProp HSet
 
 Require Export RoundedClosed Opens.
 
+
+(** * Opens of (U : OS A) : kind of transitive openess  *)
 Section OS_OS.
 
 
@@ -56,6 +58,8 @@ Definition OS_OS {A :hSet} (U : OS A) := OS (OTs U).
 
 End OS_OS. 
 
+(** * Opens of (U : A ->) : opens of subspace 
+    as predicate  *)
 Section OS_subspace.
 
 Record subhSet {A : hSet} (U : A -> Type) := {
