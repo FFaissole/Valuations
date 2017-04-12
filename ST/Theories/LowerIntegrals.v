@@ -1,6 +1,8 @@
 
+
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders
+               HoTTClasses.implementations.partiality
                HoTTClasses.implementations.sierpinsky
                HoTTClasses.implementations.dedekind
                HoTTClasses.theory.rationals
@@ -17,6 +19,9 @@ Require Import RoundedClosed
 Set Implicit Arguments.
 
 Section Integrals.
+
+(** * Lower Integrals on A: a lower integra is a semi_continuous map 
+and defined in mf(A) which is valued in the positive lower reals *)
 
 Definition M (A : hSet) := mf A -> RlowPos. 
 
@@ -42,10 +47,16 @@ Definition Mpos {A} (I : M A) :=
 Definition Mmon {A} (I : M A) := 
    forall f g : mf A,  f <= g -> (I f) <= (I g).
 
-Definition Mcont {A} (I : M A) :=
+Definition Mcont {A} : (M A) -> Type := fun I => 
+            forall (f : IncreasingSequence (mf A)), 
+           I (Cpo.lub f) <= RllubPos (fun n => I (f n)).
+
+(** strong version of continuity: not used yet*)
+Definition Mcont' {A} (I : M A) :=
   forall f : mf A, (I f <= RllubPosQP (fun q:Q+ =>
                 I (fun x => RlP_minus_q2 (f x) q))). 
 
+(** IntPos is a semigroup for plus *)
 Global Instance MPos_semi_group {A} : SemiGroup (M A)
                                           (Aop := @Mplus A). 
 Proof. 
@@ -59,26 +70,21 @@ split.
   reflexivity.   
 Defined. 
 
-(** Integrals are definite, sigma-additive, monotonic and 
-associated to probability *)
+(** Integrals are definite, sigma-additive, monotonic,
+associated to probability and continuous *)
 Record IntPos (A : hSet) : Type := 
   {I :> mf A -> RlowPos;
    I_def : Mdef I;
    I_add : Mstable_add I;
    I_prob : Mprob I;
-   I_mon : Mmon I
+   I_mon : Mmon I; 
+   I_cont : Mcont I
 }.
 
 Hint Resolve I_def I_add I_prob I_mon. 
 
-Lemma Ieq_ext {A} (f g : mf A) (It : IntPos A) :
-         (forall x, f x = g x) -> It f = It g. 
-Proof.
-intros HH.
-destruct It; simpl.
-apply ap; apply path_forall;
-trivial.
-Qed.
+
+(** IntPos in hSet *) 
 
 Lemma IntPos_eq0 {A} (J H : IntPos A) :
           I J = I H -> J = H.
@@ -94,7 +100,9 @@ assert (Hmon : I_mon0 = I_mon1).
 apply path_ishprop.
 assert (Hprob : I_prob0 = I_prob1).
 apply path_ishprop.
-rewrite Hdef, Hadd, Hmon, Hprob.
+assert (Hcont : I_cont0 = I_cont1).
+apply path_ishprop.
+rewrite Hdef, Hadd, Hmon, Hprob, Hcont.
 reflexivity. 
 Qed. 
  

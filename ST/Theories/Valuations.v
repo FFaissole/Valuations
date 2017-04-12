@@ -1,6 +1,7 @@
 
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders
+               HoTTClasses.implementations.partiality
                HoTTClasses.implementations.sierpinsky
                HoTTClasses.orders.orders. 
 Require Import HoTT.HSet HoTT.Basics.Trunc HProp HSet
@@ -16,7 +17,7 @@ Section Val.
 measures but on open sets. A valuation is semi_continuous and 
 is valued in the positive lower reals *)
 
-(** Space of valuations on A *) 
+(** Carrier for the type of valuations on A *) 
 Definition Mes (A : hSet) := OS A -> RlowPos.
 
 (** Definition of the suitable properties *)
@@ -38,47 +39,27 @@ Defined.
 Definition mon_opens  {A} (m : Mes A) :=
    forall (U V : OS A), U ⊆ V -> (m U) <= (m V).
 
-(** Space of distributions: 
-     - modularity: mu U + mu V = 
-          mu (U /\ V) + mu (U \/ V) 
-     - definite : mu ∅ = 0
-     - monotonicity 
-     - sub-probability : mu A <= 1 *)
+Definition cont {A} : (Mes A) -> Type := fun m => 
+      forall (U : IncreasingSequence (OS A)), 
+      m (Cpo.lub U) <= RllubPos (fun n => m (U n)).
+
+(** Space of valuations : valuations are definite, 
+    modular, monotonic, sub-ptrobabilstic and continuous *)
+
 Record Val (A : hSet) : Type :=
   {mu :> OS A -> RlowPos;
    mu_modular : modular mu; 
    mu_empty_op : empty_op mu;
    mu_mon : mon_opens mu;
-   mu_prob : (mu Ω) <= (RlP_1)
+   mu_prob : (mu Ω) <= (RlP_1); 
+   mu_cont : cont mu
 }.
 
 
 Hint Resolve mu_modular mu_prob mu_empty_op mu_mon.
 
-(** Deductible properties of valuations *)
+(** Val in hSet *)
 
-(** mu is monotonic *) 
-Lemma mu_monotonic : forall {A} (m : Val A), mon_opens m.
-Proof.  auto. Qed.
-Hint Resolve mu_monotonic.
-
-(** eq stable *)
-
-Lemma mu_stable_eq : forall {A} (m: Val A) (U V : OS A),
-    U = V -> m U = m V.
-Proof. 
-intros A m U V H2.
-rewrite H2. 
-split; auto.   
-Qed.
-
-Hint Resolve mu_stable_eq.
-
-(** mu m (fone A) <= 1%RlPos *)
-Lemma mu_one : forall  {A} (m: Val A), m Ω <=  RlP_1.
-Proof. auto. Qed. 
-
-Hint Resolve mu_one.
 
 
 Lemma Val_eq0 {A} (J H : Val A) :
@@ -95,7 +76,9 @@ assert (Hmon : mu_mon0 = mu_mon1).
 apply path_ishprop.
 assert (Hprob : mu_prob0 = mu_prob1).
 apply path_ishprop.
-rewrite Hmod, Hempty, Hmon, Hprob.
+assert (Hcont : mu_cont0 = mu_cont1).
+apply path_ishprop.
+rewrite Hmod, Hempty, Hmon, Hprob, Hcont.
 reflexivity. 
 Qed. 
  

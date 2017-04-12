@@ -51,7 +51,9 @@ simple refine (Build_Recursors _ _ _ _ _ _ _ _ _ _ _ _);simpl.
   assert (H2 : RllubPos s <= x).
   apply RllubPos_le. trivial.
   apply RC_mon with Qle (Rllub s) q. 
-  intros ss sh; apply (antisymmetry le). apply orders.le_or_lt.
+  intros ss sh; 
+  apply (antisymmetry le). 
+  apply orders.le_or_lt.
   reflexivity. trivial. trivial.
 Defined.
 
@@ -81,6 +83,7 @@ apply (partialLe_ind0 _ _).
 Qed.
   
 
+(** S_to_RlP preserves meets *)
 Lemma meet_pres_S_to_RlP : 
           MeetPreserving (fun (s: Sier) => S_to_RlP s). 
 Proof. 
@@ -102,7 +105,6 @@ apply (partial_ind0 _ (fun a => _)).
   apply (antisymmetry le). 
   - intros s Hs. 
     simpl in Hs. 
-    unfold semi_decide in Hs. 
     destruct (decide (s < 1)).
     unfold meet in Hs. 
     apply top_le_meet in Hs. 
@@ -110,7 +112,7 @@ apply (partial_ind0 _ (fun a => _)).
     apply top_le_meet in Hs. 
     apply (snd Hs). 
   - intros s Hs.
-    simpl; unfold semi_decide.
+    simpl.
     apply top_le_meet. 
     split. 
     destruct (decide (s < 1)). 
@@ -119,10 +121,11 @@ apply (partial_ind0 _ (fun a => _)).
     red in Hrr;
     unfold Rl_pos_Le, Rlle, RCLe_l in Hrr. 
     specialize (Hrr s Hs). 
-    simpl in Hrr; unfold semi_decide in Hrr. 
+    simpl in Hrr. 
     destruct (decide (s < 1)).     
     case (n l). 
-    apply not_bot in Hrr; case Hrr. 
+    apply not_bot in Hrr; 
+    case Hrr. 
     trivial.
   - rewrite H2.
     reflexivity.
@@ -143,12 +146,11 @@ apply (partial_ind0 _ (fun a => _)).
     intros r. 
     apply (antisymmetry le). 
     -- intros s Hs. 
-       unfold RlPMeet in Hs; simpl in Hs; 
-       unfold semi_decide in Hs. 
+       simpl in Hs. 
        apply top_le_meet in Hs. 
        destruct (decide (s < 0)). 
        destruct Hs as (_,Hs). 
-       simpl; unfold semi_decide. 
+       simpl. 
        destruct (decide (s < 0)). 
        apply top_greatest. 
        case (n l).
@@ -156,7 +158,7 @@ apply (partial_ind0 _ (fun a => _)).
        apply not_bot in Hs; case Hs.
     -- intros s Hs; simpl in Hs. 
        destruct (RlPMeet RlP_0 r) as (rr,Hprr); simpl. 
-       unfold semi_decide in *; destruct (decide (s < 0)).            
+       destruct (decide (s < 0)).            
        apply Hprr; trivial.        
        apply not_bot in Hs; case Hs.
     -- rewrite HsB.
@@ -175,13 +177,11 @@ apply (partial_ind0 _ (fun a => _)).
                   (fun n => S_to_RlP ((SierMeet_seq_l f y) n))) q). 
     trivial.
     clear Hn'.
-    apply top_le_enumerable_sup in Hn'2.   
-    unfold semi_decide, toRlseq in Hn'2.           
+    apply top_le_enumerable_sup in Hn'2.             
     revert Hn'2; apply (Trunc_ind _). 
     intros (n,Hn'2). 
     specialize (Hn n).
     simpl in Hn'2. 
-    unfold meet in Hn'2.
     assert (H3 : val (rl (S_to_RlP y)) q).
     revert Hn'2. 
     apply RC_mon with Qle. 
@@ -195,8 +195,7 @@ apply (partial_ind0 _ (fun a => _)).
                      (RlMeet (RllubPos (fun n => S_to_RlP (f n)))
                               (S_to_RlP y)) q). 
     unfold RlPMeet. 
-    simpl; unfold semi_decide, SDseq_Rlow, toRlseq,
-           semi_decide_exists.
+    simpl.
     apply top_le_meet. 
     split. 
     -- apply top_le_enumerable_sup. 
@@ -204,7 +203,8 @@ apply (partial_ind0 _ (fun a => _)).
        exists n.
        revert Hn'2.
        apply RC_mon with Qle. 
-       intros ss sh; apply (antisymmetry le).
+       intros ss sh; 
+       apply (antisymmetry le).
        apply orders.le_or_lt.
        reflexivity. 
        apply S_to_RlP_mon.
@@ -216,12 +216,11 @@ apply (partial_ind0 _ (fun a => _)).
     apply top_le_meet in Hn'.
     destruct Hn' as (Hna,Hnb). 
     assert (Hna2 : elt Q Qlt (Rllub
-                                    (fun n => S_to_RlP (f n))) q).
+                   (fun n => S_to_RlP (f n))) q).
     trivial. clear Hna.
     apply top_le_enumerable_sup in Hna2.
     revert Hna2; apply (Trunc_ind _). 
     intros (m,Hm).
-    unfold semi_decide, toRlseq in Hm. 
     assert (H2 : SierMeet (sup Unit f) y =
                  sup _ (SierMeet_seq_l f y)). 
     apply SierMeet_sup.   
@@ -229,19 +228,19 @@ apply (partial_ind0 _ (fun a => _)).
     assert (H3 : elt Q Qlt (Rllub
                  (fun n => S_to_RlP ((SierMeet_seq_l f y) n))) q).
     apply top_le_enumerable_sup.
-    unfold semi_decide, toRlseq.
     apply tr. 
     exists m. 
     simpl; specialize (Hn m).
     unfold S_to_RlP.
     rewrite Hn.
     unfold RlPMeet. 
-    simpl; unfold semi_decide.
+    simpl.
     apply top_le_meet.
     split; trivial.
     trivial. 
 Qed. 
 
+(** S_to_RlP preserves joins *)
 Lemma join_pres_S_to_RlP : 
           JoinPreserving (fun (s: Sier) => S_to_RlP s). 
 Proof. 
@@ -254,8 +253,7 @@ apply (partial_ind0 _ (fun a => _)).
   generalize (SierJoin_top y).
   intros Hst;
   destruct x;
-  fold SierTop;
-  unfold join in Hst; trivial. 
+  trivial. 
   rewrite H1. 
   assert (H2 : forall x, x <= RlP_1 -> 
                     RlPJoin RlP_1 x = RlP_1). 
@@ -263,11 +261,8 @@ apply (partial_ind0 _ (fun a => _)).
   apply (antisymmetry le). 
   - intros s Hs. 
     simpl in Hs. 
-    unfold semi_decide in Hs. 
     destruct (decide (s < 1)).
-    unfold join in Hs. 
     apply top_le_join in Hs.
-    unfold hor in Hs.
     revert Hs; (apply (Trunc_ind _)).
     intros Hs. 
     destruct Hs;
@@ -279,21 +274,20 @@ apply (partial_ind0 _ (fun a => _)).
     apply top_le_join in Hs.
     unfold hor in Hs.
     revert Hs; (apply (Trunc_ind _)).
-    intros Hs. 
-    destruct Hs. 
+    intros []. 
     -- apply not_bot in i; case i. 
-    -- simpl; unfold semi_decide;
+    -- simpl;
        destruct (decide (s < 1)); try trivial. 
        apply top_greatest.
-       red in Hrr; unfold Rl_pos_Le, Rlle, RCLe_l in Hrr. 
+       red in Hrr. 
        apply Hrr in i. 
-       simpl in i; unfold semi_decide in i;
+       simpl in i;
        destruct (decide (s < 1)); try trivial. 
        case (n0 l).                                       
   - intros s Hs.
-    apply top_le_join; unfold hor. 
+    apply top_le_join. 
     apply tr.
-    simpl in Hs; simpl; unfold semi_decide in *. 
+    simpl in Hs; simpl. 
     destruct (decide (s < 1)). 
     left; trivial. 
     left; trivial.
@@ -302,7 +296,8 @@ apply (partial_ind0 _ (fun a => _)).
     reflexivity.
     clear H1. 
     revert y.
-    assert (H3 : forall y, S_to_RlP y <= S_to_RlP (eta Unit tt)).
+    assert (H3 : forall y, S_to_RlP y
+                        <= S_to_RlP (eta Unit tt)).
     intros y; apply S_to_RlP_mon. 
     apply top_greatest. 
     trivial.  
@@ -312,19 +307,18 @@ apply (partial_ind0 _ (fun a => _)).
   intros r. 
   apply (antisymmetry le).
   -- intros s Hs. 
-     unfold RlPJoin in Hs; simpl in Hs; 
-     unfold semi_decide in Hs. 
+     unfold RlPJoin in Hs; simpl in Hs. 
      apply top_le_join in Hs. 
      destruct (decide (s < 0)).
      * apply rlpos; trivial.  
-     * unfold hor in Hs. 
-       revert Hs; apply (Trunc_ind _). 
+     * revert Hs; apply (Trunc_ind _). 
        intros Hs.
        case Hs; intros Ho. 
        ** apply not_bot in Ho; case Ho.
        ** trivial.
-  -- intros s Hs; simpl in Hs.
-     simpl; unfold semi_decide.             
+  -- intros s Hs; 
+     simpl in Hs.
+     simpl.             
      destruct (decide (s < 0)). 
      apply top_le_join. 
      unfold hor; apply tr. 
@@ -343,43 +337,40 @@ apply (partial_ind0 _ (fun a => _)).
     reflexivity. 
     rewrite H2 in Hn'.
     assert (Hn'2 : elt Q Qlt (Rllub
-                  (fun n => S_to_RlP ((SierJoin_seq_l f y) n))) q). 
+         (fun n => S_to_RlP ((SierJoin_seq_l f y) n))) q). 
     trivial.
     clear Hn'.
-    apply top_le_enumerable_sup in Hn'2.   
-    unfold semi_decide, toRlseq in Hn'2.           
+    apply top_le_enumerable_sup in Hn'2.             
     revert Hn'2; apply (Trunc_ind _). 
     intros (n,Hn'2). 
     specialize (Hn n).
     simpl in Hn'2. 
     unfold join in Hn'2.
     apply top_le_join.
-    unfold hor.
     assert (Hn'3 : val (rl (RlPJoin
-                           (S_to_RlP (f n)) (S_to_RlP y))) q). 
-    rewrite <- Hn; trivial.
+                 (S_to_RlP (f n)) (S_to_RlP y))) q). 
+    rewrite <- Hn; 
+    trivial.
     simpl in Hn'3. 
-    unfold semi_decide in Hn'3.
     apply top_le_join in Hn'3. 
-    unfold hor in Hn'3. 
-    revert Hn'3; apply (Trunc_ind _).
+    revert Hn'3; 
+    apply (Trunc_ind _);
     intros Hn'3. 
     apply tr. 
     case Hn'3; intros Hh. 
-    -- left; unfold semi_decide, semi_decide_sier.
+    -- left.
        assert (H1 : elt Q Qlt (Rllub
                                (fun n => S_to_RlP (f n))) q).
        apply top_le_enumerable_sup. 
-       apply tr; exists n. 
-       unfold semi_decide, toRlseq; trivial.
+       apply tr; exists n; trivial.
        trivial. 
-    -- right; unfold semi_decide, semi_decide_sier. 
+    -- right;
        trivial.
   - intros q Hn'.
     unfold RlPJoin in Hn'.
     apply top_le_join in Hn'.
-    unfold hor in Hn'. 
-    revert Hn'; apply (Trunc_ind _). 
+    revert Hn'; 
+    apply (Trunc_ind _); 
     intros Hn'.
     assert (H2 : SierJoin (sup Unit f) y =
                      sup _ (SierJoin_seq_l f y)).
@@ -387,8 +378,8 @@ apply (partial_ind0 _ (fun a => _)).
     reflexivity.
     rewrite H2.
     assert (H3 : elt Q Qlt (Rllub
-                                  (fun n => S_to_RlP
-                                   ((SierJoin_seq_l f y) n))) q).
+                     (fun n => S_to_RlP
+                     ((SierJoin_seq_l f y) n))) q).
     apply top_le_enumerable_sup.     
     case Hn'; intros H;
     unfold semi_decide, semi_decide_sier in H. 
@@ -399,24 +390,25 @@ apply (partial_ind0 _ (fun a => _)).
        revert H'; apply (Trunc_ind _). 
        intros (n,H'). 
        apply tr. 
-       exists n; unfold semi_decide, toRlseq. 
-       simpl; unfold semi_decide, toRlseq in H'.
+       exists n. 
+       simpl.
        revert H'.         
        apply RC_mon with Qle. 
        intros ss sh; apply (antisymmetry le).
        apply orders.le_or_lt.
        reflexivity.
-       apply S_to_RlP_mon, SierJoin_is_join. 
+       apply S_to_RlP_mon, 
+             SierJoin_is_join. 
     -- apply tr.     
        exists 0. 
-       unfold semi_decide, toRlseq. 
        simpl.   
        revert H. 
        apply RC_mon with Qle. 
        intros ss sh; apply (antisymmetry le).
        apply orders.le_or_lt.
        reflexivity.
-       apply S_to_RlP_mon, SierJoin_is_join. 
+       apply S_to_RlP_mon,
+             SierJoin_is_join. 
     -- trivial. 
 Qed. 
 
@@ -462,7 +454,7 @@ apply S_to_RlP_mon; trivial.
 apply (H1 s).
 Qed.
 
-
+(** 1_U (x) = 1 iff 1_U (x) > 0 *) 
 Lemma OpenFun_0_1 {A  : hSet}: forall (U : OS A) z,
     OpenFun A U z = RlP_1 <-> RlP_0 < OpenFun A U z.
 Proof. 
@@ -473,16 +465,17 @@ split; intros H1.
   apply tr. 
   exists 0. 
   split. 
-  - simpl; unfold semi_decide; destruct (decide (0 < 1)).  
+  - simpl; destruct (decide (0 < 1)).  
     apply top_greatest.
     case n.
     apply semirings.lt_0_1. 
   - intros HF. 
     simpl in HF;
-    unfold semi_decide in HF; destruct (decide (0 < 0)).  
+    destruct (decide (0 < 0)).  
     apply orders.lt_ne in l. 
     case l; reflexivity. 
-    apply not_bot in HF; case HF. 
+    apply not_bot in HF; 
+    case HF. 
 + revert H1; unfold OpenFun, S_to_RlP.
   generalize (U z).
   apply (partial_ind0 _ (fun a => _ -> _)). 
@@ -517,7 +510,8 @@ split; intros H1.
          apply tr; exists q.
          split; trivial.
          intros Hf; simpl in Hf; 
-         unfold semi_decide in *; destruct (decide (q < 0)).
+         unfold semi_decide in *; 
+         destruct (decide (q < 0)).
          apply orders.lt_not_le_flip in l0.
          case (l0 l). 
          apply not_bot in Hf; case Hf.
@@ -532,13 +526,16 @@ split; intros H1.
     * intros q Hq1. 
       apply top_le_enumerable_sup.
       unfold semi_decide, toRlseq.
-      assert (Hm : hexists (fun m => RlP_0 < S_to_RlP (f m))).
-      red in Hsup; unfold Rlltpos, Rllt, RCLt_l in Hsup.
+      assert (Hm : hexists 
+               (fun m => RlP_0 < S_to_RlP (f m))).
+      red in Hsup; unfold Rlltpos, 
+                   Rllt, RCLt_l in Hsup.
       revert Hsup; apply (Trunc_ind _); 
       intros (r,(Hr1,Hr2)).
       apply top_le_enumerable_sup in Hr1.
       revert Hr1; apply (Trunc_ind _); 
-      intros (m,Hm); unfold semi_decide, toRlseq in *.
+      intros (m,Hm); 
+      unfold semi_decide, toRlseq in *.
       apply tr; exists m.
       red; unfold Rlltpos, Rllt, RCLt_l.
       apply tr.
@@ -551,6 +548,7 @@ split; intros H1.
     * trivial.
 Qed.   
 
+(** 1_U (x) = 1 iff x ∈ U *) 
 Lemma OpenFun_correct {A : hSet} : forall (x:A) U,
                OpenFun A U x = RlP_1 <-> (U x) = SierTop.
 Proof. 
@@ -558,7 +556,8 @@ intros x U.
 split; intros Hu.
 apply OpenFun_0_1 in Hu. 
 + unfold OpenFun, S_to_RlP in *.
-  revert Hu. generalize (U x).
+  revert Hu.
+  generalize (U x).
   apply (partial_ind0 _ (fun a => _->_)). 
   - simpl; intros v Hv.
     unfold SierTop.
@@ -572,17 +571,18 @@ apply OpenFun_0_1 in Hu.
     intros (q,(E1,E2)).
     case (E2 E1). 
   - intros f Hn Hn'.
-    assert (Hn'2 : RlP_0 < RllubPos (fun n => S_to_RlP (f n))).
+    assert (Hn'2 : RlP_0 < RllubPos 
+           (fun n => S_to_RlP (f n))).
     trivial.    
     clear Hn'.
-    assert (Ha: merely (exists n : nat, RlP_0 < S_to_RlP (f n))). 
+    assert (Ha: merely (exists n : nat, 
+              RlP_0 < S_to_RlP (f n))). 
     red in Hn'2; 
     unfold Rlltpos, Rllt, RCLt_l in Hn'2. 
     revert Hn'2; apply (Trunc_ind _).              
     intros (p,(Hp1,Hp2)). 
     apply top_le_enumerable_sup in Hp1.
     revert Hp1; apply (Trunc_ind _).  
-    unfold semi_decide, toRlseq.
     intros (m,Hm).
     apply tr. 
     exists m.
@@ -595,12 +595,15 @@ apply OpenFun_0_1 in Hu.
     specialize (Hn w Hw). 
     apply top_le_eq.
     apply top_le_sup. 
-    apply tr; exists w; rewrite Hn; apply top_greatest. 
-+ unfold OpenFun, S_to_RlP; rewrite Hu; simpl. 
+    apply tr; exists w; 
+    rewrite Hn; 
+    apply top_greatest. 
++ unfold OpenFun, S_to_RlP; 
+  rewrite Hu; simpl. 
   reflexivity. 
 Qed.
 
-
+(** 1_(U /\ V) = (1_U) /\ (1_V) *)
 Lemma Meet_pres_openfun {A:hSet}: forall z s,
           MeetPreserving (fun (U: OS A) => val (OpenFun A U z) s). 
 Proof.
@@ -609,7 +612,8 @@ unfold OpenFun, sg_op, meet_is_sg_op.
 assert (H1 : (x ⋂ y) z = meet (x z) (y z)).
 unfold OS_meet, meet.
 apply (antisymmetry le);
-apply imply_le; intros Hs;
+apply imply_le; 
+intros Hs;
 apply top_le_meet in Hs; 
 apply top_le_meet; trivial. 
 rewrite H1. 
@@ -617,6 +621,7 @@ rewrite meet_pres_S_to_RlP.
 reflexivity. 
 Qed. 
 
+(** 1_(U \/ V) = (1_U) \/ (1_V) *)
 Lemma Join_pres_openfun {A:hSet}: forall z s,
           JoinPreserving (fun (U: OS A) => val (OpenFun A U z) s). 
 Proof.
@@ -633,6 +638,7 @@ rewrite join_pres_S_to_RlP.
 reflexivity. 
 Qed. 
 
+(** 1_U + 1_V = 1_(U \/ V) + 1_(U /\ V)*)
 Lemma OpenFun_mod {A}: forall (U V : OS A), fplus (OpenFun _ U) (OpenFun _ V) =
                                 fplus (OpenFun _ (OS_meet U V))
                                       (OpenFun _ (OS_join U V)).
@@ -727,7 +733,7 @@ apply (antisymmetry le).
     -- rewrite rings.plus_comm; trivial.
 Qed.
 
-
+(* D_op 0 1_U = U *)
 Lemma D_op_OpenFun {A  : hSet}: forall (U : OS A),
            (D_op 0 (OpenFun A U)) = U. 
 Proof.

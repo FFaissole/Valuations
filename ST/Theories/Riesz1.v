@@ -18,14 +18,59 @@ Require Export RoundedClosed Opens Functions
               
 Set Implicit Arguments.
 
+(** * From Integrals to Valuations *)
 
-(** * Formal proof of a constructive Riesz Theorem: for 
-the detailed pen-and-paper proof, see Coquand-Spitters09, 
-Integrals and valuations, or Vickers08, Monad of valuation 
-locales *)
+(** 1_U preserves lub *)
+Lemma OpenFun_lub {A : hSet} : forall (U : IncreasingSequence (OS A)) x, 
+         OpenFun A (Cpo.lub U) x = 
+                RllubPos (fun n => (OpenFun A (U n)) x).
+Proof. 
+intros U x.
+unfold OpenFun; simpl.
+apply (antisymmetry le).
++ intros s Hs. 
+  apply top_le_enumerable_sup in Hs. 
+  unfold semi_decide, toRlseq in Hs.
+  revert Hs; apply (Trunc_ind _).
+  intros (m,Hm).
+  apply top_le_enumerable_sup.
+  apply tr; exists m.  
+  revert Hm; apply S_to_RlP_mon.
+  apply imply_le.
+  intros Hv. 
+  apply top_le_joined_seq_n' in Hv.
+  revert Hv; apply (Trunc_ind _).
+  intros (p,Hp).
+  destruct Hp as (Hpm,HUp).
+  revert HUp.
+  apply SierLe_imply.
+  assert (H' : U p <= U m).
+  apply seq_increasing_le; trivial.
+  apply H'.  
++ intros s Hs.
+  apply top_le_enumerable_sup in Hs.
+  unfold semi_decide, toRlseq in Hs.
+  revert Hs; apply (Trunc_ind _).
+  intros (m,Hm).
+  revert Hm; apply S_to_RlP_mon.
+  apply imply_le. 
+  intros H. 
+  apply top_le_countable_sup.
+  apply tr; exists m; trivial.
+Qed. 
 
-(** From Integrals to Valuations: 
-  mu_I (U)  = I (1_U) *)
+(** fun n => U n ---> fun n => 1_(U n) *)
+Definition OpenFun_increasing_sequence {A : hSet} : 
+   IncreasingSequence (OS A) -> IncreasingSequence (mf A).
+Proof.
+intros U.
+exists (fun n => OpenFun A (U n)).  
+intros n x.
+apply OpenFun_mon.
+apply U.
+Defined. 
+
+(**  mu_I (U)  = I (1_U) *)
 Definition Riesz1 (A : hSet) : IntPos A -> Val A. 
 Proof. 
 intros J. 
@@ -49,5 +94,21 @@ exists (fun U:OS A => (I J (OpenFun A U))).
 + red. intros U V H. 
   apply I_mon. 
   apply OpenFun_mon; trivial.
-+ unfold OS_full; apply I_prob. 
++ unfold OS_full; apply I_prob.
++ intros f.
+  transitivity (J (λ x : A, RllubPos (λ n : nat, 
+                (OpenFun A (f n) x)))).
+  apply I_mon.
+  intros x. rewrite OpenFun_lub; reflexivity.
+  assert (X : forall x, (λ n : nat, OpenFun A (f n)) x = 
+        (OpenFun_increasing_sequence f) x).
+  intros x; reflexivity.
+  transitivity (J (λ x : A, RllubPos (fun n => 
+           seq ((OpenFun_increasing_sequence f)) n x))).
+  apply I_mon.
+  intros x.
+  apply RllubPos_mon;
+  intros n q Hn.
+  rewrite <- X; trivial. 
+  apply J.
 Defined.
