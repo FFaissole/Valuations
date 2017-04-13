@@ -51,7 +51,7 @@ Record Val (A : hSet) : Type :=
    mu_modular : modular mu; 
    mu_empty_op : empty_op mu;
    mu_mon : mon_opens mu;
-   mu_prob : (mu Ω) <= (RlP_1); 
+   mu_prob : (mu (fun x => SierTop)) <= (RlP_1); 
    mu_cont : cont mu
 }.
 

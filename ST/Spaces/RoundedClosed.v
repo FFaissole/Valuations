@@ -1,4 +1,5 @@
 
+
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders
                HoTTClasses.implementations.sierpinsky
@@ -733,7 +734,7 @@ intros a b;split.
   apply (Trunc_ind _);intros [qa Ea].
   generalize (inhab Q Qlt b);
   apply (Trunc_ind _);intros [qb Eb].
-  apply tr. 
+  apply tr. SearchAbout Q.
   destruct (Qle_total qa qb).
   - exists qa.
     apply top_le_meet. 
@@ -2003,6 +2004,7 @@ intros a p;split.
     rewrite negate_mult_distr_l.
     apply flip_nonpos_mult_l.
     apply flip_le_negate.
+    SearchAbout negate. 
     rewrite negate_0, negate_involutive.
     apply lt_le, p.
     apply lt_le; trivial.

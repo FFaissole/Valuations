@@ -1,4 +1,5 @@
 
+
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders
                HoTTClasses.implementations.sierpinsky
@@ -119,22 +120,6 @@ Qed.
      - sg_op associative
      - mf A is an hset *)
 Global Instance mf_semi_group {A} : SemiGroup (mf A). 
-Proof. 
-split. 
-+ apply _.   
-+ hnf. intros x y z.
-  unfold sg_op, plus_is_sg_op.  
-  rewrite fplus_assoc. 
-  reflexivity.   
-Defined. 
-
-(** Semiring structure on mf with sg_op = plus 
-     - sg_op associative
-     - mf A is an hset *)
-
-
-
-Global Instance mf_semi_ring {A} : SemiRing (mf A). 
 Proof. 
 split. 
 + apply _.   

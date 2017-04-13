@@ -1,4 +1,5 @@
 
+
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders
                HoTTClasses.implementations.partiality
@@ -27,6 +28,7 @@ exists (fun f : mf A => f x).
 + intros f g; reflexivity.
 + unfold Mprob; reflexivity.
 + intros f g Hfg; apply Hfg.
++ intros f; reflexivity.
 Defined.
 
 (** bind operator *)
@@ -54,6 +56,23 @@ split with (fun f => I (fun x => (M x) f)).
   apply I_prob.
 + red; intros f g Hfg.
   apply I_mon. intros x; apply I_mon; trivial.
++ intros f.
+  pose (ff := fun n : nat =>
+            (λ x : A, ((M x) (f n)))).
+  assert (Hff : forall n, ff n <= ff (S n)).
+  intros n; unfold ff. intros x.
+  apply (M x), f.
+  pose (F := Build_IncreasingSequence ff Hff).
+  generalize (I_cont I F); 
+  unfold Mcont; intros HI.
+  unfold F in *; simpl in *.
+  unfold ff in *.
+  transitivity 
+   (I (λ x : A, RllubPos 
+           (λ n : nat, (M x) (f n)))).
+  apply I_mon; intros x.
+  apply (M x).
+  trivial. 
 Defined. 
 
 (** Monadic properties *)

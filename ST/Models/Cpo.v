@@ -47,10 +47,11 @@ Context {LB : Le B}.
                                    
 Class cpo C {ordA : Le C} := mkcpo{
      cpobot : C;
-     lub : forall (f : nat -> C), C; 
-     le_lub : forall (f : nat -> C) n, f n <= lub f; 
-     lub_le : forall (f : nat -> C) x, (forall n, f n <= x)
-                                             -> lub f <= x ;
+     lub : forall (f : IncreasingSequence C), C; 
+     le_lub : forall (f : IncreasingSequence C) n, 
+                                      f n <= lub f; 
+     lub_le : forall (f : IncreasingSequence C) x, 
+               (forall n, f n <= x) -> lub f <= x ;
      cpobot_bot : forall x, cpobot <= x    
 }.
 

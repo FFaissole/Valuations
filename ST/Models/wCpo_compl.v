@@ -1,4 +1,5 @@
 
+
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders
                HoTTClasses.interfaces.rationals
@@ -44,7 +45,11 @@ simple refine (Build_Recursors _ _ _ _ _ _ _ _ _ _ _ _);simpl.
   apply cpobot_bot. 
 + intros s Hp x Hi n.
   simpl in Hi.
-  transitivity (lub s).
+  transitivity 
+    (lub (Build_IncreasingSequence s Hp)).
+  transitivity 
+    ((Build_IncreasingSequence s Hp) n); 
+  try reflexivity.
   apply le_lub.
   trivial. 
 + intros s Hi x Hn.
