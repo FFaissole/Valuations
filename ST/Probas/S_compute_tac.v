@@ -13,7 +13,7 @@ Require Import HoTT.HSet HoTT.Basics.Trunc HProp HSet
 
 Require Export RoundedClosed Opens Functions 
                Valuations LowerIntegrals
-               D_op OpenFun Riesz1.
+               D_op OpenFun Riesz1 Flip Random.
               
 Set Implicit Arguments.
 Close Scope nat. 
@@ -65,14 +65,93 @@ apply (antisymmetry SierLe).
   exists (n + m)%nat; 
   simpl in *; trivial. 
 Qed.
-            
-Ltac S_compute n := match goal with 
-          | [H : _ |- IsTop SierTop] => apply top_greatest
-          | [H :_ |- IsTop (sup Unit _)] => match n with 
-              | _ => (tryif (apply top_le_sup; 
-                     apply tr; exists n; assumption) 
-                     then idtac else 
-                     (timeout 4 (rewrite (sup_dec_r n)); 
-                     S_compute n))
-              end
+
+
+Ltac S_compute_aux n := tryif (assumption || apply top_greatest) then 
+                     idtac else (
+                     apply top_le_sup; 
+                     apply tr; exists n; simpl; 
+                     assumption || apply top_greatest). 
+
+Ltac S_compute n := 
+         tryif (S_compute_aux n) then 
+               idtac else (rewrite (sup_dec_r n); S_compute n).
+  
+
+Definition switch : OS bool -> OS bool.
+Proof.
+intros U [].
+refine (U false).
+refine (U true).
+Defined.
+
+Definition Utrue : OS bool := fun x:bool => match x with 
+        | true => SierTop
+        | false => SierBot
 end.
+
+Definition seq_sier : OS nat := 
+   fun x:nat => match x with 
+        | O => SierBot 
+        | S O => SierBot 
+        | S (S O) => SierBot 
+        | S (S (S O))  => SierBot 
+        | S (S (S (S O))) => SierBot 
+        | S (S (S (S (S O)))) => SierBot 
+        | S (S (S (S (S (S O))))) => SierBot 
+        | S (S (S (S (S (S (S O)))))) => SierBot 
+        | S (S (S (S (S (S (S (S O))))))) => SierBot 
+        | _ => SierTop
+end.
+
+
+Definition seq_sier_mon : IncreasingSequence Sier.
+Proof.
+exists seq_sier.
+intros n.
+induction n.
+simpl; reflexivity.
+induction n.
+simpl; reflexivity.
+induction n.
+simpl; reflexivity.
+induction n.
+simpl; reflexivity.
+induction n.
+simpl; reflexivity.
+induction n.
+simpl; reflexivity.
+induction n.
+simpl; reflexivity.
+induction n.
+simpl; reflexivity.
+induction n.
+simpl; apply top_greatest.
+simpl; reflexivity. 
+Defined.
+
+Definition seq_sier'_mon : IncreasingSequence Sier.
+Proof.
+exists seq_sier'.
+intros n.
+induction n.
+simpl; reflexivity.
+induction n.
+simpl; apply top_greatest.
+simpl; reflexivity. 
+Defined.
+
+Lemma switch_compute : forall U : OS bool, 
+              IsTop (switch (Utrue) false).
+Proof.
+intros x; simpl.
+S_compute O. 
+Qed. 
+
+Lemma seq_compute : IsTop (sup Unit (seq_sier_mon)).
+Proof. 
+S_compute (S O).
+Qed. 
+
+
+
