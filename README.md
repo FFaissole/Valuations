@@ -28,11 +28,9 @@ The project is organized as it follows:
     
 - Probas/*.v: interpretation of probabilistic languages: Giry.v contains a formalization of the Giry monad on integrals; Interp.v contains the interpretation rules of the semantic of a Rml-like language; Flip.v, Random.v and RandomWalk.v are examples of mini probabilstic programs; S_compute_tac.v is a tactic to compute with partial types. 
 
+# Documentation 
 
- 
- 
-
-
+https://www.lri.fr/~faissole/Valdoc/toc.html
 
 
 
