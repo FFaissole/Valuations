@@ -1,10 +1,10 @@
-#Synthetic Topology in Homotopy Type Theory for probabilstic programming
+# Synthetic Topology in Homotopy Type Theory for probabilstic programming
 
 Florian Faissole - Bas Spitters 
 
 This work is based on HoTT and HoTTClasses. 
 
-#Build 
+# Build 
 
 You need the following dependencies: 
 - IR branch of Coq: https://github.com/mattam82/coq/tree/IR
@@ -16,7 +16,7 @@ Install the dependencies and run the following commands:
 - cd Valuations
 - make
 
-Organization
+# Organization
 
 They are currently in several groups:
 
