@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>D_op</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library D_op</h1>
+
+<div class="code">
+
+<br/>
+
+<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab10"></a><h1 class="section">D_op: operator which takes a function and a rational</h1>
+
+and gives the open in which the function is bigger than the 
+rational 
+<div class="paragraph"> </div>
+
+ see a similart construction with Dedekind cuts in 
+Coquand-Spitters 09, Integrals and valuations 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Section</span> <a name="Dop"><span class="id" title="section">Dop</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Context</span> `{<span class="id" title="class">Funext</span>} `{<span class="id" title="class">Univalence</span>}.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="D_op"><span class="id" title="definition">D_op</span></a> {<span class="id" title="var">A</span> :<span class="id" title="abbreviation">hSet</span>} (<span class="id" title="var">q</span> : <span class="id" title="axiom">Q</span>) : <a class="idref" href="Functions.html#mf"><span class="id" title="definition">mf</span></a> <a class="idref" href="D_op.html#A"><span class="id" title="variable">A</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="Opens.html#OS"><span class="id" title="definition">OS</span></a> <a class="idref" href="D_op.html#A"><span class="id" title="variable">A</span></a>.<br/>
+ 
+<br/>
+</div>
+
+<div class="doc">
+Correctness of the definition 
+</div>
+<div class="code">
+<span class="id" title="keyword">Lemma</span> <a name="D_op_correct"><span class="id" title="lemma">D_op_correct</span></a> {<span class="id" title="var">A</span>:<span class="id" title="abbreviation">hSet</span>}: <span class="id" title="keyword">∀</span> <span class="id" title="var">f</span> <span class="id" title="var">q</span> (<span class="id" title="var">x</span>:<a class="idref" href="D_op.html#A"><span class="id" title="variable">A</span></a>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="D_op.html#D_op"><span class="id" title="definition">D_op</span></a> <a class="idref" href="D_op.html#q"><span class="id" title="variable">q</span></a> <a class="idref" href="D_op.html#f"><span class="id" title="variable">f</span></a>) <a class="idref" href="D_op.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Datatypes.html#df1ced36fc33ce188051218bca314374"><span class="id" title="notation">↔</span></a>  <a class="idref" href="RoundedClosed.html#QRlow"><span class="id" title="instance">QRlow</span></a> <a class="idref" href="D_op.html#q"><span class="id" title="variable">q</span></a> <span class="id" title="notation">&lt;</span> <span class="id" title="notation">(</span><a class="idref" href="D_op.html#f"><span class="id" title="variable">f</span></a> <a class="idref" href="D_op.html#x"><span class="id" title="variable">x</span></a><span class="id" title="notation">)</span>.<br/>
+ 
+<br/>
+</div>
+
+<div class="doc">
+Monotonicity of the operator on the functional arg
+</div>
+<div class="code">
+<span class="id" title="keyword">Lemma</span> <a name="D_op_mon_f"><span class="id" title="lemma">D_op_mon_f</span></a> {<span class="id" title="var">A</span>:<span class="id" title="abbreviation">hSet</span>}: <span class="id" title="keyword">∀</span> <span class="id" title="var">q</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="D_op.html#f"><span class="id" title="variable">f</span></a> <span class="id" title="notation">≤</span> <a class="idref" href="D_op.html#g"><span class="id" title="variable">g</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="D_op.html#D_op"><span class="id" title="definition">D_op</span></a> <a class="idref" href="D_op.html#q"><span class="id" title="variable">q</span></a> <a class="idref" href="D_op.html#f"><span class="id" title="variable">f</span></a> <span class="id" title="notation">≤</span> @<a class="idref" href="D_op.html#D_op"><span class="id" title="definition">D_op</span></a> <a class="idref" href="D_op.html#A"><span class="id" title="variable">A</span></a> <a class="idref" href="D_op.html#q"><span class="id" title="variable">q</span></a> <a class="idref" href="D_op.html#g"><span class="id" title="variable">g</span></a>.<br/>
+ 
+<br/>
+</div>
+
+<div class="doc">
+Monotonicity of the operator on the rational arg
+</div>
+<div class="code">
+<span class="id" title="keyword">Lemma</span> <a name="D_op_mon_q"><span class="id" title="lemma">D_op_mon_q</span></a> {<span class="id" title="var">A</span>:<span class="id" title="abbreviation">hSet</span>} : <span class="id" title="keyword">∀</span> <span class="id" title="var">p</span> <span class="id" title="var">q</span> <span class="id" title="var">f</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="D_op.html#p"><span class="id" title="variable">p</span></a> <span class="id" title="notation">≤</span> <a class="idref" href="D_op.html#q"><span class="id" title="variable">q</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> @<a class="idref" href="D_op.html#D_op"><span class="id" title="definition">D_op</span></a> <a class="idref" href="D_op.html#A"><span class="id" title="variable">A</span></a> <a class="idref" href="D_op.html#q"><span class="id" title="variable">q</span></a> <a class="idref" href="D_op.html#f"><span class="id" title="variable">f</span></a> <span class="id" title="notation">≤</span> @<a class="idref" href="D_op.html#D_op"><span class="id" title="definition">D_op</span></a> <a class="idref" href="D_op.html#A"><span class="id" title="variable">A</span></a> <a class="idref" href="D_op.html#p"><span class="id" title="variable">p</span></a> <a class="idref" href="D_op.html#f"><span class="id" title="variable">f</span></a>.<br/>
+ 
+<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="D_op.html#Dop"><span class="id" title="section">Dop</span></a>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

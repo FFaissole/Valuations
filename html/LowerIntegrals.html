@@ -1,0 +1,186 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>LowerIntegrals</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library LowerIntegrals</h1>
+
+<div class="code">
+
+<br/>
+
+<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <a name="Integrals"><span class="id" title="section">Integrals</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab12"></a><h1 class="section">Lower Integrals on A: a lower integra is a semi_continuous map</h1>
+
+and defined in mf(A) which is valued in the positive lower reals 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="M"><span class="id" title="definition">M</span></a> (<span class="id" title="var">A</span> : <span class="id" title="abbreviation">hSet</span>) := <a class="idref" href="Functions.html#mf"><span class="id" title="definition">mf</span></a> <a class="idref" href="LowerIntegrals.html#A"><span class="id" title="variable">A</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#RlowPos"><span class="id" title="record">RlowPos</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="Mplus"><span class="id" title="definition">Mplus</span></a> {<span class="id" title="var">A</span>} : <span class="id" title="class">Plus</span> (<a class="idref" href="LowerIntegrals.html#M"><span class="id" title="definition">M</span></a> <a class="idref" href="LowerIntegrals.html#A"><span class="id" title="variable">A</span></a>).<br/>
+<span class="id" title="keyword">Defined</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="Mdef"><span class="id" title="definition">Mdef</span></a> {<span class="id" title="var">A</span>} (<span class="id" title="var">I</span> : <a class="idref" href="LowerIntegrals.html#M"><span class="id" title="definition">M</span></a> <a class="idref" href="LowerIntegrals.html#A"><span class="id" title="variable">A</span></a>) :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">(</span><a class="idref" href="LowerIntegrals.html#I"><span class="id" title="variable">I</span></a> (<a class="idref" href="Functions.html#fzero"><span class="id" title="instance">fzero</span></a> <a class="idref" href="LowerIntegrals.html#A"><span class="id" title="variable">A</span></a>)<span class="id" title="notation">)</span> <span class="id" title="notation">=</span> <a class="idref" href="RoundedClosed.html#RlP_0"><span class="id" title="definition">RlP_0</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="Mprob"><span class="id" title="definition">Mprob</span></a> {<span class="id" title="var">A</span>} (<span class="id" title="var">I</span> : <a class="idref" href="LowerIntegrals.html#M"><span class="id" title="definition">M</span></a> <a class="idref" href="LowerIntegrals.html#A"><span class="id" title="variable">A</span></a>) :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">(</span><a class="idref" href="LowerIntegrals.html#I"><span class="id" title="variable">I</span></a> (<a class="idref" href="Functions.html#fone"><span class="id" title="instance">fone</span></a> <a class="idref" href="LowerIntegrals.html#A"><span class="id" title="variable">A</span></a>)<span class="id" title="notation">)</span> <span class="id" title="notation">≤</span> <a class="idref" href="RoundedClosed.html#RlP_1"><span class="id" title="definition">RlP_1</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="Mstable_add"><span class="id" title="definition">Mstable_add</span></a> {<span class="id" title="var">A</span>} (<span class="id" title="var">I</span> : <a class="idref" href="LowerIntegrals.html#M"><span class="id" title="definition">M</span></a> <a class="idref" href="LowerIntegrals.html#A"><span class="id" title="variable">A</span></a>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">∀</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>: <a class="idref" href="Functions.html#mf"><span class="id" title="definition">mf</span></a> <a class="idref" href="LowerIntegrals.html#A"><span class="id" title="variable">A</span></a>, <span class="id" title="notation">(</span><a class="idref" href="LowerIntegrals.html#I"><span class="id" title="variable">I</span></a> (<a class="idref" href="Functions.html#fplus"><span class="id" title="instance">fplus</span></a> <a class="idref" href="LowerIntegrals.html#f"><span class="id" title="variable">f</span></a> <a class="idref" href="LowerIntegrals.html#g"><span class="id" title="variable">g</span></a>)<span class="id" title="notation">)</span> <span class="id" title="notation">=</span> <span class="id" title="notation">(</span><span class="id" title="notation">(</span><a class="idref" href="LowerIntegrals.html#I"><span class="id" title="variable">I</span></a> <a class="idref" href="LowerIntegrals.html#f"><span class="id" title="variable">f</span></a><span class="id" title="notation">)+(</span><a class="idref" href="LowerIntegrals.html#I"><span class="id" title="variable">I</span></a> <a class="idref" href="LowerIntegrals.html#g"><span class="id" title="variable">g</span></a><span class="id" title="notation">)</span><span class="id" title="notation">)</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="Mpos"><span class="id" title="definition">Mpos</span></a> {<span class="id" title="var">A</span>} (<span class="id" title="var">I</span> : <a class="idref" href="LowerIntegrals.html#M"><span class="id" title="definition">M</span></a> <a class="idref" href="LowerIntegrals.html#A"><span class="id" title="variable">A</span></a>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">∀</span> (<span class="id" title="var">f</span> : <a class="idref" href="Functions.html#mf"><span class="id" title="definition">mf</span></a> <a class="idref" href="LowerIntegrals.html#A"><span class="id" title="variable">A</span></a>), <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">(</span></a><span class="id" title="keyword">∀</span> <span class="id" title="var">x</span>, <a class="idref" href="RoundedClosed.html#RlP_0"><span class="id" title="definition">RlP_0</span></a> <span class="id" title="notation">≤</span> <a class="idref" href="LowerIntegrals.html#f"><span class="id" title="variable">f</span></a> <a class="idref" href="LowerIntegrals.html#x"><span class="id" title="variable">x</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#RlP_0"><span class="id" title="definition">RlP_0</span></a> <span class="id" title="notation">≤</span> <a class="idref" href="LowerIntegrals.html#I"><span class="id" title="variable">I</span></a> <a class="idref" href="LowerIntegrals.html#f"><span class="id" title="variable">f</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="Mmon"><span class="id" title="definition">Mmon</span></a> {<span class="id" title="var">A</span>} (<span class="id" title="var">I</span> : <a class="idref" href="LowerIntegrals.html#M"><span class="id" title="definition">M</span></a> <a class="idref" href="LowerIntegrals.html#A"><span class="id" title="variable">A</span></a>) := <br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">∀</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> : <a class="idref" href="Functions.html#mf"><span class="id" title="definition">mf</span></a> <a class="idref" href="LowerIntegrals.html#A"><span class="id" title="variable">A</span></a>,  <a class="idref" href="LowerIntegrals.html#f"><span class="id" title="variable">f</span></a> <span class="id" title="notation">≤</span> <a class="idref" href="LowerIntegrals.html#g"><span class="id" title="variable">g</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <span class="id" title="notation">(</span><a class="idref" href="LowerIntegrals.html#I"><span class="id" title="variable">I</span></a> <a class="idref" href="LowerIntegrals.html#f"><span class="id" title="variable">f</span></a><span class="id" title="notation">)</span> <span class="id" title="notation">≤</span> <span class="id" title="notation">(</span><a class="idref" href="LowerIntegrals.html#I"><span class="id" title="variable">I</span></a> <a class="idref" href="LowerIntegrals.html#g"><span class="id" title="variable">g</span></a><span class="id" title="notation">)</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="Mcont"><span class="id" title="definition">Mcont</span></a> {<span class="id" title="var">A</span>} : <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">(</span></a><a class="idref" href="LowerIntegrals.html#M"><span class="id" title="definition">M</span></a> <a class="idref" href="LowerIntegrals.html#A"><span class="id" title="variable">A</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <span class="id" title="keyword">Type</span> := <span class="id" title="keyword">fun</span> <span class="id" title="var">I</span> ⇒ <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">∀</span> (<span class="id" title="var">f</span> : <span class="id" title="record">IncreasingSequence</span> (<a class="idref" href="Functions.html#mf"><span class="id" title="definition">mf</span></a> <a class="idref" href="LowerIntegrals.html#A"><span class="id" title="variable">A</span></a>)), <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="LowerIntegrals.html#I"><span class="id" title="variable">I</span></a> (<a class="idref" href="Cpo.html#lub"><span class="id" title="projection">Cpo.lub</span></a> <a class="idref" href="LowerIntegrals.html#f"><span class="id" title="variable">f</span></a>) <span class="id" title="notation">≤</span> <a class="idref" href="RoundedClosed.html#RllubPos"><span class="id" title="definition">RllubPos</span></a> (<span class="id" title="keyword">fun</span> <span class="id" title="var">n</span> ⇒ <a class="idref" href="LowerIntegrals.html#I"><span class="id" title="variable">I</span></a> (<a class="idref" href="LowerIntegrals.html#f"><span class="id" title="variable">f</span></a> <a class="idref" href="LowerIntegrals.html#n"><span class="id" title="variable">n</span></a>)).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+strong version of continuity: not used yet
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="Mcont'"><span class="id" title="definition">Mcont'</span></a> {<span class="id" title="var">A</span>} (<span class="id" title="var">I</span> : <a class="idref" href="LowerIntegrals.html#M"><span class="id" title="definition">M</span></a> <a class="idref" href="LowerIntegrals.html#A"><span class="id" title="variable">A</span></a>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">∀</span> <span class="id" title="var">f</span> : <a class="idref" href="Functions.html#mf"><span class="id" title="definition">mf</span></a> <a class="idref" href="LowerIntegrals.html#A"><span class="id" title="variable">A</span></a>, (<a class="idref" href="LowerIntegrals.html#I"><span class="id" title="variable">I</span></a> <a class="idref" href="LowerIntegrals.html#f"><span class="id" title="variable">f</span></a> <span class="id" title="notation">≤</span> <a class="idref" href="RoundedClosed.html#RllubPosQP"><span class="id" title="definition">RllubPosQP</span></a> (<span class="id" title="keyword">fun</span> <span class="id" title="var">q</span>:<span class="id" title="notation">Q</span>+ ⇒<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="LowerIntegrals.html#I"><span class="id" title="variable">I</span></a> (<span class="id" title="keyword">fun</span> <span class="id" title="var">x</span> ⇒ <a class="idref" href="RoundedClosed.html#RlP_minus_q2"><span class="id" title="definition">RlP_minus_q2</span></a> (<a class="idref" href="LowerIntegrals.html#f"><span class="id" title="variable">f</span></a> <a class="idref" href="LowerIntegrals.html#x"><span class="id" title="variable">x</span></a>) <a class="idref" href="LowerIntegrals.html#q"><span class="id" title="variable">q</span></a>))).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+IntPos is a semigroup for plus 
+</div>
+<div class="code">
+<span class="id" title="keyword">Global Instance</span> <a name="MPos_semi_group"><span class="id" title="instance">MPos_semi_group</span></a> {<span class="id" title="var">A</span>} : <span class="id" title="class">SemiGroup</span> (<a class="idref" href="LowerIntegrals.html#M"><span class="id" title="definition">M</span></a> <a class="idref" href="LowerIntegrals.html#A"><span class="id" title="variable">A</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Aop</span> := @<a class="idref" href="LowerIntegrals.html#Mplus"><span class="id" title="definition">Mplus</span></a> <a class="idref" href="LowerIntegrals.html#A"><span class="id" title="variable">A</span></a>).<br/>
+ 
+<br/>
+</div>
+
+<div class="doc">
+Integrals are definite, sigma-additive, monotonic,
+associated to probability and continuous 
+</div>
+<div class="code">
+<span class="id" title="keyword">Record</span> <a name="IntPos"><span class="id" title="record">IntPos</span></a> (<span class="id" title="var">A</span> : <span class="id" title="abbreviation">hSet</span>) : <span class="id" title="keyword">Type</span> := <br/>
+&nbsp;&nbsp;{<a name="I"><span class="id" title="projection">I</span></a> :&gt; <a class="idref" href="Functions.html#mf"><span class="id" title="definition">mf</span></a> <a class="idref" href="LowerIntegrals.html#A"><span class="id" title="variable">A</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#RlowPos"><span class="id" title="record">RlowPos</span></a>;<br/>
+&nbsp;&nbsp;&nbsp;<a name="I_def"><span class="id" title="projection">I_def</span></a> : <a class="idref" href="LowerIntegrals.html#Mdef"><span class="id" title="definition">Mdef</span></a> <a class="idref" href="LowerIntegrals.html#I"><span class="id" title="method">I</span></a>;<br/>
+&nbsp;&nbsp;&nbsp;<a name="I_add"><span class="id" title="projection">I_add</span></a> : <a class="idref" href="LowerIntegrals.html#Mstable_add"><span class="id" title="definition">Mstable_add</span></a> <a class="idref" href="LowerIntegrals.html#I"><span class="id" title="method">I</span></a>;<br/>
+&nbsp;&nbsp;&nbsp;<a name="I_prob"><span class="id" title="projection">I_prob</span></a> : <a class="idref" href="LowerIntegrals.html#Mprob"><span class="id" title="definition">Mprob</span></a> <a class="idref" href="LowerIntegrals.html#I"><span class="id" title="method">I</span></a>;<br/>
+&nbsp;&nbsp;&nbsp;<a name="I_mon"><span class="id" title="projection">I_mon</span></a> : <a class="idref" href="LowerIntegrals.html#Mmon"><span class="id" title="definition">Mmon</span></a> <a class="idref" href="LowerIntegrals.html#I"><span class="id" title="method">I</span></a>; <br/>
+&nbsp;&nbsp;&nbsp;<a name="I_cont"><span class="id" title="projection">I_cont</span></a> : <a class="idref" href="LowerIntegrals.html#Mcont"><span class="id" title="definition">Mcont</span></a> <a class="idref" href="LowerIntegrals.html#I"><span class="id" title="method">I</span></a><br/>
+}.<br/>
+
+<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+IntPos in hSet 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="IntPos_eq0"><span class="id" title="lemma">IntPos_eq0</span></a> {<span class="id" title="var">A</span>} (<span class="id" title="var">J</span> <span class="id" title="var">H</span> : <a class="idref" href="LowerIntegrals.html#IntPos"><span class="id" title="record">IntPos</span></a> <a class="idref" href="LowerIntegrals.html#A"><span class="id" title="variable">A</span></a>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="LowerIntegrals.html#I"><span class="id" title="projection">I</span></a> <a class="idref" href="LowerIntegrals.html#J"><span class="id" title="variable">J</span></a> <span class="id" title="notation">=</span> <a class="idref" href="LowerIntegrals.html#I"><span class="id" title="projection">I</span></a> <a class="idref" href="LowerIntegrals.html#H"><span class="id" title="variable">H</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="LowerIntegrals.html#J"><span class="id" title="variable">J</span></a> <span class="id" title="notation">=</span> <a class="idref" href="LowerIntegrals.html#H"><span class="id" title="variable">H</span></a>.<br/>
+ 
+<br/>
+<span class="id" title="keyword">Instance</span> <a name="IntPos_isset"><span class="id" title="instance">IntPos_isset@</span></a>{} {<span class="id" title="var">A</span>} : <span class="id" title="abbreviation">IsHSet</span> (<a class="idref" href="LowerIntegrals.html#IntPos"><span class="id" title="record">IntPos</span></a> <a class="idref" href="LowerIntegrals.html#A"><span class="id" title="variable">A</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="IntPos_stable_conv"><span class="id" title="definition">IntPos_stable_conv</span></a> {<span class="id" title="var">A</span>} (<span class="id" title="var">I</span> <span class="id" title="var">J</span> : <a class="idref" href="LowerIntegrals.html#IntPos"><span class="id" title="record">IntPos</span></a> <a class="idref" href="LowerIntegrals.html#A"><span class="id" title="variable">A</span></a>) <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">p</span> <span class="id" title="var">q</span> : <span class="id" title="notation">Q</span>+) (<span class="id" title="var">Hpq</span> : <span class="id" title="axiom">Qle</span> (<span class="id" title="projection">pos</span> (<a class="idref" href="LowerIntegrals.html#p"><span class="id" title="variable">p</span></a> <span class="id" title="notation">+</span> <a class="idref" href="LowerIntegrals.html#q"><span class="id" title="variable">q</span></a>)) 1) : <a class="idref" href="LowerIntegrals.html#IntPos"><span class="id" title="record">IntPos</span></a> <a class="idref" href="LowerIntegrals.html#A"><span class="id" title="variable">A</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">SearchAbout</span> <span class="id" title="definition">mult</span> <span class="id" title="definition">lt</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">SearchAbout</span> <span class="id" title="definition">mult</span> <span class="id" title="definition">lt</span>.<br/>
+<span class="id" title="var">Admitted</span>.<br/>
+
+<br/>
+
+<br/>
+
+<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Global Instance</span> <a name="Le_fun_IntPos"><span class="id" title="instance">Le_fun_IntPos</span></a> {<span class="id" title="var">A</span> <span class="id" title="var">B</span>:<span class="id" title="abbreviation">hSet</span>} : <span class="id" title="class">Le</span> (<a class="idref" href="LowerIntegrals.html#A"><span class="id" title="variable">A</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="LowerIntegrals.html#IntPos"><span class="id" title="record">IntPos</span></a> <a class="idref" href="LowerIntegrals.html#B"><span class="id" title="variable">B</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Global Instance</span> <a name="le_Intpos"><span class="id" title="instance">le_Intpos</span></a> {<span class="id" title="var">A</span>:<span class="id" title="abbreviation">hSet</span>} : <span class="id" title="class">Le</span> (<a class="idref" href="LowerIntegrals.html#IntPos"><span class="id" title="record">IntPos</span></a> <a class="idref" href="LowerIntegrals.html#A"><span class="id" title="variable">A</span></a>) := <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">fun</span> <span class="id" title="var">I</span> <span class="id" title="var">J</span> ⇒ <span class="id" title="keyword">∀</span> <span class="id" title="var">f</span>, <a class="idref" href="LowerIntegrals.html#I"><span class="id" title="variable">I</span></a> <a class="idref" href="LowerIntegrals.html#f"><span class="id" title="variable">f</span></a> <span class="id" title="notation">≤</span> <a class="idref" href="LowerIntegrals.html#J"><span class="id" title="variable">J</span></a> <a class="idref" href="LowerIntegrals.html#f"><span class="id" title="variable">f</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="IntPos_cpobot"><span class="id" title="definition">IntPos_cpobot</span></a>  {<span class="id" title="var">A</span>:<span class="id" title="abbreviation">hSet</span>} : <a class="idref" href="LowerIntegrals.html#IntPos"><span class="id" title="record">IntPos</span></a> <a class="idref" href="LowerIntegrals.html#A"><span class="id" title="variable">A</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Global Instance</span> <a name="PO_Intpos"><span class="id" title="instance">PO_Intpos</span></a> {<span class="id" title="var">A</span>:<span class="id" title="abbreviation">hSet</span>} : <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="class">PartialOrder</span> (@<a class="idref" href="LowerIntegrals.html#le_Intpos"><span class="id" title="instance">le_Intpos</span></a> <a class="idref" href="LowerIntegrals.html#A"><span class="id" title="variable">A</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="IntPos_cpolub"><span class="id" title="definition">IntPos_cpolub</span></a>  {<span class="id" title="var">A</span>:<span class="id" title="abbreviation">hSet</span>} : <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">(</span></a><span class="id" title="record">IncreasingSequence</span> (<a class="idref" href="LowerIntegrals.html#IntPos"><span class="id" title="record">IntPos</span></a> <a class="idref" href="LowerIntegrals.html#A"><span class="id" title="variable">A</span></a>)<a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="LowerIntegrals.html#IntPos"><span class="id" title="record">IntPos</span></a> <a class="idref" href="LowerIntegrals.html#A"><span class="id" title="variable">A</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Global Instance</span> <a name="Cpo_IntPos"><span class="id" title="instance">Cpo_IntPos</span></a> {<span class="id" title="var">A</span>:<span class="id" title="abbreviation">hSet</span>} : <a class="idref" href="Cpo.html#cpo"><span class="id" title="class">cpo</span></a> (<a class="idref" href="LowerIntegrals.html#IntPos"><span class="id" title="record">IntPos</span></a> <a class="idref" href="LowerIntegrals.html#A"><span class="id" title="variable">A</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="fun_Increasing_comp"><span class="id" title="definition">fun_Increasing_comp</span></a> {<span class="id" title="var">A</span> <span class="id" title="var">B</span>:<span class="id" title="abbreviation">hSet</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">f</span> : <span class="id" title="record">IncreasingSequence</span> <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="LowerIntegrals.html#A"><span class="id" title="variable">A</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="LowerIntegrals.html#IntPos"><span class="id" title="record">IntPos</span></a> <a class="idref" href="LowerIntegrals.html#B"><span class="id" title="variable">B</span></a>)) (<span class="id" title="var">x</span> : <a class="idref" href="LowerIntegrals.html#A"><span class="id" title="variable">A</span></a>) : <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="record">IncreasingSequence</span> (<a class="idref" href="LowerIntegrals.html#IntPos"><span class="id" title="record">IntPos</span></a> <a class="idref" href="LowerIntegrals.html#B"><span class="id" title="variable">B</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Global Instance</span> <a name="Cpo_fun_IntPos"><span class="id" title="instance">Cpo_fun_IntPos</span></a> {<span class="id" title="var">A</span> <span class="id" title="var">B</span>:<span class="id" title="abbreviation">hSet</span>} : <a class="idref" href="Cpo.html#cpo"><span class="id" title="class">cpo</span></a> (<a class="idref" href="LowerIntegrals.html#A"><span class="id" title="variable">A</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="LowerIntegrals.html#IntPos"><span class="id" title="record">IntPos</span></a> <a class="idref" href="LowerIntegrals.html#B"><span class="id" title="variable">B</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="LowerIntegrals.html#Integrals"><span class="id" title="section">Integrals</span></a>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

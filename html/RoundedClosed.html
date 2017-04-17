@@ -1,0 +1,956 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>RoundedClosed</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library RoundedClosed</h1>
+
+<div class="code">
+
+<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab2"></a><h1 class="section">Constructive Lower Reals</h1>
+
+</div>
+<div class="code">
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <a name="GeneralIlq"><span class="id" title="section">GeneralIlq</span></a>.<br/>
+</div>
+
+<div class="doc">
+General rounded closed predicates on a type A. This construction 
+should be instantiated to get semi_continuous spaces of numbers. 
+If A = Q one can get both lower reals and upper reals. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Variable</span> <a name="GeneralIlq.A"><span class="id" title="variable">A</span></a> : <span class="id" title="keyword">Type</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="APred"><span class="id" title="definition">APred</span></a> := <a class="idref" href="RoundedClosed.html#GeneralIlq.A"><span class="id" title="variable">A</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <span class="id" title="definition">Sier</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Variable</span> <a name="GeneralIlq.Rle"><span class="id" title="variable">Rle</span></a> : <span class="id" title="definition">relation</span> <a class="idref" href="RoundedClosed.html#GeneralIlq.A"><span class="id" title="variable">A</span></a>.<br/>
+<span class="id" title="keyword">Variable</span> <a name="GeneralIlq.Rlt"><span class="id" title="variable">Rlt</span></a> : <span class="id" title="definition">relation</span> <a class="idref" href="RoundedClosed.html#GeneralIlq.A"><span class="id" title="variable">A</span></a>.<br/>
+<span class="id" title="keyword">Hypothesis</span> <a name="GeneralIlq.Hd"><span class="id" title="variable">Hd</span></a> : <span class="id" title="class">DecidablePaths</span> <a class="idref" href="RoundedClosed.html#GeneralIlq.A"><span class="id" title="variable">A</span></a>.<br/>
+<span class="id" title="keyword">Hypothesis</span> <a name="GeneralIlq.Hda"><span class="id" title="variable">Hda</span></a> : <span class="id" title="class">AntiSymmetric</span> <a class="idref" href="RoundedClosed.html#GeneralIlq.Rle"><span class="id" title="variable">Rle</span></a>.<br/>
+<span class="id" title="keyword">Hypothesis</span> <a name="GeneralIlq.Hdt"><span class="id" title="variable">Hdt</span></a> : <span class="id" title="class">TotalRelation</span> <a class="idref" href="RoundedClosed.html#GeneralIlq.Rle"><span class="id" title="variable">Rle</span></a>.<br/>
+<span class="id" title="keyword">Hypothesis</span> <a name="GeneralIlq.HA"><span class="id" title="variable">HA</span></a> : <span class="id" title="class">Apart</span> <a class="idref" href="RoundedClosed.html#GeneralIlq.A"><span class="id" title="variable">A</span></a>.<br/>
+<span class="id" title="keyword">Hypothesis</span> <a name="GeneralIlq.ATA"><span class="id" title="variable">ATA</span></a> : <span class="id" title="class">TrivialApart</span> <a class="idref" href="RoundedClosed.html#GeneralIlq.A"><span class="id" title="variable">A</span></a> (<span class="id" title="var">Aap</span> := <a class="idref" href="RoundedClosed.html#GeneralIlq.Rlt"><span class="id" title="variable">Rlt</span></a>).<br/>
+<span class="id" title="keyword">Hypothesis</span> <a name="GeneralIlq.FR"><span class="id" title="variable">FR</span></a> : <span class="id" title="class">FullPseudoOrder</span> <a class="idref" href="RoundedClosed.html#GeneralIlq.Rle"><span class="id" title="variable">Rle</span></a> <a class="idref" href="RoundedClosed.html#GeneralIlq.Rlt"><span class="id" title="variable">Rlt</span></a>.<br/>
+<span class="id" title="keyword">Hypothesis</span> <a name="GeneralIlq.RC_le_or_lt"><span class="id" title="variable">RC_le_or_lt</span></a> : <span class="id" title="keyword">∀</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> : <a class="idref" href="RoundedClosed.html#GeneralIlq.A"><span class="id" title="variable">A</span></a>, <a class="idref" href="RoundedClosed.html#GeneralIlq.Rle"><span class="id" title="variable">Rle</span></a> <a class="idref" href="RoundedClosed.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="RoundedClosed.html#y"><span class="id" title="variable">y</span></a> <span class="id" title="notation">∨</span> <a class="idref" href="RoundedClosed.html#GeneralIlq.Rlt"><span class="id" title="variable">Rlt</span></a> <a class="idref" href="RoundedClosed.html#y"><span class="id" title="variable">y</span></a> <a class="idref" href="RoundedClosed.html#x"><span class="id" title="variable">x</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <a name="GeneralIlq.isRoundedClosed"><span class="id" title="section">isRoundedClosed</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Variable</span> <a name="GeneralIlq.isRoundedClosed.elt"><span class="id" title="variable">elt</span></a> : <a class="idref" href="RoundedClosed.html#APred"><span class="id" title="definition">APred</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Class</span> <a name="IsRC"><span class="id" title="record">IsRC</span></a> : <span class="id" title="keyword">Type</span> :=<br/>
+&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a name="is_inhab"><span class="id" title="projection">is_inhab</span></a> : <span class="id" title="definition">merely</span> (<a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Specif.html#84eb6d2849dbf3581b1c0c05add5f2d8"><span class="id" title="notation">∃</span></a> <span class="id" title="var">q</span><a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Specif.html#84eb6d2849dbf3581b1c0c05add5f2d8"><span class="id" title="notation">,</span></a> <a class="idref" href="RoundedClosed.html#GeneralIlq.isRoundedClosed.elt"><span class="id" title="variable">elt</span></a> <a class="idref" href="RoundedClosed.html#q"><span class="id" title="variable">q</span></a>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a name="is_rounded"><span class="id" title="projection">is_rounded</span></a> : <span class="id" title="keyword">∀</span> <span class="id" title="var">q</span>, <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Datatypes.html#iff"><span class="id" title="definition">iff@</span></a>{<span class="id" title="keyword">Set</span> <span class="id" title="var">UQ</span> <span class="id" title="var">UQ</span>} (<a class="idref" href="RoundedClosed.html#GeneralIlq.isRoundedClosed.elt"><span class="id" title="variable">elt</span></a> <a class="idref" href="RoundedClosed.html#q"><span class="id" title="variable">q</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="definition">merely</span> (<a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Specif.html#84eb6d2849dbf3581b1c0c05add5f2d8"><span class="id" title="notation">∃</span></a> <span class="id" title="var">r</span><a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Specif.html#84eb6d2849dbf3581b1c0c05add5f2d8"><span class="id" title="notation">,</span></a> <a class="idref" href="RoundedClosed.html#GeneralIlq.Rlt"><span class="id" title="variable">Rlt</span></a> <a class="idref" href="RoundedClosed.html#q"><span class="id" title="variable">q</span></a> <a class="idref" href="RoundedClosed.html#r"><span class="id" title="variable">r</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Datatypes.html#d82a7d96d3659d805ffe732283716822"><span class="id" title="notation">∧</span></a> <a class="idref" href="RoundedClosed.html#GeneralIlq.isRoundedClosed.elt"><span class="id" title="variable">elt</span></a> <a class="idref" href="RoundedClosed.html#r"><span class="id" title="variable">r</span></a>))<br/>
+&nbsp;&nbsp;}.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="RoundedClosed.html#GeneralIlq.isRoundedClosed"><span class="id" title="section">isRoundedClosed</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Record</span> <a name="RC"><span class="id" title="record">RC</span></a> :=  {<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="elt"><span class="id" title="projection">elt</span></a> :&gt; <a class="idref" href="RoundedClosed.html#APred"><span class="id" title="definition">APred</span></a>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="elt_RC"><span class="id" title="projection">elt_RC</span></a> : <a class="idref" href="RoundedClosed.html#IsRC"><span class="id" title="class">IsRC</span></a> <a class="idref" href="RoundedClosed.html#elt"><span class="id" title="method">elt</span></a><br/>
+}.<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="inhab"><span class="id" title="definition">inhab</span></a> (<span class="id" title="var">c</span> : <a class="idref" href="RoundedClosed.html#RC"><span class="id" title="record">RC</span></a>) := <a class="idref" href="RoundedClosed.html#is_inhab"><span class="id" title="projection">is_inhab</span></a> (<a class="idref" href="RoundedClosed.html#elt"><span class="id" title="projection">elt</span></a> <a class="idref" href="RoundedClosed.html#c"><span class="id" title="variable">c</span></a>).<br/>
+<span class="id" title="keyword">Definition</span> <a name="rounded"><span class="id" title="definition">rounded</span></a> (<span class="id" title="var">c</span> : <a class="idref" href="RoundedClosed.html#RC"><span class="id" title="record">RC</span></a>) := <a class="idref" href="RoundedClosed.html#is_rounded"><span class="id" title="projection">is_rounded</span></a> (<a class="idref" href="RoundedClosed.html#elt"><span class="id" title="projection">elt</span></a> <a class="idref" href="RoundedClosed.html#c"><span class="id" title="variable">c</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="IsRC_conjunction"><span class="id" title="definition">IsRC_conjunction</span></a> <span class="id" title="var">r</span> : <a class="idref" href="RoundedClosed.html#IsRC"><span class="id" title="class">IsRC</span></a> <a class="idref" href="RoundedClosed.html#r"><span class="id" title="variable">r</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <span class="id" title="var">_</span><br/>
+&nbsp;&nbsp;:= <span class="id" title="keyword">fun</span> <span class="id" title="var">c</span> ⇒ <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">(</span></a><a class="idref" href="RoundedClosed.html#is_inhab"><span class="id" title="projection">is_inhab</span></a> <a class="idref" href="RoundedClosed.html#r"><span class="id" title="variable">r</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">,</span></a> <a class="idref" href="RoundedClosed.html#is_rounded"><span class="id" title="projection">is_rounded</span></a> <a class="idref" href="RoundedClosed.html#r"><span class="id" title="variable">r</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">)</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Global Instance</span> <a name="isRC_conj_isequiv"><span class="id" title="instance">isRC_conj_isequiv</span></a> {<span class="id" title="var">r</span>}<br/>
+&nbsp;&nbsp;: <span class="id" title="class">IsEquiv</span> (<a class="idref" href="RoundedClosed.html#IsRC_conjunction"><span class="id" title="definition">IsRC_conjunction</span></a> <a class="idref" href="RoundedClosed.html#r"><span class="id" title="variable">r</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <a name="GeneralIlq.contents"><span class="id" title="section">contents</span></a>.<br/>
+<span class="id" title="keyword">Context</span> `{<span class="id" title="class">Funext</span>} `{<span class="id" title="class">Univalence</span>}.<br/>
+
+<br/>
+<span class="id" title="keyword">Global Instance</span> <a name="RC_hprop"><span class="id" title="instance">RC_hprop@</span></a>{} : <span class="id" title="keyword">∀</span> <span class="id" title="var">r</span>, <span class="id" title="abbreviation">IsHProp</span> (<a class="idref" href="RoundedClosed.html#IsRC"><span class="id" title="class">IsRC</span></a> <a class="idref" href="RoundedClosed.html#r"><span class="id" title="variable">r</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="RC_eq0"><span class="id" title="lemma">RC_eq0</span></a> : <span class="id" title="keyword">∀</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> : <a class="idref" href="RoundedClosed.html#RC"><span class="id" title="record">RC</span></a>, <a class="idref" href="RoundedClosed.html#elt"><span class="id" title="projection">elt</span></a> <a class="idref" href="RoundedClosed.html#a"><span class="id" title="variable">a</span></a> <span class="id" title="notation">=</span> <a class="idref" href="RoundedClosed.html#elt"><span class="id" title="projection">elt</span></a> <a class="idref" href="RoundedClosed.html#b"><span class="id" title="variable">b</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#a"><span class="id" title="variable">a</span></a> <span class="id" title="notation">=</span> <a class="idref" href="RoundedClosed.html#b"><span class="id" title="variable">b</span></a>.<br/>
+ 
+<br/>
+<span class="id" title="keyword">Instance</span> <a name="RC_isset"><span class="id" title="instance">RC_isset@</span></a>{} : <span class="id" title="abbreviation">IsHSet</span> <a class="idref" href="RoundedClosed.html#RC"><span class="id" title="record">RC</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="RC_eq"><span class="id" title="lemma">RC_eq</span></a> : <span class="id" title="keyword">∀</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> : <a class="idref" href="RoundedClosed.html#RC"><span class="id" title="record">RC</span></a>, <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">(</span></a><span class="id" title="keyword">∀</span> <span class="id" title="var">q</span>, <a class="idref" href="RoundedClosed.html#elt"><span class="id" title="projection">elt</span></a> <a class="idref" href="RoundedClosed.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="RoundedClosed.html#q"><span class="id" title="variable">q</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Datatypes.html#df1ced36fc33ce188051218bca314374"><span class="id" title="notation">↔</span></a> <a class="idref" href="RoundedClosed.html#elt"><span class="id" title="projection">elt</span></a> <a class="idref" href="RoundedClosed.html#b"><span class="id" title="variable">b</span></a> <a class="idref" href="RoundedClosed.html#q"><span class="id" title="variable">q</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#a"><span class="id" title="variable">a</span></a> <span class="id" title="notation">=</span> <a class="idref" href="RoundedClosed.html#b"><span class="id" title="variable">b</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="RC_le"><span class="id" title="lemma">RC_le</span></a> : <span class="id" title="keyword">∀</span> <span class="id" title="var">a</span> <span class="id" title="var">q</span> <span class="id" title="var">r</span>, <a class="idref" href="RoundedClosed.html#elt"><span class="id" title="projection">elt</span></a> <a class="idref" href="RoundedClosed.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="RoundedClosed.html#r"><span class="id" title="variable">r</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#GeneralIlq.Rle"><span class="id" title="variable">Rle</span></a> <a class="idref" href="RoundedClosed.html#q"><span class="id" title="variable">q</span></a> <a class="idref" href="RoundedClosed.html#r"><span class="id" title="variable">r</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#elt"><span class="id" title="projection">elt</span></a> <a class="idref" href="RoundedClosed.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="RoundedClosed.html#q"><span class="id" title="variable">q</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="RC_ordlt"><span class="id" title="lemma">RC_ordlt</span></a> : <span class="id" title="keyword">∀</span> (<span class="id" title="var">c</span> : <a class="idref" href="RoundedClosed.html#RC"><span class="id" title="record">RC</span></a>) (<span class="id" title="var">q</span> <span class="id" title="var">r</span> : <a class="idref" href="RoundedClosed.html#GeneralIlq.A"><span class="id" title="variable">A</span></a>), <a class="idref" href="RoundedClosed.html#elt"><span class="id" title="projection">elt</span></a> <a class="idref" href="RoundedClosed.html#c"><span class="id" title="variable">c</span></a> <a class="idref" href="RoundedClosed.html#q"><span class="id" title="variable">q</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <span class="id" title="notation">¬</span> <a class="idref" href="RoundedClosed.html#elt"><span class="id" title="projection">elt</span></a> <a class="idref" href="RoundedClosed.html#c"><span class="id" title="variable">c</span></a> <a class="idref" href="RoundedClosed.html#r"><span class="id" title="variable">r</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#GeneralIlq.Rlt"><span class="id" title="variable">Rlt</span></a> <a class="idref" href="RoundedClosed.html#q"><span class="id" title="variable">q</span></a> <a class="idref" href="RoundedClosed.html#r"><span class="id" title="variable">r</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+RCLe_l : one possible definition of large order on RC. 
+    Properties: 
+<ul class="doclist">
+<li> partial order
+
+</li>
+</ul>
+ 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Global Instance</span> <a name="RCLe_l"><span class="id" title="instance">RCLe_l</span></a> : <span class="id" title="class">Le@</span>{<span class="id" title="var">UQ</span> <span class="id" title="var">UQ</span>} <a class="idref" href="RoundedClosed.html#RC"><span class="id" title="record">RC</span></a><br/>
+&nbsp;&nbsp;:= <span class="id" title="keyword">fun</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> ⇒ <span class="id" title="keyword">∀</span> <span class="id" title="var">q</span>, <a class="idref" href="RoundedClosed.html#elt"><span class="id" title="projection">elt</span></a> <a class="idref" href="RoundedClosed.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="RoundedClosed.html#q"><span class="id" title="variable">q</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#elt"><span class="id" title="projection">elt</span></a> <a class="idref" href="RoundedClosed.html#b"><span class="id" title="variable">b</span></a> <a class="idref" href="RoundedClosed.html#q"><span class="id" title="variable">q</span></a>.<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Instance</span> <a name="RCLe_l_partial_order"><span class="id" title="instance">RCLe_l_partial_order@</span></a>{} : <span class="id" title="class">PartialOrder</span> <a class="idref" href="RoundedClosed.html#RCLe_l"><span class="id" title="instance">RCLe_l</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+RCLt_l : one possible definition of strict order on RC. 
+    Properties: 
+<ul class="doclist">
+<li> strict order
+
+</li>
+<li> apart.
+
+</li>
+</ul>
+ 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Global Instance</span> <a name="RCLt_l"><span class="id" title="instance">RCLt_l</span></a> : <span class="id" title="class">Lt@</span>{<span class="id" title="var">UQ</span> <span class="id" title="var">UQ</span>} <a class="idref" href="RoundedClosed.html#RC"><span class="id" title="record">RC</span></a> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">fun</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> ⇒ <span class="id" title="definition">merely</span> (<a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Specif.html#84eb6d2849dbf3581b1c0c05add5f2d8"><span class="id" title="notation">∃</span></a> <span class="id" title="var">q</span><a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Specif.html#84eb6d2849dbf3581b1c0c05add5f2d8"><span class="id" title="notation">,</span></a> <a class="idref" href="RoundedClosed.html#elt"><span class="id" title="projection">elt</span></a> <a class="idref" href="RoundedClosed.html#b"><span class="id" title="variable">b</span></a> <a class="idref" href="RoundedClosed.html#q"><span class="id" title="variable">q</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Datatypes.html#d82a7d96d3659d805ffe732283716822"><span class="id" title="notation">∧</span></a> <span class="id" title="notation">¬</span> <a class="idref" href="RoundedClosed.html#elt"><span class="id" title="projection">elt</span></a> <a class="idref" href="RoundedClosed.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="RoundedClosed.html#q"><span class="id" title="variable">q</span></a>).<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Global Instance</span> <a name="RCApart"><span class="id" title="instance">RCApart</span></a> : <span class="id" title="class">Apart@</span>{<span class="id" title="var">UQ</span> <span class="id" title="var">UQ</span>} <a class="idref" href="RoundedClosed.html#RC"><span class="id" title="record">RC</span></a><br/>
+&nbsp;&nbsp;:= <span class="id" title="keyword">fun</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> ⇒ <a class="idref" href="RoundedClosed.html#a"><span class="id" title="variable">a</span></a> <span class="id" title="notation">&lt;</span> <a class="idref" href="RoundedClosed.html#b"><span class="id" title="variable">b</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Datatypes.html#7a45dffb109c3069e5c675be68643e60"><span class="id" title="notation">∨</span></a> <a class="idref" href="RoundedClosed.html#b"><span class="id" title="variable">b</span></a> <span class="id" title="notation">&lt;</span> <a class="idref" href="RoundedClosed.html#a"><span class="id" title="variable">a</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Instance</span> <a name="GenLt_strict_order"><span class="id" title="instance">GenLt_strict_order@</span></a>{} : <span class="id" title="class">StrictOrder</span> <a class="idref" href="RoundedClosed.html#RCLt_l"><span class="id" title="instance">RCLt_l</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="d176afdb5cb6493f23a8bd0e7014cfe7"><span class="id" title="notation">&quot;</span></a>a &lt;= b" := (<a class="idref" href="RoundedClosed.html#RCLe_l"><span class="id" title="instance">RCLe_l</span></a> <span class="id" title="var">a</span> <span class="id" title="var">b</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="RC_stable"><span class="id" title="lemma">RC_stable</span></a> : <span class="id" title="keyword">∀</span> <span class="id" title="var">r</span> <span class="id" title="var">p</span> <span class="id" title="var">q</span>, <a class="idref" href="RoundedClosed.html#elt"><span class="id" title="projection">elt</span></a> <a class="idref" href="RoundedClosed.html#r"><span class="id" title="variable">r</span></a> <a class="idref" href="RoundedClosed.html#p"><span class="id" title="variable">p</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">(</span></a><a class="idref" href="RoundedClosed.html#p"><span class="id" title="variable">p</span></a><span class="id" title="notation">=</span><a class="idref" href="RoundedClosed.html#q"><span class="id" title="variable">q</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#elt"><span class="id" title="projection">elt</span></a> <a class="idref" href="RoundedClosed.html#r"><span class="id" title="variable">r</span></a> <a class="idref" href="RoundedClosed.html#q"><span class="id" title="variable">q</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Monotonicity property : if (p&lt;=q)RC then 
+    (if p is in x then q is in y 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="RC_mon"><span class="id" title="lemma">RC_mon</span></a> : <span class="id" title="keyword">∀</span> (<span class="id" title="var">x</span> <span class="id" title="var">y</span> : <a class="idref" href="RoundedClosed.html#RC"><span class="id" title="record">RC</span></a>) (<span class="id" title="var">p</span> <span class="id" title="var">q</span> :<a class="idref" href="RoundedClosed.html#GeneralIlq.A"><span class="id" title="variable">A</span></a>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">(</span></a><a class="idref" href="RoundedClosed.html#GeneralIlq.Rle"><span class="id" title="variable">Rle</span></a> <a class="idref" href="RoundedClosed.html#q"><span class="id" title="variable">q</span></a> <a class="idref" href="RoundedClosed.html#p"><span class="id" title="variable">p</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="RoundedClosed.html#d176afdb5cb6493f23a8bd0e7014cfe7"><span class="id" title="notation">≤</span></a> <a class="idref" href="RoundedClosed.html#y"><span class="id" title="variable">y</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#elt"><span class="id" title="projection">elt</span></a> <a class="idref" href="RoundedClosed.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="RoundedClosed.html#p"><span class="id" title="variable">p</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#elt"><span class="id" title="projection">elt</span></a> <a class="idref" href="RoundedClosed.html#y"><span class="id" title="variable">y</span></a> <a class="idref" href="RoundedClosed.html#q"><span class="id" title="variable">q</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="RoundedClosed.html#GeneralIlq.contents"><span class="id" title="section">contents</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="RoundedClosed.html#GeneralIlq"><span class="id" title="section">GeneralIlq</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <a name="GeneralRelQ"><span class="id" title="section">GeneralRelQ</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Special case of A = Q, QPred the predicate of any 
+subset of Q, Qle_g is any relation on Q satisfying conditions 
+of the following hypotheses, it is not necessarily Qle
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="QPred"><span class="id" title="definition">QPred</span></a> := <a class="idref" href="RoundedClosed.html#APred"><span class="id" title="definition">APred</span></a> <span class="id" title="axiom">Q</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Variable</span> <a name="GeneralRelQ.Qle_g"><span class="id" title="variable">Qle_g</span></a> : <span class="id" title="definition">relation</span> <span class="id" title="axiom">Q</span>.<br/>
+<span class="id" title="keyword">Variable</span> <a name="GeneralRelQ.Qlt_g"><span class="id" title="variable">Qlt_g</span></a> : <span class="id" title="definition">relation</span> <span class="id" title="axiom">Q</span>.<br/>
+<span class="id" title="keyword">Hypothesis</span> <a name="GeneralRelQ.Hdec"><span class="id" title="variable">Hdec</span></a> : <span class="id" title="class">DecidablePaths</span> <span class="id" title="axiom">Q</span>.<br/>
+<span class="id" title="keyword">Hypothesis</span> <a name="GeneralRelQ.Hda"><span class="id" title="variable">Hda</span></a> : <span class="id" title="class">AntiSymmetric</span> <a class="idref" href="RoundedClosed.html#GeneralRelQ.Qle_g"><span class="id" title="variable">Qle_g</span></a>.<br/>
+<span class="id" title="keyword">Hypothesis</span> <a name="GeneralRelQ.Hdt"><span class="id" title="variable">Hdt</span></a> : <span class="id" title="class">TotalRelation</span> <a class="idref" href="RoundedClosed.html#GeneralRelQ.Qle_g"><span class="id" title="variable">Qle_g</span></a>.<br/>
+<span class="id" title="keyword">Hypothesis</span> <a name="GeneralRelQ.FR"><span class="id" title="variable">FR</span></a> : <span class="id" title="class">FullPseudoOrder</span> <a class="idref" href="RoundedClosed.html#GeneralRelQ.Qle_g"><span class="id" title="variable">Qle_g</span></a> <a class="idref" href="RoundedClosed.html#GeneralRelQ.Qlt_g"><span class="id" title="variable">Qlt_g</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <a name="GeneralRelQ.GeneralDefQ"><span class="id" title="section">GeneralDefQ</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Variable</span> <a name="GeneralRelQ.GeneralDefQ.elt"><span class="id" title="variable">elt</span></a> : <a class="idref" href="RoundedClosed.html#QPred"><span class="id" title="definition">QPred</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="IsRCQ"><span class="id" title="definition">IsRCQ</span></a> := <a class="idref" href="RoundedClosed.html#IsRC"><span class="id" title="class">IsRC</span></a> <span class="id" title="axiom">Q</span> <a class="idref" href="RoundedClosed.html#GeneralRelQ.Qlt_g"><span class="id" title="variable">Qlt_g</span></a> <a class="idref" href="RoundedClosed.html#GeneralRelQ.GeneralDefQ.elt"><span class="id" title="variable">elt</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="RoundedClosed.html#GeneralRelQ.GeneralDefQ"><span class="id" title="section">GeneralDefQ</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Record</span> <a name="RCQ"><span class="id" title="record">RCQ</span></a> :=  {<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="eltQ"><span class="id" title="projection">eltQ</span></a> : <a class="idref" href="RoundedClosed.html#QPred"><span class="id" title="definition">QPred</span></a>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="elt_RCQ"><span class="id" title="projection">elt_RCQ</span></a> : <a class="idref" href="RoundedClosed.html#IsRCQ"><span class="id" title="definition">IsRCQ</span></a> <a class="idref" href="RoundedClosed.html#eltQ"><span class="id" title="method">eltQ</span></a><br/>
+}.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Qlt_g is semi_decidable 
+</div>
+<div class="code">
+<span class="id" title="keyword">Global Instance</span>  <a name="RCLt_semi_dec"><span class="id" title="instance">RCLt_semi_dec</span></a> : <span class="id" title="keyword">∀</span> <span class="id" title="var">r</span> <span class="id" title="var">q</span>, <span class="id" title="class">SemiDecide</span> (<a class="idref" href="RoundedClosed.html#GeneralRelQ.Qlt_g"><span class="id" title="variable">Qlt_g</span></a> <a class="idref" href="RoundedClosed.html#r"><span class="id" title="variable">r</span></a> <a class="idref" href="RoundedClosed.html#q"><span class="id" title="variable">q</span></a>).<br/>
+ 
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="RoundedClosed.html#GeneralRelQ"><span class="id" title="section">GeneralRelQ</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <a name="LowerReals"><span class="id" title="section">LowerReals</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Lower Reals, QPred is the set of all the 
+rationals less than the represented real number, 
+i.e. half a dedekind cut. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Section</span> <a name="LowerReals.LowerReals_def"><span class="id" title="section">LowerReals_def</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Variable</span> <a name="LowerReals.LowerReals_def.elt"><span class="id" title="variable">elt</span></a> : <a class="idref" href="RoundedClosed.html#QPred"><span class="id" title="definition">QPred</span></a>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="IsRlow"><span class="id" title="definition">IsRlow</span></a> := <a class="idref" href="RoundedClosed.html#IsRCQ"><span class="id" title="definition">IsRCQ</span></a> <span class="id" title="axiom">Qlt</span> <a class="idref" href="RoundedClosed.html#LowerReals.LowerReals_def.elt"><span class="id" title="variable">elt</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="RoundedClosed.html#LowerReals.LowerReals_def"><span class="id" title="section">LowerReals_def</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Context</span> `{<span class="id" title="class">Funext</span>} `{<span class="id" title="class">Univalence</span>}.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="Rlow"><span class="id" title="definition">Rlow</span></a> := <a class="idref" href="RoundedClosed.html#RC"><span class="id" title="record">RC</span></a> <span class="id" title="axiom">Q</span> <span class="id" title="axiom">Qlt</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Order relations on Rlow. 
+    Rlle: -partial order
+    Rllt: -strict order 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Global Instance</span> <a name="Rlle"><span class="id" title="instance">Rlle</span></a> : <span class="id" title="class">Le</span> <a class="idref" href="RoundedClosed.html#Rlow"><span class="id" title="definition">Rlow</span></a> := <a class="idref" href="RoundedClosed.html#RCLe_l"><span class="id" title="instance">RCLe_l</span></a> <span class="id" title="axiom">Q</span> <span class="id" title="axiom">Qlt</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Instance</span> <a name="Rlle_order"><span class="id" title="instance">Rlle_order@</span></a>{} : <span class="id" title="class">PartialOrder</span> <a class="idref" href="RoundedClosed.html#Rlle"><span class="id" title="instance">Rlle</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Global Instance</span> <a name="Rllt"><span class="id" title="instance">Rllt</span></a> : <span class="id" title="class">Lt</span> <a class="idref" href="RoundedClosed.html#Rlow"><span class="id" title="definition">Rlow</span></a> := <a class="idref" href="RoundedClosed.html#RCLt_l"><span class="id" title="instance">RCLt_l</span></a> <span class="id" title="axiom">Q</span> <span class="id" title="axiom">Qlt</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="Fpo_Qle_Qlt"><span class="id" title="lemma">Fpo_Qle_Qlt</span></a> : <span class="id" title="class">FullPseudoOrder</span> <span class="id" title="axiom">Qle</span> <span class="id" title="axiom">Qlt</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Global Instance</span> <a name="RlApart"><span class="id" title="instance">RlApart</span></a> : <span class="id" title="class">Apart@</span>{<span class="id" title="var">UQ</span> <span class="id" title="var">UQ</span>} <a class="idref" href="RoundedClosed.html#Rlow"><span class="id" title="definition">Rlow</span></a><br/>
+&nbsp;&nbsp;:= <span class="id" title="keyword">fun</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> ⇒ <a class="idref" href="RoundedClosed.html#a"><span class="id" title="variable">a</span></a> <span class="id" title="notation">&lt;</span> <a class="idref" href="RoundedClosed.html#b"><span class="id" title="variable">b</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Datatypes.html#7a45dffb109c3069e5c675be68643e60"><span class="id" title="notation">∨</span></a> <a class="idref" href="RoundedClosed.html#b"><span class="id" title="variable">b</span></a> <span class="id" title="notation">&lt;</span> <a class="idref" href="RoundedClosed.html#a"><span class="id" title="variable">a</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Instance</span> <a name="Rllt_strict_order"><span class="id" title="instance">Rllt_strict_order@</span></a>{} : <span class="id" title="class">StrictOrder</span> <a class="idref" href="RoundedClosed.html#Rllt"><span class="id" title="instance">Rllt</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="val"><span class="id" title="definition">val</span></a> := <a class="idref" href="RoundedClosed.html#elt"><span class="id" title="projection">elt</span></a> <span class="id" title="axiom">Q</span> <span class="id" title="axiom">Qlt</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Case rational ---&gt; lower real 
+</div>
+<div class="code">
+<span class="id" title="keyword">Lemma</span> <a name="QIsRlow"><span class="id" title="lemma">QIsRlow</span></a> : <span class="id" title="keyword">∀</span> <span class="id" title="var">q</span> : <span class="id" title="axiom">Q</span>, <a class="idref" href="RoundedClosed.html#IsRlow"><span class="id" title="definition">IsRlow</span></a> (<span class="id" title="keyword">fun</span> <span class="id" title="var">r</span> ⇒ <span class="id" title="definition">semi_decide</span> (<a class="idref" href="RoundedClosed.html#r"><span class="id" title="variable">r</span></a> <span class="id" title="notation">&lt;</span> <a class="idref" href="RoundedClosed.html#q"><span class="id" title="variable">q</span></a>)).<br/>
+
+<br/>
+<span class="id" title="keyword">Global Instance</span> <a name="QRlow"><span class="id" title="instance">QRlow</span></a> : <span class="id" title="class">Cast</span> <span class="id" title="axiom">Q</span> <a class="idref" href="RoundedClosed.html#Rlow"><span class="id" title="definition">Rlow</span></a>.<br/>
+
+<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Zero on Rlow 
+</div>
+<div class="code">
+<span class="id" title="keyword">Global Instance</span> <a name="Rl0"><span class="id" title="instance">Rl0</span></a> : <span class="id" title="class">Zero</span> <a class="idref" href="RoundedClosed.html#Rlow"><span class="id" title="definition">Rlow</span></a> := <a class="idref" href="RoundedClosed.html#QRlow"><span class="id" title="instance">QRlow</span></a> 0.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+One on Rlow 
+</div>
+<div class="code">
+<span class="id" title="keyword">Global Instance</span> <a name="Rl1"><span class="id" title="instance">Rl1</span></a> : <span class="id" title="class">One</span> <a class="idref" href="RoundedClosed.html#Rlow"><span class="id" title="definition">Rlow</span></a> := <a class="idref" href="RoundedClosed.html#QRlow"><span class="id" title="instance">QRlow</span></a> 1.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Properties of QRlow 
+</div>
+<div class="code">
+<span class="id" title="keyword">Lemma</span> <a name="Rllt_Q_preserving"><span class="id" title="lemma">Rllt_Q_preserving</span></a> : <span class="id" title="class">StrictlyOrderPreserving</span> (<span class="id" title="definition">cast</span> <span class="id" title="axiom">Q</span> <a class="idref" href="RoundedClosed.html#Rlow"><span class="id" title="definition">Rlow</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="Rllt_Q_reflecting"><span class="id" title="lemma">Rllt_Q_reflecting</span></a> : <span class="id" title="class">StrictlyOrderReflecting</span> (<span class="id" title="definition">cast</span> <span class="id" title="axiom">Q</span> <a class="idref" href="RoundedClosed.html#Rlow"><span class="id" title="definition">Rlow</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Global Instance</span> <a name="Rllt_Q_embedding"><span class="id" title="instance">Rllt_Q_embedding</span></a> : <span class="id" title="class">StrictOrderEmbedding</span> (<span class="id" title="definition">cast</span> <span class="id" title="axiom">Q</span> <a class="idref" href="RoundedClosed.html#Rlow"><span class="id" title="definition">Rlow</span></a>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Sum of two lower reals 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="pred_plus_l"><span class="id" title="definition">pred_plus_l</span></a> : <span class="id" title="class">Plus</span> <a class="idref" href="RoundedClosed.html#QPred"><span class="id" title="definition">QPred</span></a>.<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="rlow_pred_plus_pr"><span class="id" title="lemma">rlow_pred_plus_pr</span></a> : <span class="id" title="keyword">∀</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> : <a class="idref" href="RoundedClosed.html#Rlow"><span class="id" title="definition">Rlow</span></a>, <span class="id" title="keyword">∀</span> <span class="id" title="var">q</span>,<br/>
+&nbsp;&nbsp;(<a class="idref" href="RoundedClosed.html#val"><span class="id" title="definition">val</span></a> <a class="idref" href="RoundedClosed.html#a"><span class="id" title="variable">a</span></a> <span class="id" title="notation">+</span> <a class="idref" href="RoundedClosed.html#val"><span class="id" title="definition">val</span></a> <a class="idref" href="RoundedClosed.html#b"><span class="id" title="variable">b</span></a>) <a class="idref" href="RoundedClosed.html#q"><span class="id" title="variable">q</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Datatypes.html#df1ced36fc33ce188051218bca314374"><span class="id" title="notation">↔</span></a><br/>
+&nbsp;&nbsp;<span class="id" title="definition">merely</span> (<a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Specif.html#84eb6d2849dbf3581b1c0c05add5f2d8"><span class="id" title="notation">∃</span></a> <span class="id" title="var">r</span> <span class="id" title="var">s</span><a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Specif.html#84eb6d2849dbf3581b1c0c05add5f2d8"><span class="id" title="notation">,</span></a> <a class="idref" href="RoundedClosed.html#val"><span class="id" title="definition">val</span></a> <a class="idref" href="RoundedClosed.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="RoundedClosed.html#r"><span class="id" title="variable">r</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Datatypes.html#d82a7d96d3659d805ffe732283716822"><span class="id" title="notation">∧</span></a> <a class="idref" href="RoundedClosed.html#val"><span class="id" title="definition">val</span></a> <a class="idref" href="RoundedClosed.html#b"><span class="id" title="variable">b</span></a> <a class="idref" href="RoundedClosed.html#s"><span class="id" title="variable">s</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Datatypes.html#d82a7d96d3659d805ffe732283716822"><span class="id" title="notation">∧</span></a> <a class="idref" href="RoundedClosed.html#q"><span class="id" title="variable">q</span></a> <span class="id" title="notation">&lt;</span> <a class="idref" href="RoundedClosed.html#r"><span class="id" title="variable">r</span></a> <span class="id" title="notation">+</span> <a class="idref" href="RoundedClosed.html#s"><span class="id" title="variable">s</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="plus_isRlow"><span class="id" title="lemma">plus_isRlow</span></a> : <span class="id" title="keyword">∀</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> : <a class="idref" href="RoundedClosed.html#Rlow"><span class="id" title="definition">Rlow</span></a>, <a class="idref" href="RoundedClosed.html#IsRlow"><span class="id" title="definition">IsRlow</span></a> (<a class="idref" href="RoundedClosed.html#val"><span class="id" title="definition">val</span></a> <a class="idref" href="RoundedClosed.html#a"><span class="id" title="variable">a</span></a> <span class="id" title="notation">+</span> <a class="idref" href="RoundedClosed.html#val"><span class="id" title="definition">val</span></a> <a class="idref" href="RoundedClosed.html#b"><span class="id" title="variable">b</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Global Instance</span> <a name="RlPlus"><span class="id" title="instance">RlPlus</span></a> : <span class="id" title="class">Plus</span> <a class="idref" href="RoundedClosed.html#Rlow"><span class="id" title="definition">Rlow</span></a>.<br/>
+
+<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Properties of RlPlus : 
+<ul class="doclist">
+<li> commutativity 
+
+</li>
+<li> associativity 
+
+</li>
+<li> left/right identity with 0
+
+</li>
+<li> compatibility with QRlow 
+</li>
+</ul>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="Rlplus_eq_pr"><span class="id" title="lemma">Rlplus_eq_pr</span></a> : <span class="id" title="keyword">∀</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> : <a class="idref" href="RoundedClosed.html#Rlow"><span class="id" title="definition">Rlow</span></a>, <span class="id" title="keyword">∀</span> <span class="id" title="var">q</span>,<br/>
+&nbsp;&nbsp;<a class="idref" href="RoundedClosed.html#val"><span class="id" title="definition">val</span></a> (<a class="idref" href="RoundedClosed.html#a"><span class="id" title="variable">a</span></a> <span class="id" title="notation">+</span> <a class="idref" href="RoundedClosed.html#b"><span class="id" title="variable">b</span></a>) <a class="idref" href="RoundedClosed.html#q"><span class="id" title="variable">q</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Datatypes.html#df1ced36fc33ce188051218bca314374"><span class="id" title="notation">↔</span></a><br/>
+&nbsp;&nbsp;<span class="id" title="definition">merely</span> (<a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Specif.html#84eb6d2849dbf3581b1c0c05add5f2d8"><span class="id" title="notation">∃</span></a> <span class="id" title="var">r</span> <span class="id" title="var">s</span><a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Specif.html#84eb6d2849dbf3581b1c0c05add5f2d8"><span class="id" title="notation">,</span></a> <a class="idref" href="RoundedClosed.html#val"><span class="id" title="definition">val</span></a> <a class="idref" href="RoundedClosed.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="RoundedClosed.html#r"><span class="id" title="variable">r</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Datatypes.html#d82a7d96d3659d805ffe732283716822"><span class="id" title="notation">∧</span></a> <a class="idref" href="RoundedClosed.html#val"><span class="id" title="definition">val</span></a> <a class="idref" href="RoundedClosed.html#b"><span class="id" title="variable">b</span></a> <a class="idref" href="RoundedClosed.html#s"><span class="id" title="variable">s</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Datatypes.html#d82a7d96d3659d805ffe732283716822"><span class="id" title="notation">∧</span></a> <a class="idref" href="RoundedClosed.html#q"><span class="id" title="variable">q</span></a> <span class="id" title="notation">=</span> <a class="idref" href="RoundedClosed.html#r"><span class="id" title="variable">r</span></a> <span class="id" title="notation">+</span> <a class="idref" href="RoundedClosed.html#s"><span class="id" title="variable">s</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="rlow_plus_lt_pr"><span class="id" title="lemma">rlow_plus_lt_pr</span></a> : <span class="id" title="keyword">∀</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> : <a class="idref" href="RoundedClosed.html#Rlow"><span class="id" title="definition">Rlow</span></a>, <span class="id" title="keyword">∀</span> <span class="id" title="var">q</span>,<br/>
+&nbsp;&nbsp;<a class="idref" href="RoundedClosed.html#val"><span class="id" title="definition">val</span></a> (<a class="idref" href="RoundedClosed.html#a"><span class="id" title="variable">a</span></a> <span class="id" title="notation">+</span> <a class="idref" href="RoundedClosed.html#b"><span class="id" title="variable">b</span></a>) <a class="idref" href="RoundedClosed.html#q"><span class="id" title="variable">q</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Datatypes.html#df1ced36fc33ce188051218bca314374"><span class="id" title="notation">↔</span></a><br/>
+&nbsp;&nbsp;<span class="id" title="definition">merely</span> (<a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Specif.html#84eb6d2849dbf3581b1c0c05add5f2d8"><span class="id" title="notation">∃</span></a> <span class="id" title="var">r</span> <span class="id" title="var">s</span><a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Specif.html#84eb6d2849dbf3581b1c0c05add5f2d8"><span class="id" title="notation">,</span></a> <a class="idref" href="RoundedClosed.html#val"><span class="id" title="definition">val</span></a> <a class="idref" href="RoundedClosed.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="RoundedClosed.html#r"><span class="id" title="variable">r</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Datatypes.html#d82a7d96d3659d805ffe732283716822"><span class="id" title="notation">∧</span></a> <a class="idref" href="RoundedClosed.html#val"><span class="id" title="definition">val</span></a> <a class="idref" href="RoundedClosed.html#b"><span class="id" title="variable">b</span></a> <a class="idref" href="RoundedClosed.html#s"><span class="id" title="variable">s</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Datatypes.html#d82a7d96d3659d805ffe732283716822"><span class="id" title="notation">∧</span></a> <a class="idref" href="RoundedClosed.html#q"><span class="id" title="variable">q</span></a> <span class="id" title="notation">&lt;</span> <a class="idref" href="RoundedClosed.html#r"><span class="id" title="variable">r</span></a> <span class="id" title="notation">+</span> <a class="idref" href="RoundedClosed.html#s"><span class="id" title="variable">s</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="RlPlus_comm"><span class="id" title="lemma">RlPlus_comm</span></a> : <span class="id" title="class">Commutative</span> <a class="idref" href="RoundedClosed.html#RlPlus"><span class="id" title="instance">RlPlus</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="RlPlus_assoc"><span class="id" title="lemma">RlPlus_assoc</span></a> : <span class="id" title="class">Associative</span> <a class="idref" href="RoundedClosed.html#RlPlus"><span class="id" title="instance">RlPlus</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="RlPlus_left_id"><span class="id" title="lemma">RlPlus_left_id</span></a> : <span class="id" title="class">LeftIdentity</span> <a class="idref" href="RoundedClosed.html#RlPlus"><span class="id" title="instance">RlPlus</span></a> 0.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="RlPlus_Q"><span class="id" title="lemma">RlPlus_Q</span></a> : <span class="id" title="keyword">∀</span> <span class="id" title="var">q</span> <span class="id" title="var">r</span> : <span class="id" title="axiom">Q</span>, <a class="idref" href="RoundedClosed.html#QRlow"><span class="id" title="instance">QRlow</span></a> (<a class="idref" href="RoundedClosed.html#q"><span class="id" title="variable">q</span></a> <span class="id" title="notation">+</span> <a class="idref" href="RoundedClosed.html#r"><span class="id" title="variable">r</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">=</span> <a class="idref" href="RoundedClosed.html#QRlow"><span class="id" title="instance">QRlow</span></a> <a class="idref" href="RoundedClosed.html#q"><span class="id" title="variable">q</span></a> <span class="id" title="notation">+</span> <a class="idref" href="RoundedClosed.html#QRlow"><span class="id" title="instance">QRlow</span></a> <a class="idref" href="RoundedClosed.html#r"><span class="id" title="variable">r</span></a> <span class="id" title="notation">:&gt;</span> <a class="idref" href="RoundedClosed.html#Rlow"><span class="id" title="definition">Rlow</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Join of two lower reals 
+</div>
+<div class="code">
+<span class="id" title="keyword">Lemma</span> <a name="RlJoin_isRlow"><span class="id" title="lemma">RlJoin_isRlow</span></a> : <span class="id" title="keyword">∀</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> : <a class="idref" href="RoundedClosed.html#Rlow"><span class="id" title="definition">Rlow</span></a>,<br/>
+&nbsp;&nbsp;<a class="idref" href="RoundedClosed.html#IsRlow"><span class="id" title="definition">IsRlow</span></a> (<span class="id" title="keyword">fun</span> <span class="id" title="var">q</span> ⇒ <span class="id" title="definition">semi_decide</span> (<span class="id" title="definition">hor</span> (<a class="idref" href="RoundedClosed.html#val"><span class="id" title="definition">val</span></a> <a class="idref" href="RoundedClosed.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="RoundedClosed.html#q"><span class="id" title="variable">q</span></a>) (<a class="idref" href="RoundedClosed.html#val"><span class="id" title="definition">val</span></a> <a class="idref" href="RoundedClosed.html#b"><span class="id" title="variable">b</span></a> <a class="idref" href="RoundedClosed.html#q"><span class="id" title="variable">q</span></a>))).<br/>
+
+<br/>
+<span class="id" title="keyword">Global Instance</span> <a name="RlJoin"><span class="id" title="instance">RlJoin</span></a> : <span class="id" title="class">Join</span> <a class="idref" href="RoundedClosed.html#Rlow"><span class="id" title="definition">Rlow</span></a>.<br/>
+ 
+<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Meet of two lower reals 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="RlMeet_isRlow"><span class="id" title="lemma">RlMeet_isRlow</span></a> : <span class="id" title="keyword">∀</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> : <a class="idref" href="RoundedClosed.html#Rlow"><span class="id" title="definition">Rlow</span></a>,<br/>
+&nbsp;&nbsp;<a class="idref" href="RoundedClosed.html#IsRlow"><span class="id" title="definition">IsRlow</span></a> (<span class="id" title="keyword">fun</span> <span class="id" title="var">q</span> ⇒ <span class="id" title="definition">semi_decide</span> (<span class="id" title="definition">meet</span> (<a class="idref" href="RoundedClosed.html#val"><span class="id" title="definition">val</span></a> <a class="idref" href="RoundedClosed.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="RoundedClosed.html#q"><span class="id" title="variable">q</span></a>) (<a class="idref" href="RoundedClosed.html#val"><span class="id" title="definition">val</span></a> <a class="idref" href="RoundedClosed.html#b"><span class="id" title="variable">b</span></a> <a class="idref" href="RoundedClosed.html#q"><span class="id" title="variable">q</span></a>))).<br/>
+<span class="id" title="keyword">SearchAbout</span> <span class="id" title="axiom">Q</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Global Instance</span> <a name="RlMeet"><span class="id" title="instance">RlMeet</span></a> : <span class="id" title="class">Meet</span> <a class="idref" href="RoundedClosed.html#Rlow"><span class="id" title="definition">Rlow</span></a>.<br/>
+ 
+<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Orders Rlle and operations on lower reals 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="Rlle_Q_preserving"><span class="id" title="lemma">Rlle_Q_preserving</span></a> : <span class="id" title="class">OrderPreserving</span> (<span class="id" title="definition">cast</span> <span class="id" title="axiom">Q</span> <a class="idref" href="RoundedClosed.html#Rlow"><span class="id" title="definition">Rlow</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="RlPlus_le_preserving"><span class="id" title="lemma">RlPlus_le_preserving</span></a> : <span class="id" title="keyword">∀</span> <span class="id" title="var">a</span> : <a class="idref" href="RoundedClosed.html#Rlow"><span class="id" title="definition">Rlow</span></a>, <span class="id" title="class">OrderPreserving</span> <span class="id" title="notation">(</span><a class="idref" href="RoundedClosed.html#a"><span class="id" title="variable">a</span></a> <span class="id" title="notation">+)</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Auxiliary definitions of sequences of lower reals 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="NatEnum"><span class="id" title="lemma">NatEnum</span></a> : <span class="id" title="class">Enumerable</span> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="QEnum"><span class="id" title="lemma">QEnum</span></a> : <span class="id" title="class">Enumerable</span> <span class="id" title="axiom">Q</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Global Instance</span> <a name="SDseq_Rlow"><span class="id" title="instance">SDseq_Rlow</span></a> (<span class="id" title="var">S</span> : <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#Rlow"><span class="id" title="definition">Rlow</span></a>) (<span class="id" title="var">q</span> : <span class="id" title="axiom">Q</span>) (<span class="id" title="var">H</span> : <span class="id" title="class">Funext</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="class">SemiDecide</span> (<a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Specif.html#84eb6d2849dbf3581b1c0c05add5f2d8"><span class="id" title="notation">∃</span></a> <span class="id" title="var">n</span><a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Specif.html#84eb6d2849dbf3581b1c0c05add5f2d8"><span class="id" title="notation">,</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Specif.html#84eb6d2849dbf3581b1c0c05add5f2d8"><span class="id" title="notation">(</span></a><a class="idref" href="RoundedClosed.html#val"><span class="id" title="definition">val</span></a> (<a class="idref" href="RoundedClosed.html#S"><span class="id" title="variable">S</span></a> <a class="idref" href="RoundedClosed.html#n"><span class="id" title="variable">n</span></a>) <a class="idref" href="RoundedClosed.html#q"><span class="id" title="variable">q</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Specif.html#84eb6d2849dbf3581b1c0c05add5f2d8"><span class="id" title="notation">)</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Global Instance</span> <a name="SDseq_RlowQ"><span class="id" title="instance">SDseq_RlowQ</span></a> (<span class="id" title="var">S</span> : <span class="id" title="axiom">Q</span> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#Rlow"><span class="id" title="definition">Rlow</span></a>) (<span class="id" title="var">q</span> : <span class="id" title="axiom">Q</span>) (<span class="id" title="var">H</span> : <span class="id" title="class">Funext</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="class">SemiDecide</span> (<a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Specif.html#84eb6d2849dbf3581b1c0c05add5f2d8"><span class="id" title="notation">∃</span></a> <span class="id" title="var">n</span><a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Specif.html#84eb6d2849dbf3581b1c0c05add5f2d8"><span class="id" title="notation">,</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Specif.html#84eb6d2849dbf3581b1c0c05add5f2d8"><span class="id" title="notation">(</span></a><a class="idref" href="RoundedClosed.html#val"><span class="id" title="definition">val</span></a> (<a class="idref" href="RoundedClosed.html#S"><span class="id" title="variable">S</span></a> <a class="idref" href="RoundedClosed.html#n"><span class="id" title="variable">n</span></a>) <a class="idref" href="RoundedClosed.html#q"><span class="id" title="variable">q</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Specif.html#84eb6d2849dbf3581b1c0c05add5f2d8"><span class="id" title="notation">)</span></a>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Lub of a sequence of lower reals 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="Rllub"><span class="id" title="definition">Rllub</span></a> (<span class="id" title="var">f</span> : <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#Rlow"><span class="id" title="definition">Rlow</span></a>)  : <a class="idref" href="RoundedClosed.html#Rlow"><span class="id" title="definition">Rlow</span></a>.<br/>
+ 
+<br/>
+</div>
+
+<div class="doc">
+Properties of Rllub 
+</div>
+<div class="code">
+<span class="id" title="keyword">Lemma</span> <a name="Rllub_case"><span class="id" title="lemma">Rllub_case</span></a> <br/>
+&nbsp;&nbsp;: <span class="id" title="keyword">∀</span> (<span class="id" title="var">fr</span> : <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#Rlow"><span class="id" title="definition">Rlow</span></a>) <span class="id" title="var">n</span> <span class="id" title="var">p</span>, <a class="idref" href="RoundedClosed.html#val"><span class="id" title="definition">val</span></a> (<a class="idref" href="RoundedClosed.html#fr"><span class="id" title="variable">fr</span></a> <a class="idref" href="RoundedClosed.html#n"><span class="id" title="variable">n</span></a>) <a class="idref" href="RoundedClosed.html#p"><span class="id" title="variable">p</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#val"><span class="id" title="definition">val</span></a> (<a class="idref" href="RoundedClosed.html#Rllub"><span class="id" title="definition">Rllub</span></a> <a class="idref" href="RoundedClosed.html#fr"><span class="id" title="variable">fr</span></a>) <a class="idref" href="RoundedClosed.html#p"><span class="id" title="variable">p</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="Rllub_lub"><span class="id" title="lemma">Rllub_lub</span></a> : <span class="id" title="keyword">∀</span> (<span class="id" title="var">fr</span> : <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#Rlow"><span class="id" title="definition">Rlow</span></a>) <span class="id" title="var">n</span>, <a class="idref" href="RoundedClosed.html#Rlle"><span class="id" title="instance">Rlle</span></a> (<a class="idref" href="RoundedClosed.html#fr"><span class="id" title="variable">fr</span></a> <a class="idref" href="RoundedClosed.html#n"><span class="id" title="variable">n</span></a>) (<a class="idref" href="RoundedClosed.html#Rllub"><span class="id" title="definition">Rllub</span></a> <a class="idref" href="RoundedClosed.html#fr"><span class="id" title="variable">fr</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="Rllub_le"><span class="id" title="lemma">Rllub_le</span></a> <br/>
+&nbsp;&nbsp;: <span class="id" title="keyword">∀</span> (<span class="id" title="var">fr</span> : <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#Rlow"><span class="id" title="definition">Rlow</span></a>) <span class="id" title="var">r</span>, <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">(</span></a><span class="id" title="keyword">∀</span> <span class="id" title="var">n</span>, <a class="idref" href="RoundedClosed.html#Rlle"><span class="id" title="instance">Rlle</span></a> (<a class="idref" href="RoundedClosed.html#fr"><span class="id" title="variable">fr</span></a> <a class="idref" href="RoundedClosed.html#n"><span class="id" title="variable">n</span></a>)  <a class="idref" href="RoundedClosed.html#r"><span class="id" title="variable">r</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#Rlle"><span class="id" title="instance">Rlle</span></a> (<a class="idref" href="RoundedClosed.html#Rllub"><span class="id" title="definition">Rllub</span></a> <a class="idref" href="RoundedClosed.html#fr"><span class="id" title="variable">fr</span></a>) <a class="idref" href="RoundedClosed.html#r"><span class="id" title="variable">r</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="Rllub_mon"><span class="id" title="lemma">Rllub_mon</span></a> : <span class="id" title="keyword">∀</span> (<span class="id" title="var">fr</span> <span class="id" title="var">fk</span> : <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#Rlow"><span class="id" title="definition">Rlow</span></a>), <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">(</span></a><span class="id" title="keyword">∀</span> <span class="id" title="var">n</span>, <a class="idref" href="RoundedClosed.html#Rlle"><span class="id" title="instance">Rlle</span></a> (<a class="idref" href="RoundedClosed.html#fr"><span class="id" title="variable">fr</span></a> <a class="idref" href="RoundedClosed.html#n"><span class="id" title="variable">n</span></a>) (<a class="idref" href="RoundedClosed.html#fk"><span class="id" title="variable">fk</span></a> <a class="idref" href="RoundedClosed.html#n"><span class="id" title="variable">n</span></a>)<a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">)</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#Rlle"><span class="id" title="instance">Rlle</span></a> (<a class="idref" href="RoundedClosed.html#Rllub"><span class="id" title="definition">Rllub</span></a> <a class="idref" href="RoundedClosed.html#fr"><span class="id" title="variable">fr</span></a>) (<a class="idref" href="RoundedClosed.html#Rllub"><span class="id" title="definition">Rllub</span></a> <a class="idref" href="RoundedClosed.html#fk"><span class="id" title="variable">fk</span></a>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Lub of a set of lower reals isomorphic to Q  
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="RllubQ"><span class="id" title="definition">RllubQ</span></a> (<span class="id" title="var">f</span> : <span class="id" title="axiom">Q</span> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#Rlow"><span class="id" title="definition">Rlow</span></a>)  : <a class="idref" href="RoundedClosed.html#Rlow"><span class="id" title="definition">Rlow</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Properties of RllubQ 
+</div>
+<div class="code">
+<span class="id" title="keyword">Lemma</span> <a name="RllubQ_case"><span class="id" title="lemma">RllubQ_case</span></a> <br/>
+&nbsp;&nbsp;: <span class="id" title="keyword">∀</span> (<span class="id" title="var">fr</span> : <span class="id" title="axiom">Q</span> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#Rlow"><span class="id" title="definition">Rlow</span></a>) <span class="id" title="var">n</span> <span class="id" title="var">p</span>, <a class="idref" href="RoundedClosed.html#val"><span class="id" title="definition">val</span></a> (<a class="idref" href="RoundedClosed.html#fr"><span class="id" title="variable">fr</span></a> <a class="idref" href="RoundedClosed.html#n"><span class="id" title="variable">n</span></a>) <a class="idref" href="RoundedClosed.html#p"><span class="id" title="variable">p</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#val"><span class="id" title="definition">val</span></a> (<a class="idref" href="RoundedClosed.html#RllubQ"><span class="id" title="definition">RllubQ</span></a> <a class="idref" href="RoundedClosed.html#fr"><span class="id" title="variable">fr</span></a>) <a class="idref" href="RoundedClosed.html#p"><span class="id" title="variable">p</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="RllubQ_lub"><span class="id" title="lemma">RllubQ_lub</span></a> : <span class="id" title="keyword">∀</span> (<span class="id" title="var">fr</span> : <span class="id" title="axiom">Q</span> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#Rlow"><span class="id" title="definition">Rlow</span></a>) <span class="id" title="var">n</span>, <a class="idref" href="RoundedClosed.html#Rlle"><span class="id" title="instance">Rlle</span></a> (<a class="idref" href="RoundedClosed.html#fr"><span class="id" title="variable">fr</span></a> <a class="idref" href="RoundedClosed.html#n"><span class="id" title="variable">n</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="RoundedClosed.html#RllubQ"><span class="id" title="definition">RllubQ</span></a> <a class="idref" href="RoundedClosed.html#fr"><span class="id" title="variable">fr</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="RllubQ_le"><span class="id" title="lemma">RllubQ_le</span></a> <br/>
+&nbsp;&nbsp;: <span class="id" title="keyword">∀</span> (<span class="id" title="var">fr</span> : <span class="id" title="axiom">Q</span> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#Rlow"><span class="id" title="definition">Rlow</span></a>) <span class="id" title="var">r</span>, <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">(</span></a><span class="id" title="keyword">∀</span> <span class="id" title="var">n</span>, <a class="idref" href="RoundedClosed.html#Rlle"><span class="id" title="instance">Rlle</span></a> (<a class="idref" href="RoundedClosed.html#fr"><span class="id" title="variable">fr</span></a> <a class="idref" href="RoundedClosed.html#n"><span class="id" title="variable">n</span></a>)  <a class="idref" href="RoundedClosed.html#r"><span class="id" title="variable">r</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">)</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#Rlle"><span class="id" title="instance">Rlle</span></a> (<a class="idref" href="RoundedClosed.html#RllubQ"><span class="id" title="definition">RllubQ</span></a> <a class="idref" href="RoundedClosed.html#fr"><span class="id" title="variable">fr</span></a>) <a class="idref" href="RoundedClosed.html#r"><span class="id" title="variable">r</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="RllubQ_mon"><span class="id" title="lemma">RllubQ_mon</span></a> : <span class="id" title="keyword">∀</span> (<span class="id" title="var">fr</span> <span class="id" title="var">fk</span> : <span class="id" title="axiom">Q</span> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#Rlow"><span class="id" title="definition">Rlow</span></a>), <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">(</span></a><span class="id" title="keyword">∀</span> <span class="id" title="var">n</span>, <a class="idref" href="RoundedClosed.html#Rlle"><span class="id" title="instance">Rlle</span></a> (<a class="idref" href="RoundedClosed.html#fr"><span class="id" title="variable">fr</span></a> <a class="idref" href="RoundedClosed.html#n"><span class="id" title="variable">n</span></a>) (<a class="idref" href="RoundedClosed.html#fk"><span class="id" title="variable">fk</span></a> <a class="idref" href="RoundedClosed.html#n"><span class="id" title="variable">n</span></a>)<a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">)</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#Rlle"><span class="id" title="instance">Rlle</span></a> (<a class="idref" href="RoundedClosed.html#RllubQ"><span class="id" title="definition">RllubQ</span></a> <a class="idref" href="RoundedClosed.html#fr"><span class="id" title="variable">fr</span></a>) (<a class="idref" href="RoundedClosed.html#RllubQ"><span class="id" title="definition">RllubQ</span></a> <a class="idref" href="RoundedClosed.html#fk"><span class="id" title="variable">fk</span></a>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Lub of a set of lower reals isomorphic to Q (TODO : general enumerable set) 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="RllubQP"><span class="id" title="definition">RllubQP</span></a> (<span class="id" title="var">f</span> : <span class="id" title="notation">Q</span><a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">+</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#Rlow"><span class="id" title="definition">Rlow</span></a>)  : <a class="idref" href="RoundedClosed.html#Rlow"><span class="id" title="definition">Rlow</span></a>.<br/>
+<span class="id" title="keyword">Defined</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Properties of RllubQ 
+</div>
+<div class="code">
+<span class="id" title="keyword">Lemma</span> <a name="RllubQP_case"><span class="id" title="lemma">RllubQP_case</span></a> <br/>
+&nbsp;&nbsp;: <span class="id" title="keyword">∀</span> (<span class="id" title="var">fr</span> : <span class="id" title="notation">Q</span><a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">+</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#Rlow"><span class="id" title="definition">Rlow</span></a>) <span class="id" title="var">n</span> <span class="id" title="var">p</span>, <a class="idref" href="RoundedClosed.html#val"><span class="id" title="definition">val</span></a> (<a class="idref" href="RoundedClosed.html#fr"><span class="id" title="variable">fr</span></a> <a class="idref" href="RoundedClosed.html#n"><span class="id" title="variable">n</span></a>) <a class="idref" href="RoundedClosed.html#p"><span class="id" title="variable">p</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#val"><span class="id" title="definition">val</span></a> (<a class="idref" href="RoundedClosed.html#RllubQP"><span class="id" title="definition">RllubQP</span></a> <a class="idref" href="RoundedClosed.html#fr"><span class="id" title="variable">fr</span></a>) <a class="idref" href="RoundedClosed.html#p"><span class="id" title="variable">p</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="RllubQP_lub"><span class="id" title="lemma">RllubQP_lub</span></a> : <span class="id" title="keyword">∀</span> (<span class="id" title="var">fr</span> : <span class="id" title="notation">Q</span><a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">+</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#Rlow"><span class="id" title="definition">Rlow</span></a>) <span class="id" title="var">n</span>, <a class="idref" href="RoundedClosed.html#Rlle"><span class="id" title="instance">Rlle</span></a> (<a class="idref" href="RoundedClosed.html#fr"><span class="id" title="variable">fr</span></a> <a class="idref" href="RoundedClosed.html#n"><span class="id" title="variable">n</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="RoundedClosed.html#RllubQP"><span class="id" title="definition">RllubQP</span></a> <a class="idref" href="RoundedClosed.html#fr"><span class="id" title="variable">fr</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="RllubQP_le"><span class="id" title="lemma">RllubQP_le</span></a> <br/>
+&nbsp;&nbsp;: <span class="id" title="keyword">∀</span> (<span class="id" title="var">fr</span> : <span class="id" title="notation">Q</span><a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">+</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#Rlow"><span class="id" title="definition">Rlow</span></a>) <span class="id" title="var">r</span>, <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">(</span></a><span class="id" title="keyword">∀</span> <span class="id" title="var">n</span>, <a class="idref" href="RoundedClosed.html#Rlle"><span class="id" title="instance">Rlle</span></a> (<a class="idref" href="RoundedClosed.html#fr"><span class="id" title="variable">fr</span></a> <a class="idref" href="RoundedClosed.html#n"><span class="id" title="variable">n</span></a>)  <a class="idref" href="RoundedClosed.html#r"><span class="id" title="variable">r</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">)</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#Rlle"><span class="id" title="instance">Rlle</span></a> (<a class="idref" href="RoundedClosed.html#RllubQP"><span class="id" title="definition">RllubQP</span></a> <a class="idref" href="RoundedClosed.html#fr"><span class="id" title="variable">fr</span></a>) <a class="idref" href="RoundedClosed.html#r"><span class="id" title="variable">r</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="RllubQP_mon"><span class="id" title="lemma">RllubQP_mon</span></a> : <span class="id" title="keyword">∀</span> (<span class="id" title="var">fr</span> <span class="id" title="var">fk</span> : <span class="id" title="notation">Q</span><a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">+</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#Rlow"><span class="id" title="definition">Rlow</span></a>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">(</span></a><span class="id" title="keyword">∀</span> <span class="id" title="var">n</span>, <a class="idref" href="RoundedClosed.html#Rlle"><span class="id" title="instance">Rlle</span></a> (<a class="idref" href="RoundedClosed.html#fr"><span class="id" title="variable">fr</span></a> <a class="idref" href="RoundedClosed.html#n"><span class="id" title="variable">n</span></a>) (<a class="idref" href="RoundedClosed.html#fk"><span class="id" title="variable">fk</span></a> <a class="idref" href="RoundedClosed.html#n"><span class="id" title="variable">n</span></a>)<a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#Rlle"><span class="id" title="instance">Rlle</span></a> (<a class="idref" href="RoundedClosed.html#RllubQP"><span class="id" title="definition">RllubQP</span></a> <a class="idref" href="RoundedClosed.html#fr"><span class="id" title="variable">fr</span></a>) (<a class="idref" href="RoundedClosed.html#RllubQP"><span class="id" title="definition">RllubQP</span></a> <a class="idref" href="RoundedClosed.html#fk"><span class="id" title="variable">fk</span></a>).<br/>
+ 
+<br/>
+</div>
+
+<div class="doc">
+Positive lower reals: a lower real is said to be positive if 
+every negative rational number is in the lower real 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Record</span> <a name="RlowPos"><span class="id" title="record">RlowPos</span></a> := <a name="mkRlP"><span class="id" title="constructor">mkRlP</span></a> {<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="rl"><span class="id" title="projection">rl</span></a> :&gt; <a class="idref" href="RoundedClosed.html#RC"><span class="id" title="record">RC</span></a> <span class="id" title="axiom">Q</span> <span class="id" title="axiom">Qlt</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="rlpos"><span class="id" title="projection">rlpos</span></a> : <span class="id" title="keyword">∀</span> <span class="id" title="var">p</span> : <span class="id" title="axiom">Q</span>, <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">(</span></a><a class="idref" href="RoundedClosed.html#p"><span class="id" title="variable">p</span></a> <span class="id" title="notation">&lt;</span> 0<a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#val"><span class="id" title="definition">val</span></a> <a class="idref" href="RoundedClosed.html#rl"><span class="id" title="method">rl</span></a> <a class="idref" href="RoundedClosed.html#p"><span class="id" title="variable">p</span></a><br/>
+}.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="RlowPos_pos"><span class="id" title="lemma">RlowPos_pos</span></a> : <span class="id" title="keyword">∀</span> (<span class="id" title="var">r</span> : <a class="idref" href="RoundedClosed.html#RlowPos"><span class="id" title="record">RlowPos</span></a>), <a class="idref" href="RoundedClosed.html#Rlle"><span class="id" title="instance">Rlle</span></a> (<span class="id" title="notation">'</span> 0) <a class="idref" href="RoundedClosed.html#r"><span class="id" title="variable">r</span></a>.<br/>
+ 
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="RlP_eq"><span class="id" title="lemma">RlP_eq</span></a> : <span class="id" title="keyword">∀</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> : <a class="idref" href="RoundedClosed.html#RlowPos"><span class="id" title="record">RlowPos</span></a>, <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">(</span></a><span class="id" title="keyword">∀</span> <span class="id" title="var">q</span>, <a class="idref" href="RoundedClosed.html#val"><span class="id" title="definition">val</span></a> <a class="idref" href="RoundedClosed.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="RoundedClosed.html#q"><span class="id" title="variable">q</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Datatypes.html#df1ced36fc33ce188051218bca314374"><span class="id" title="notation">↔</span></a> <a class="idref" href="RoundedClosed.html#val"><span class="id" title="definition">val</span></a> <a class="idref" href="RoundedClosed.html#b"><span class="id" title="variable">b</span></a> <a class="idref" href="RoundedClosed.html#q"><span class="id" title="variable">q</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#a"><span class="id" title="variable">a</span></a> <span class="id" title="notation">=</span> <a class="idref" href="RoundedClosed.html#b"><span class="id" title="variable">b</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="toRL"><span class="id" title="definition">toRL</span></a> : <a class="idref" href="RoundedClosed.html#RlowPos"><span class="id" title="record">RlowPos</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#Rlow"><span class="id" title="definition">Rlow</span></a>.<br/>
+<span class="id" title="keyword">Defined</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Global Instance</span> <a name="Rllepos"><span class="id" title="instance">Rllepos</span></a> : <span class="id" title="class">Le</span> <a class="idref" href="RoundedClosed.html#RlowPos"><span class="id" title="record">RlowPos</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Global Instance</span> <a name="Rlltpos"><span class="id" title="instance">Rlltpos</span></a> : <span class="id" title="class">Lt</span> <a class="idref" href="RoundedClosed.html#RlowPos"><span class="id" title="record">RlowPos</span></a>.<br/>
+ 
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="RCP_eq0"><span class="id" title="lemma">RCP_eq0</span></a> : <span class="id" title="keyword">∀</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> : <a class="idref" href="RoundedClosed.html#RlowPos"><span class="id" title="record">RlowPos</span></a>, <a class="idref" href="RoundedClosed.html#val"><span class="id" title="definition">val</span></a> <a class="idref" href="RoundedClosed.html#a"><span class="id" title="variable">a</span></a> <span class="id" title="notation">=</span> <a class="idref" href="RoundedClosed.html#val"><span class="id" title="definition">val</span></a> <a class="idref" href="RoundedClosed.html#b"><span class="id" title="variable">b</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#a"><span class="id" title="variable">a</span></a> <span class="id" title="notation">=</span> <a class="idref" href="RoundedClosed.html#b"><span class="id" title="variable">b</span></a>.<br/>
+ 
+<br/>
+<span class="id" title="keyword">Global Instance</span> <a name="RCP_isset"><span class="id" title="instance">RCP_isset</span></a> :  <span class="id" title="abbreviation">IsHSet</span> <a class="idref" href="RoundedClosed.html#RlowPos"><span class="id" title="record">RlowPos</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="RCP_eq"><span class="id" title="lemma">RCP_eq</span></a> : <span class="id" title="keyword">∀</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> : <a class="idref" href="RoundedClosed.html#RlowPos"><span class="id" title="record">RlowPos</span></a>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">(</span></a><span class="id" title="keyword">∀</span> <span class="id" title="var">q</span>, <a class="idref" href="RoundedClosed.html#val"><span class="id" title="definition">val</span></a> <a class="idref" href="RoundedClosed.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="RoundedClosed.html#q"><span class="id" title="variable">q</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Datatypes.html#df1ced36fc33ce188051218bca314374"><span class="id" title="notation">↔</span></a> <a class="idref" href="RoundedClosed.html#val"><span class="id" title="definition">val</span></a> <a class="idref" href="RoundedClosed.html#b"><span class="id" title="variable">b</span></a> <a class="idref" href="RoundedClosed.html#q"><span class="id" title="variable">q</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#a"><span class="id" title="variable">a</span></a> <span class="id" title="notation">=</span> <a class="idref" href="RoundedClosed.html#b"><span class="id" title="variable">b</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Global Instance</span> <a name="Rllepos_order"><span class="id" title="instance">Rllepos_order@</span></a>{} : <span class="id" title="class">PartialOrder</span> <a class="idref" href="RoundedClosed.html#Rllepos"><span class="id" title="instance">Rllepos</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Sequences of RlowPos 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="toRlseq"><span class="id" title="definition">toRlseq</span></a> : <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">(</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#RlowPos"><span class="id" title="record">RlowPos</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">(</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#Rlow"><span class="id" title="definition">Rlow</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">)</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="toRlseqQ"><span class="id" title="definition">toRlseqQ</span></a> : <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">(</span></a><span class="id" title="axiom">Q</span> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#RlowPos"><span class="id" title="record">RlowPos</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">(</span></a><span class="id" title="axiom">Q</span> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#Rlow"><span class="id" title="definition">Rlow</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">)</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="toRlseq_mon"><span class="id" title="lemma">toRlseq_mon</span></a> (<span class="id" title="var">A</span> : <span class="id" title="abbreviation">hSet</span>) (<span class="id" title="var">l</span> <span class="id" title="var">m</span> : <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#RlowPos"><span class="id" title="record">RlowPos</span></a>) :<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">∀</span> <span class="id" title="var">n</span>, <a class="idref" href="RoundedClosed.html#Rlle"><span class="id" title="instance">Rlle</span></a> (<a class="idref" href="RoundedClosed.html#l"><span class="id" title="variable">l</span></a> <a class="idref" href="RoundedClosed.html#n"><span class="id" title="variable">n</span></a>) (<a class="idref" href="RoundedClosed.html#m"><span class="id" title="variable">m</span></a> <a class="idref" href="RoundedClosed.html#n"><span class="id" title="variable">n</span></a>) <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#Rlle"><span class="id" title="instance">Rlle</span></a> ((<a class="idref" href="RoundedClosed.html#toRlseq"><span class="id" title="definition">toRlseq</span></a> <a class="idref" href="RoundedClosed.html#l"><span class="id" title="variable">l</span></a>) <a class="idref" href="RoundedClosed.html#n"><span class="id" title="variable">n</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;((<a class="idref" href="RoundedClosed.html#toRlseq"><span class="id" title="definition">toRlseq</span></a> <a class="idref" href="RoundedClosed.html#m"><span class="id" title="variable">m</span></a>) <a class="idref" href="RoundedClosed.html#n"><span class="id" title="variable">n</span></a>).<br/>
+ 
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="toRlseqQ_mon"><span class="id" title="lemma">toRlseqQ_mon</span></a> (<span class="id" title="var">A</span> : <span class="id" title="abbreviation">hSet</span>) (<span class="id" title="var">l</span> <span class="id" title="var">m</span> :  <span class="id" title="axiom">Q</span><a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#RlowPos"><span class="id" title="record">RlowPos</span></a>) :<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">∀</span> <span class="id" title="var">n</span>, <a class="idref" href="RoundedClosed.html#Rlle"><span class="id" title="instance">Rlle</span></a> (<a class="idref" href="RoundedClosed.html#l"><span class="id" title="variable">l</span></a> <a class="idref" href="RoundedClosed.html#n"><span class="id" title="variable">n</span></a>) (<a class="idref" href="RoundedClosed.html#m"><span class="id" title="variable">m</span></a> <a class="idref" href="RoundedClosed.html#n"><span class="id" title="variable">n</span></a>) <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#Rlle"><span class="id" title="instance">Rlle</span></a> ((<a class="idref" href="RoundedClosed.html#toRlseqQ"><span class="id" title="definition">toRlseqQ</span></a> <a class="idref" href="RoundedClosed.html#l"><span class="id" title="variable">l</span></a>) <a class="idref" href="RoundedClosed.html#n"><span class="id" title="variable">n</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;((<a class="idref" href="RoundedClosed.html#toRlseqQ"><span class="id" title="definition">toRlseqQ</span></a> <a class="idref" href="RoundedClosed.html#m"><span class="id" title="variable">m</span></a>) <a class="idref" href="RoundedClosed.html#n"><span class="id" title="variable">n</span></a>).<br/>
+ 
+<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="toRlseq_le_r"><span class="id" title="lemma">toRlseq_le_r</span></a> (<span class="id" title="var">A</span> : <span class="id" title="abbreviation">hSet</span>) (<span class="id" title="var">l</span> : <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#RlowPos"><span class="id" title="record">RlowPos</span></a>) (<span class="id" title="var">r</span> : <a class="idref" href="RoundedClosed.html#RlowPos"><span class="id" title="record">RlowPos</span></a>) :<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">∀</span> <span class="id" title="var">n</span>, <a class="idref" href="RoundedClosed.html#Rlle"><span class="id" title="instance">Rlle</span></a> (<a class="idref" href="RoundedClosed.html#l"><span class="id" title="variable">l</span></a> <a class="idref" href="RoundedClosed.html#n"><span class="id" title="variable">n</span></a>) <a class="idref" href="RoundedClosed.html#r"><span class="id" title="variable">r</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#Rlle"><span class="id" title="instance">Rlle</span></a> ((<a class="idref" href="RoundedClosed.html#toRlseq"><span class="id" title="definition">toRlseq</span></a> <a class="idref" href="RoundedClosed.html#l"><span class="id" title="variable">l</span></a>) <a class="idref" href="RoundedClosed.html#n"><span class="id" title="variable">n</span></a>) <a class="idref" href="RoundedClosed.html#r"><span class="id" title="variable">r</span></a>.<br/>
+ 
+<br/>
+<span class="id" title="keyword">Global Instance</span> <a name="Rl_pos_Le"><span class="id" title="instance">Rl_pos_Le</span></a> : <span class="id" title="class">Le</span> (<a class="idref" href="RoundedClosed.html#RlowPos"><span class="id" title="record">RlowPos</span></a>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Lub on sequences of RlowPos 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="RllubPos"><span class="id" title="definition">RllubPos</span></a> (<span class="id" title="var">fr</span> : <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#RlowPos"><span class="id" title="record">RlowPos</span></a>) : <a class="idref" href="RoundedClosed.html#RlowPos"><span class="id" title="record">RlowPos</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="RllubPos_case"><span class="id" title="lemma">RllubPos_case</span></a> <br/>
+&nbsp;&nbsp;: <span class="id" title="keyword">∀</span> (<span class="id" title="var">fr</span> : <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#RlowPos"><span class="id" title="record">RlowPos</span></a>) <span class="id" title="var">n</span> <span class="id" title="var">p</span>, <a class="idref" href="RoundedClosed.html#val"><span class="id" title="definition">val</span></a> (<a class="idref" href="RoundedClosed.html#fr"><span class="id" title="variable">fr</span></a> <a class="idref" href="RoundedClosed.html#n"><span class="id" title="variable">n</span></a>) <a class="idref" href="RoundedClosed.html#p"><span class="id" title="variable">p</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#val"><span class="id" title="definition">val</span></a> (<a class="idref" href="RoundedClosed.html#RllubPos"><span class="id" title="definition">RllubPos</span></a> <a class="idref" href="RoundedClosed.html#fr"><span class="id" title="variable">fr</span></a>) <a class="idref" href="RoundedClosed.html#p"><span class="id" title="variable">p</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="RllubPos_lub"><span class="id" title="lemma">RllubPos_lub</span></a> : <span class="id" title="keyword">∀</span> (<span class="id" title="var">fr</span> : <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#RlowPos"><span class="id" title="record">RlowPos</span></a>) <span class="id" title="var">n</span>, <a class="idref" href="RoundedClosed.html#Rlle"><span class="id" title="instance">Rlle</span></a> (<a class="idref" href="RoundedClosed.html#fr"><span class="id" title="variable">fr</span></a> <a class="idref" href="RoundedClosed.html#n"><span class="id" title="variable">n</span></a>) (<a class="idref" href="RoundedClosed.html#RllubPos"><span class="id" title="definition">RllubPos</span></a> <a class="idref" href="RoundedClosed.html#fr"><span class="id" title="variable">fr</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="RllubPos_le"><span class="id" title="lemma">RllubPos_le</span></a> <br/>
+&nbsp;&nbsp;: <span class="id" title="keyword">∀</span> (<span class="id" title="var">fr</span> : <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#RlowPos"><span class="id" title="record">RlowPos</span></a>) <span class="id" title="var">r</span>, <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">(</span></a><span class="id" title="keyword">∀</span> <span class="id" title="var">n</span>, <a class="idref" href="RoundedClosed.html#Rlle"><span class="id" title="instance">Rlle</span></a> (<a class="idref" href="RoundedClosed.html#fr"><span class="id" title="variable">fr</span></a> <a class="idref" href="RoundedClosed.html#n"><span class="id" title="variable">n</span></a>)  <a class="idref" href="RoundedClosed.html#r"><span class="id" title="variable">r</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#Rlle"><span class="id" title="instance">Rlle</span></a> (<a class="idref" href="RoundedClosed.html#RllubPos"><span class="id" title="definition">RllubPos</span></a> <a class="idref" href="RoundedClosed.html#fr"><span class="id" title="variable">fr</span></a>) <a class="idref" href="RoundedClosed.html#r"><span class="id" title="variable">r</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="RllubPos_mon"><span class="id" title="lemma">RllubPos_mon</span></a> : <span class="id" title="keyword">∀</span> (<span class="id" title="var">fr</span> <span class="id" title="var">fk</span> : <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#RlowPos"><span class="id" title="record">RlowPos</span></a>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">(</span></a><span class="id" title="keyword">∀</span> <span class="id" title="var">n</span>, <a class="idref" href="RoundedClosed.html#Rlle"><span class="id" title="instance">Rlle</span></a> (<a class="idref" href="RoundedClosed.html#fr"><span class="id" title="variable">fr</span></a> <a class="idref" href="RoundedClosed.html#n"><span class="id" title="variable">n</span></a>) (<a class="idref" href="RoundedClosed.html#fk"><span class="id" title="variable">fk</span></a> <a class="idref" href="RoundedClosed.html#n"><span class="id" title="variable">n</span></a>)<a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#Rlle"><span class="id" title="instance">Rlle</span></a> (<a class="idref" href="RoundedClosed.html#RllubPos"><span class="id" title="definition">RllubPos</span></a> <a class="idref" href="RoundedClosed.html#fr"><span class="id" title="variable">fr</span></a>) (<a class="idref" href="RoundedClosed.html#RllubPos"><span class="id" title="definition">RllubPos</span></a> <a class="idref" href="RoundedClosed.html#fk"><span class="id" title="variable">fk</span></a>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Lub of a set of RlowPos isomorphic to Q 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="RllubPosQ"><span class="id" title="definition">RllubPosQ</span></a> (<span class="id" title="var">fr</span> : <span class="id" title="axiom">Q</span> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#RlowPos"><span class="id" title="record">RlowPos</span></a>) : <a class="idref" href="RoundedClosed.html#RlowPos"><span class="id" title="record">RlowPos</span></a>.<br/>
+<span class="id" title="keyword">Defined</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="RllubPosQ_case"><span class="id" title="lemma">RllubPosQ_case</span></a> <br/>
+&nbsp;&nbsp;: <span class="id" title="keyword">∀</span> (<span class="id" title="var">fr</span> : <span class="id" title="axiom">Q</span> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#RlowPos"><span class="id" title="record">RlowPos</span></a>) <span class="id" title="var">n</span> <span class="id" title="var">p</span>, <a class="idref" href="RoundedClosed.html#val"><span class="id" title="definition">val</span></a> (<a class="idref" href="RoundedClosed.html#fr"><span class="id" title="variable">fr</span></a> <a class="idref" href="RoundedClosed.html#n"><span class="id" title="variable">n</span></a>) <a class="idref" href="RoundedClosed.html#p"><span class="id" title="variable">p</span></a> <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#val"><span class="id" title="definition">val</span></a> (<a class="idref" href="RoundedClosed.html#RllubPosQ"><span class="id" title="definition">RllubPosQ</span></a> <a class="idref" href="RoundedClosed.html#fr"><span class="id" title="variable">fr</span></a>) <a class="idref" href="RoundedClosed.html#p"><span class="id" title="variable">p</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="RllubPosQ_lub"><span class="id" title="lemma">RllubPosQ_lub</span></a> : <span class="id" title="keyword">∀</span> (<span class="id" title="var">fr</span> : <span class="id" title="axiom">Q</span> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#RlowPos"><span class="id" title="record">RlowPos</span></a>) <span class="id" title="var">n</span>, <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="RoundedClosed.html#Rlle"><span class="id" title="instance">Rlle</span></a> (<a class="idref" href="RoundedClosed.html#fr"><span class="id" title="variable">fr</span></a> <a class="idref" href="RoundedClosed.html#n"><span class="id" title="variable">n</span></a>) (<a class="idref" href="RoundedClosed.html#RllubPosQ"><span class="id" title="definition">RllubPosQ</span></a> <a class="idref" href="RoundedClosed.html#fr"><span class="id" title="variable">fr</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="RllubPosQ_le"><span class="id" title="lemma">RllubPosQ_le</span></a> <br/>
+&nbsp;&nbsp;: <span class="id" title="keyword">∀</span> (<span class="id" title="var">fr</span> : <span class="id" title="axiom">Q</span> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#RlowPos"><span class="id" title="record">RlowPos</span></a>) <span class="id" title="var">r</span>, <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">(</span></a><span class="id" title="keyword">∀</span> <span class="id" title="var">n</span>, <a class="idref" href="RoundedClosed.html#Rlle"><span class="id" title="instance">Rlle</span></a> (<a class="idref" href="RoundedClosed.html#fr"><span class="id" title="variable">fr</span></a> <a class="idref" href="RoundedClosed.html#n"><span class="id" title="variable">n</span></a>)  <a class="idref" href="RoundedClosed.html#r"><span class="id" title="variable">r</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">)</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#Rlle"><span class="id" title="instance">Rlle</span></a> (<a class="idref" href="RoundedClosed.html#RllubPosQ"><span class="id" title="definition">RllubPosQ</span></a> <a class="idref" href="RoundedClosed.html#fr"><span class="id" title="variable">fr</span></a>) <a class="idref" href="RoundedClosed.html#r"><span class="id" title="variable">r</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="RllubPosQ_mon"><span class="id" title="lemma">RllubPosQ_mon</span></a> : <span class="id" title="keyword">∀</span> (<span class="id" title="var">fr</span> <span class="id" title="var">fk</span> : <span class="id" title="axiom">Q</span> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#RlowPos"><span class="id" title="record">RlowPos</span></a>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">(</span></a><span class="id" title="keyword">∀</span> <span class="id" title="var">n</span>, <a class="idref" href="RoundedClosed.html#Rlle"><span class="id" title="instance">Rlle</span></a> (<a class="idref" href="RoundedClosed.html#fr"><span class="id" title="variable">fr</span></a> <a class="idref" href="RoundedClosed.html#n"><span class="id" title="variable">n</span></a>) (<a class="idref" href="RoundedClosed.html#fk"><span class="id" title="variable">fk</span></a> <a class="idref" href="RoundedClosed.html#n"><span class="id" title="variable">n</span></a>)<a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">)</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#Rlle"><span class="id" title="instance">Rlle</span></a> (<a class="idref" href="RoundedClosed.html#RllubPosQ"><span class="id" title="definition">RllubPosQ</span></a> <a class="idref" href="RoundedClosed.html#fr"><span class="id" title="variable">fr</span></a>) (<a class="idref" href="RoundedClosed.html#RllubPosQ"><span class="id" title="definition">RllubPosQ</span></a> <a class="idref" href="RoundedClosed.html#fk"><span class="id" title="variable">fk</span></a>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Lub of a set of RlowPos isomorphic to Q+  
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="RllubPosQP"><span class="id" title="definition">RllubPosQP</span></a> (<span class="id" title="var">fr</span> : <span class="id" title="notation">Q</span><a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">+</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#RlowPos"><span class="id" title="record">RlowPos</span></a>) : <a class="idref" href="RoundedClosed.html#RlowPos"><span class="id" title="record">RlowPos</span></a>.<br/>
+<span class="id" title="keyword">Defined</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="RllubPosQP_case"><span class="id" title="lemma">RllubPosQP_case</span></a> <br/>
+&nbsp;&nbsp;: <span class="id" title="keyword">∀</span> (<span class="id" title="var">fr</span> : <span class="id" title="notation">Q</span><a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">+</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#RlowPos"><span class="id" title="record">RlowPos</span></a>) <span class="id" title="var">n</span> <span class="id" title="var">p</span>, <a class="idref" href="RoundedClosed.html#val"><span class="id" title="definition">val</span></a> (<a class="idref" href="RoundedClosed.html#fr"><span class="id" title="variable">fr</span></a> <a class="idref" href="RoundedClosed.html#n"><span class="id" title="variable">n</span></a>) <a class="idref" href="RoundedClosed.html#p"><span class="id" title="variable">p</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#val"><span class="id" title="definition">val</span></a> (<a class="idref" href="RoundedClosed.html#RllubPosQP"><span class="id" title="definition">RllubPosQP</span></a> <a class="idref" href="RoundedClosed.html#fr"><span class="id" title="variable">fr</span></a>) <a class="idref" href="RoundedClosed.html#p"><span class="id" title="variable">p</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="RllubPosQP_lub"><span class="id" title="lemma">RllubPosQP_lub</span></a> : <span class="id" title="keyword">∀</span> (<span class="id" title="var">fr</span> : <span class="id" title="notation">Q</span><a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">+</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#RlowPos"><span class="id" title="record">RlowPos</span></a>) <span class="id" title="var">n</span>, <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="RoundedClosed.html#Rlle"><span class="id" title="instance">Rlle</span></a> (<a class="idref" href="RoundedClosed.html#fr"><span class="id" title="variable">fr</span></a> <a class="idref" href="RoundedClosed.html#n"><span class="id" title="variable">n</span></a>) (<a class="idref" href="RoundedClosed.html#RllubPosQP"><span class="id" title="definition">RllubPosQP</span></a> <a class="idref" href="RoundedClosed.html#fr"><span class="id" title="variable">fr</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="RllubPosQP_le"><span class="id" title="lemma">RllubPosQP_le</span></a> <br/>
+&nbsp;&nbsp;: <span class="id" title="keyword">∀</span> (<span class="id" title="var">fr</span> : <span class="id" title="notation">Q</span><a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">+</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#RlowPos"><span class="id" title="record">RlowPos</span></a>) <span class="id" title="var">r</span>, <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">(</span></a><span class="id" title="keyword">∀</span> <span class="id" title="var">n</span>, <a class="idref" href="RoundedClosed.html#Rlle"><span class="id" title="instance">Rlle</span></a> (<a class="idref" href="RoundedClosed.html#fr"><span class="id" title="variable">fr</span></a> <a class="idref" href="RoundedClosed.html#n"><span class="id" title="variable">n</span></a>) <a class="idref" href="RoundedClosed.html#r"><span class="id" title="variable">r</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#Rlle"><span class="id" title="instance">Rlle</span></a> (<a class="idref" href="RoundedClosed.html#RllubPosQP"><span class="id" title="definition">RllubPosQP</span></a> <a class="idref" href="RoundedClosed.html#fr"><span class="id" title="variable">fr</span></a>) <a class="idref" href="RoundedClosed.html#r"><span class="id" title="variable">r</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="RllubPosQP_mon"><span class="id" title="lemma">RllubPosQP_mon</span></a> : <span class="id" title="keyword">∀</span> (<span class="id" title="var">fr</span> <span class="id" title="var">fk</span> : <span class="id" title="notation">Q</span><a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">+</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#RlowPos"><span class="id" title="record">RlowPos</span></a>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">(</span></a><span class="id" title="keyword">∀</span> <span class="id" title="var">n</span>, <a class="idref" href="RoundedClosed.html#Rlle"><span class="id" title="instance">Rlle</span></a> (<a class="idref" href="RoundedClosed.html#fr"><span class="id" title="variable">fr</span></a> <a class="idref" href="RoundedClosed.html#n"><span class="id" title="variable">n</span></a>) (<a class="idref" href="RoundedClosed.html#fk"><span class="id" title="variable">fk</span></a> <a class="idref" href="RoundedClosed.html#n"><span class="id" title="variable">n</span></a>)<a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#Rlle"><span class="id" title="instance">Rlle</span></a> (<a class="idref" href="RoundedClosed.html#RllubPosQP"><span class="id" title="definition">RllubPosQP</span></a> <a class="idref" href="RoundedClosed.html#fr"><span class="id" title="variable">fr</span></a>) (<a class="idref" href="RoundedClosed.html#RllubPosQP"><span class="id" title="definition">RllubPosQP</span></a> <a class="idref" href="RoundedClosed.html#fk"><span class="id" title="variable">fk</span></a>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Any lower real r such that 0
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="Rlow_RlowPos"><span class="id" title="definition">Rlow_RlowPos</span></a> (<span class="id" title="var">r</span> : <a class="idref" href="RoundedClosed.html#Rlow"><span class="id" title="definition">Rlow</span></a>) : <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">(</span></a><a class="idref" href="RoundedClosed.html#Rlle"><span class="id" title="instance">Rlle</span></a> (<span class="id" title="notation">'</span> 0)  <a class="idref" href="RoundedClosed.html#r"><span class="id" title="variable">r</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#RlowPos"><span class="id" title="record">RlowPos</span></a>.<br/>
+<span class="id" title="keyword">Defined</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="O_simpl"><span class="id" title="lemma">O_simpl</span></a> : <a class="idref" href="RoundedClosed.html#Rlle"><span class="id" title="instance">Rlle</span></a> (<span class="id" title="notation">'</span> 0) (<span class="id" title="notation">'</span> 0).<br/>
+ 
+<br/>
+</div>
+
+<div class="doc">
+0 for RlowPos 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="RlP_0"><span class="id" title="definition">RlP_0</span></a> : <a class="idref" href="RoundedClosed.html#RlowPos"><span class="id" title="record">RlowPos</span></a>.<br/>
+<span class="id" title="keyword">Defined</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="Rlle_O_I"><span class="id" title="lemma">Rlle_O_I</span></a> : <a class="idref" href="RoundedClosed.html#Rlle"><span class="id" title="instance">Rlle</span></a> (<span class="id" title="notation">'</span> 0) (<span class="id" title="notation">'</span> 1).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+1 for RlowPos 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="RlP_1"><span class="id" title="definition">RlP_1</span></a> : <a class="idref" href="RoundedClosed.html#RlowPos"><span class="id" title="record">RlowPos</span></a>.<br/>
+<span class="id" title="keyword">Defined</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Sum of two RlowPos 
+</div>
+<div class="code">
+<span class="id" title="keyword">Global Instance</span>  <a name="RlP_plus"><span class="id" title="instance">RlP_plus</span></a> : <span class="id" title="class">Plus</span> <a class="idref" href="RoundedClosed.html#RlowPos"><span class="id" title="record">RlowPos</span></a>.<br/>
+ 
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="RlP_plus_RlPlus"><span class="id" title="lemma">RlP_plus_RlPlus</span></a> : <span class="id" title="keyword">∀</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="RoundedClosed.html#rl"><span class="id" title="projection">rl</span></a> (<a class="idref" href="RoundedClosed.html#RlP_plus"><span class="id" title="instance">RlP_plus</span></a> <a class="idref" href="RoundedClosed.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="RoundedClosed.html#b"><span class="id" title="variable">b</span></a>) <span class="id" title="notation">=</span> <a class="idref" href="RoundedClosed.html#RlPlus"><span class="id" title="instance">RlPlus</span></a> <a class="idref" href="RoundedClosed.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="RoundedClosed.html#b"><span class="id" title="variable">b</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="RlPPlus_comm"><span class="id" title="lemma">RlPPlus_comm</span></a> : <span class="id" title="class">Commutative</span> <a class="idref" href="RoundedClosed.html#RlP_plus"><span class="id" title="instance">RlP_plus</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="RlPPlus_assoc"><span class="id" title="lemma">RlPPlus_assoc</span></a> : <span class="id" title="class">Associative</span> <a class="idref" href="RoundedClosed.html#RlP_plus"><span class="id" title="instance">RlP_plus</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="RlPPlus_left_id"><span class="id" title="lemma">RlPPlus_left_id</span></a> : <span class="id" title="class">LeftIdentity</span> <a class="idref" href="RoundedClosed.html#RlP_plus"><span class="id" title="instance">RlP_plus</span></a> <a class="idref" href="RoundedClosed.html#RlP_0"><span class="id" title="definition">RlP_0</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Global Instance</span> <a name="RlPApart"><span class="id" title="instance">RlPApart</span></a> : <span class="id" title="class">Apart@</span>{<span class="id" title="var">UQ</span> <span class="id" title="var">UQ</span>} <a class="idref" href="RoundedClosed.html#RlowPos"><span class="id" title="record">RlowPos</span></a><br/>
+&nbsp;&nbsp;:= <span class="id" title="keyword">fun</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> ⇒ <a class="idref" href="RoundedClosed.html#a"><span class="id" title="variable">a</span></a> <span class="id" title="notation">&lt;</span> <a class="idref" href="RoundedClosed.html#b"><span class="id" title="variable">b</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Datatypes.html#7a45dffb109c3069e5c675be68643e60"><span class="id" title="notation">∨</span></a> <a class="idref" href="RoundedClosed.html#b"><span class="id" title="variable">b</span></a> <span class="id" title="notation">&lt;</span> <a class="idref" href="RoundedClosed.html#a"><span class="id" title="variable">a</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="Rllepos_plus_le_preserving"><span class="id" title="lemma">Rllepos_plus_le_preserving</span></a> : <span class="id" title="keyword">∀</span> <span class="id" title="var">a</span> : <a class="idref" href="RoundedClosed.html#RlowPos"><span class="id" title="record">RlowPos</span></a>, <span class="id" title="class">OrderPreserving</span> <span class="id" title="notation">(</span><a class="idref" href="RoundedClosed.html#a"><span class="id" title="variable">a</span></a> <span class="id" title="notation">+)</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Lower offset on Rlow : a lower real minus a rational 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="pred_minusQ_l"><span class="id" title="definition">pred_minusQ_l</span></a> (<span class="id" title="var">r</span> : <a class="idref" href="RoundedClosed.html#QPred"><span class="id" title="definition">QPred</span></a>) (<span class="id" title="var">q</span> : <span class="id" title="axiom">Q</span>) : <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">(</span></a><a class="idref" href="RoundedClosed.html#r"><span class="id" title="variable">r</span></a> <a class="idref" href="RoundedClosed.html#q"><span class="id" title="variable">q</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#QPred"><span class="id" title="definition">QPred</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="minusQ_l_isRlow"><span class="id" title="lemma">minusQ_l_isRlow</span></a> : <span class="id" title="keyword">∀</span> (<span class="id" title="var">a</span> : <a class="idref" href="RoundedClosed.html#Rlow"><span class="id" title="definition">Rlow</span></a>) (<span class="id" title="var">p</span> : <span class="id" title="axiom">Q</span>) (<span class="id" title="var">H</span> : <a class="idref" href="RoundedClosed.html#val"><span class="id" title="definition">val</span></a> <a class="idref" href="RoundedClosed.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="RoundedClosed.html#p"><span class="id" title="variable">p</span></a>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="RoundedClosed.html#IsRlow"><span class="id" title="definition">IsRlow</span></a> (<a class="idref" href="RoundedClosed.html#pred_minusQ_l"><span class="id" title="definition">pred_minusQ_l</span></a> (<a class="idref" href="RoundedClosed.html#val"><span class="id" title="definition">val</span></a> <a class="idref" href="RoundedClosed.html#a"><span class="id" title="variable">a</span></a>) <a class="idref" href="RoundedClosed.html#p"><span class="id" title="variable">p</span></a> <a class="idref" href="RoundedClosed.html#H"><span class="id" title="variable">H</span></a>).<br/>
+
+<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="pred_minusQ_l2"><span class="id" title="definition">pred_minusQ_l2</span></a> (<span class="id" title="var">r</span> : <a class="idref" href="RoundedClosed.html#QPred"><span class="id" title="definition">QPred</span></a>) (<span class="id" title="var">q</span> : <span class="id" title="axiom">Q</span>) : <a class="idref" href="RoundedClosed.html#QPred"><span class="id" title="definition">QPred</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="minusQ_l_isRlow2"><span class="id" title="lemma">minusQ_l_isRlow2</span></a> : <span class="id" title="keyword">∀</span> (<span class="id" title="var">a</span> : <a class="idref" href="RoundedClosed.html#Rlow"><span class="id" title="definition">Rlow</span></a>) (<span class="id" title="var">p</span> : <span class="id" title="axiom">Q</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="RoundedClosed.html#IsRlow"><span class="id" title="definition">IsRlow</span></a> (<span class="id" title="keyword">fun</span> <span class="id" title="var">m</span> ⇒ <span class="id" title="definition">semi_decide</span> (<span class="id" title="definition">hor</span> ((<a class="idref" href="RoundedClosed.html#pred_minusQ_l2"><span class="id" title="definition">pred_minusQ_l2</span></a> (<a class="idref" href="RoundedClosed.html#val"><span class="id" title="definition">val</span></a> <a class="idref" href="RoundedClosed.html#a"><span class="id" title="variable">a</span></a>) <a class="idref" href="RoundedClosed.html#p"><span class="id" title="variable">p</span></a>) <a class="idref" href="RoundedClosed.html#m"><span class="id" title="variable">m</span></a>) (<a class="idref" href="RoundedClosed.html#val"><span class="id" title="definition">val</span></a> <a class="idref" href="RoundedClosed.html#Rl0"><span class="id" title="instance">Rl0</span></a> <a class="idref" href="RoundedClosed.html#m"><span class="id" title="variable">m</span></a>))).<br/>
+
+<br/>
+ 
+<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Multiplication of a lower real and a positive rational 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="pred_multQ"><span class="id" title="definition">pred_multQ</span></a> (<span class="id" title="var">r</span> : <a class="idref" href="RoundedClosed.html#QPred"><span class="id" title="definition">QPred</span></a>) (<span class="id" title="var">q</span> : <span class="id" title="notation">Q</span>+) : <a class="idref" href="RoundedClosed.html#QPred"><span class="id" title="definition">QPred</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="multQ_isRlow"><span class="id" title="lemma">multQ_isRlow</span></a> : <span class="id" title="keyword">∀</span> (<span class="id" title="var">a</span> : <a class="idref" href="RoundedClosed.html#Rlow"><span class="id" title="definition">Rlow</span></a>) (<span class="id" title="var">p</span> : <span class="id" title="notation">Q</span>+),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="RoundedClosed.html#IsRlow"><span class="id" title="definition">IsRlow</span></a> (<a class="idref" href="RoundedClosed.html#pred_multQ"><span class="id" title="definition">pred_multQ</span></a> (<a class="idref" href="RoundedClosed.html#val"><span class="id" title="definition">val</span></a> <a class="idref" href="RoundedClosed.html#a"><span class="id" title="variable">a</span></a>) <a class="idref" href="RoundedClosed.html#p"><span class="id" title="variable">p</span></a>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">SearchAbout</span> <span class="id" title="definition">negate</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="Rlow_mult_q"><span class="id" title="definition">Rlow_mult_q</span></a> : <span class="id" title="notation">Q</span><a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">+</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#RlowPos"><span class="id" title="record">RlowPos</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <a class="idref" href="RoundedClosed.html#RlowPos"><span class="id" title="record">RlowPos</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="Rlow_mult_q1"><span class="id" title="lemma">Rlow_mult_q1</span></a> : <span class="id" title="keyword">∀</span> <span class="id" title="var">r</span>, <a class="idref" href="RoundedClosed.html#Rlow_mult_q"><span class="id" title="definition">Rlow_mult_q</span></a> 1 <a class="idref" href="RoundedClosed.html#r"><span class="id" title="variable">r</span></a> <span class="id" title="notation">=</span> <a class="idref" href="RoundedClosed.html#r"><span class="id" title="variable">r</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="Rlow_mult_q_RlP_0"><span class="id" title="lemma">Rlow_mult_q_RlP_0</span></a> : <span class="id" title="keyword">∀</span> <span class="id" title="var">q</span>, <a class="idref" href="RoundedClosed.html#Rlow_mult_q"><span class="id" title="definition">Rlow_mult_q</span></a> <a class="idref" href="RoundedClosed.html#q"><span class="id" title="variable">q</span></a> <a class="idref" href="RoundedClosed.html#RlP_0"><span class="id" title="definition">RlP_0</span></a> <span class="id" title="notation">=</span> <a class="idref" href="RoundedClosed.html#RlP_0"><span class="id" title="definition">RlP_0</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="QRlow_qpos"><span class="id" title="definition">QRlow_qpos</span></a> (<span class="id" title="var">q</span> : <span class="id" title="notation">Q</span>+)  : <a class="idref" href="RoundedClosed.html#RlowPos"><span class="id" title="record">RlowPos</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Join of two RlowPos 
+</div>
+<div class="code">
+<span class="id" title="keyword">Global Instance</span> <a name="RlPJoin"><span class="id" title="instance">RlPJoin</span></a> : <span class="id" title="class">Join</span> <a class="idref" href="RoundedClosed.html#RlowPos"><span class="id" title="record">RlowPos</span></a>.<br/>
+ 
+<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Meet of two RlowPos 
+</div>
+<div class="code">
+<span class="id" title="keyword">Global Instance</span> <a name="RlPMeet"><span class="id" title="instance">RlPMeet</span></a> : <span class="id" title="class">Meet</span> <a class="idref" href="RoundedClosed.html#RlowPos"><span class="id" title="record">RlowPos</span></a>.<br/>
+ 
+<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+RlowPos is a semigroup for plus 
+</div>
+<div class="code">
+<span class="id" title="keyword">Global Instance</span> <a name="RlPSemiGroup_plus"><span class="id" title="instance">RlPSemiGroup_plus</span></a> : @<span class="id" title="class">CommutativeSemiGroup</span> <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="RoundedClosed.html#RlowPos"><span class="id" title="record">RlowPos</span></a> <a class="idref" href="RoundedClosed.html#RlP_plus"><span class="id" title="instance">RlP_plus</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+RlowPos is a semigroup for join 
+</div>
+<div class="code">
+<span class="id" title="keyword">Global Instance</span> <a name="RlPSemiGroup_join"><span class="id" title="instance">RlPSemiGroup_join</span></a> : @<span class="id" title="class">CommutativeSemiGroup</span> <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="RoundedClosed.html#RlowPos"><span class="id" title="record">RlowPos</span></a> <a class="idref" href="RoundedClosed.html#RlPJoin"><span class="id" title="instance">RlPJoin</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+RlowPos is a semigroup for meet 
+</div>
+<div class="code">
+<span class="id" title="keyword">Global Instance</span> <a name="RlPSemiGroup_meet"><span class="id" title="instance">RlPSemiGroup_meet</span></a> : @<span class="id" title="class">CommutativeSemiGroup</span> <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="RoundedClosed.html#RlowPos"><span class="id" title="record">RlowPos</span></a> <a class="idref" href="RoundedClosed.html#RlPMeet"><span class="id" title="instance">RlPMeet</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+RlowPos is a distributive lattice 
+</div>
+<div class="code">
+<span class="id" title="keyword">Global Instance</span> <a name="RlPDLattice"><span class="id" title="instance">RlPDLattice</span></a> : <span class="id" title="class">DistributiveLattice</span> <a class="idref" href="RoundedClosed.html#RlowPos"><span class="id" title="record">RlowPos</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="RoundedClosed.html#LowerReals"><span class="id" title="section">LowerReals</span></a>.<br/>
+
+<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,177 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>Opens</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library Opens</h1>
+
+<div class="code">
+
+<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab3"></a><h1 class="section">Open Subspaces of a hset A</h1>
+
+<div class="paragraph"> </div>
+
+ The continuous maps from A to 
+the Sierpinski space Sier forms a classifying topos for the opens 
+subsets of A. In Synthetic topology, continuous maps are the 
+definissible ones. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="OS"><span class="id" title="definition">OS</span></a> (<span class="id" title="var">A</span> : <span class="id" title="abbreviation">hSet</span>) := <a class="idref" href="Opens.html#A"><span class="id" title="variable">A</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.5pl3/stdlib/Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">→</span></a> <span class="id" title="definition">Sier</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Global Instance</span> <a name="OS_isset"><span class="id" title="instance">OS_isset</span></a> {<span class="id" title="var">A</span>} : <span class="id" title="abbreviation">IsHSet</span> (<a class="idref" href="Opens.html#OS"><span class="id" title="definition">OS</span></a> <a class="idref" href="Opens.html#A"><span class="id" title="variable">A</span></a>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Order relation on OS 
+</div>
+<div class="code">
+<span class="id" title="keyword">Global Instance</span> <a name="Osle"><span class="id" title="instance">Osle</span></a> {<span class="id" title="var">A</span>} : <span class="id" title="class">Le</span> (<a class="idref" href="Opens.html#OS"><span class="id" title="definition">OS</span></a> <a class="idref" href="Opens.html#A"><span class="id" title="variable">A</span></a>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Osle is a partial order 
+</div>
+<div class="code">
+<span class="id" title="keyword">Global Instance</span> <a name="Osle_ord"><span class="id" title="instance">Osle_ord</span></a> {<span class="id" title="var">A</span>} : <span class="id" title="class">PartialOrder</span> (@<a class="idref" href="Opens.html#Osle"><span class="id" title="instance">Osle</span></a> <a class="idref" href="Opens.html#A"><span class="id" title="variable">A</span></a>).<br/>
+ 
+<br/>
+</div>
+
+<div class="doc">
+Join of open subsets 
+</div>
+<div class="code">
+<span class="id" title="keyword">Global Instance</span> <a name="OS_join"><span class="id" title="instance">OS_join</span></a> {<span class="id" title="var">A</span>} : <span class="id" title="class">Join</span> (<a class="idref" href="Opens.html#OS"><span class="id" title="definition">OS</span></a> <a class="idref" href="Opens.html#A"><span class="id" title="variable">A</span></a>) :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">fun</span> <span class="id" title="var">U</span> <span class="id" title="var">V</span> ⇒ <span class="id" title="keyword">fun</span> <span class="id" title="var">x</span> ⇒ <span class="id" title="instance">SierJoin</span> (<a class="idref" href="Opens.html#U"><span class="id" title="variable">U</span></a> <a class="idref" href="Opens.html#x"><span class="id" title="variable">x</span></a>) (<a class="idref" href="Opens.html#V"><span class="id" title="variable">V</span></a> <a class="idref" href="Opens.html#x"><span class="id" title="variable">x</span></a>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Meet of open subsets 
+</div>
+<div class="code">
+<span class="id" title="keyword">Global Instance</span> <a name="OS_meet"><span class="id" title="instance">OS_meet</span></a> {<span class="id" title="var">A</span>} : <span class="id" title="class">Meet</span> (<a class="idref" href="Opens.html#OS"><span class="id" title="definition">OS</span></a> <a class="idref" href="Opens.html#A"><span class="id" title="variable">A</span></a>) := <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">fun</span> <span class="id" title="var">U</span> <span class="id" title="var">V</span> ⇒ <span class="id" title="keyword">fun</span> <span class="id" title="var">x</span> ⇒ <span class="id" title="instance">SierMeet</span> (<a class="idref" href="Opens.html#U"><span class="id" title="variable">U</span></a> <a class="idref" href="Opens.html#x"><span class="id" title="variable">x</span></a>) (<a class="idref" href="Opens.html#V"><span class="id" title="variable">V</span></a> <a class="idref" href="Opens.html#x"><span class="id" title="variable">x</span></a>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Empty space 
+</div>
+<div class="code">
+<span class="id" title="keyword">Global Instance</span> <a name="OS_empty"><span class="id" title="instance">OS_empty</span></a> {<span class="id" title="var">A</span>} : <span class="id" title="class">Zero</span> (<a class="idref" href="Opens.html#OS"><span class="id" title="definition">OS</span></a> <a class="idref" href="Opens.html#A"><span class="id" title="variable">A</span></a>) := <span class="id" title="keyword">fun</span> <span class="id" title="var">x</span> : <span class="id" title="var">A</span> ⇒ <span class="id" title="notation">⊥</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+The entire space itself 
+</div>
+<div class="code">
+<span class="id" title="keyword">Global Instance</span> <a name="OS_full"><span class="id" title="instance">OS_full</span></a> {<span class="id" title="var">A</span>} : <span class="id" title="class">One</span> (<a class="idref" href="Opens.html#OS"><span class="id" title="definition">OS</span></a> <a class="idref" href="Opens.html#A"><span class="id" title="variable">A</span></a>) := <span class="id" title="keyword">fun</span> <span class="id" title="var">x</span> : <span class="id" title="var">A</span> ⇒ <span class="id" title="notation">⊤</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+OS A is has a cpo 
+</div>
+<div class="code">
+<span class="id" title="keyword">Global Instance</span> <a name="OS_cpo"><span class="id" title="instance">OS_cpo</span></a> {<span class="id" title="var">A</span>} : <a class="idref" href="Cpo.html#cpo"><span class="id" title="class">cpo</span></a> (<a class="idref" href="Opens.html#OS"><span class="id" title="definition">OS</span></a> <a class="idref" href="Opens.html#A"><span class="id" title="variable">A</span></a>).<br/>
+ 
+<br/>
+</div>
+
+<div class="doc">
+Notations 
+</div>
+<div class="code">
+<span class="id" title="keyword">Notation</span> <a name="d0b6c5974fb762eb150c8e4bd377dd22"><span class="id" title="notation">&quot;</span></a>U ⋂ V" := (<a class="idref" href="Opens.html#OS_meet"><span class="id" title="instance">OS_meet</span></a> <span class="id" title="var">U</span> <span class="id" title="var">V</span>) (<span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 80).<br/>
+<span class="id" title="keyword">Notation</span> <a name="23b85ee963d7c36311bd044ac18821c2"><span class="id" title="notation">&quot;</span></a>U ∪ V" := (<a class="idref" href="Opens.html#OS_join"><span class="id" title="instance">OS_join</span></a> <span class="id" title="var">U</span> <span class="id" title="var">V</span>) (<span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 80).<br/>
+<span class="id" title="keyword">Notation</span> <a name="1bcfff782645e550303b44d1d50df7a5"><span class="id" title="notation">&quot;</span></a>∅" := (<a class="idref" href="Opens.html#OS_empty"><span class="id" title="instance">OS_empty</span></a>).<br/>
+<span class="id" title="keyword">Notation</span> <a name="90d3e561eecd6f722fcd65c2a39b3026"><span class="id" title="notation">&quot;</span></a>U ⊆ V" := (<a class="idref" href="Opens.html#Osle"><span class="id" title="instance">Osle</span></a> <span class="id" title="var">U</span> <span class="id" title="var">V</span>) (<span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 90).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Lattice properties of the order 
+</div>
+<div class="code">
+<span class="id" title="keyword">Lemma</span> <a name="os_lattice_order"><span class="id" title="lemma">os_lattice_order</span></a>  {<span class="id" title="var">A</span>} : <span class="id" title="class">LatticeOrder</span> (@<a class="idref" href="Opens.html#Osle"><span class="id" title="instance">Osle</span></a> <a class="idref" href="Opens.html#A"><span class="id" title="variable">A</span></a>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Semigroup structure of OS A with sg_op = join (OS A) :
+<ul class="doclist">
+<li> associative sg_op
+
+</li>
+<li> OS A is a hSet 
+</li>
+</ul>
+
+</div>
+<div class="code">
+<span class="id" title="keyword">Global Instance</span> <a name="os_semi_group"><span class="id" title="instance">os_semi_group</span></a> {<span class="id" title="var">A</span>} : <span class="id" title="class">SemiGroup</span> (<a class="idref" href="Opens.html#OS"><span class="id" title="definition">OS</span></a> <a class="idref" href="Opens.html#A"><span class="id" title="variable">A</span></a>).<br/>
+ 
+<br/>
+</div>
+
+<div class="doc">
+Lattice structure on OS 
+</div>
+<div class="code">
+<span class="id" title="keyword">Global Instance</span> <a name="os_jslattice"><span class="id" title="instance">os_jslattice</span></a> {<span class="id" title="var">A</span>} : <span class="id" title="class">JoinSemiLattice</span> (<a class="idref" href="Opens.html#OS"><span class="id" title="definition">OS</span></a> <a class="idref" href="Opens.html#A"><span class="id" title="variable">A</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Global Instance</span> <a name="os_mslattice"><span class="id" title="instance">os_mslattice</span></a> {<span class="id" title="var">A</span>}: <span class="id" title="class">MeetSemiLattice</span> (<a class="idref" href="Opens.html#OS"><span class="id" title="definition">OS</span></a> <a class="idref" href="Opens.html#A"><span class="id" title="variable">A</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Global Instance</span> <a name="os_lattice"><span class="id" title="instance">os_lattice</span></a> {<span class="id" title="var">A</span>} : <span class="id" title="class">Lattice</span> (<a class="idref" href="Opens.html#OS"><span class="id" title="definition">OS</span></a> <a class="idref" href="Opens.html#A"><span class="id" title="variable">A</span></a>).<br/>
+<span class="id" title="keyword">Defined</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Global Instance</span> <a name="os_dlattice"><span class="id" title="instance">os_dlattice</span></a> {<span class="id" title="var">A</span>}: <span class="id" title="class">DistributiveLattice</span> (<a class="idref" href="Opens.html#OS"><span class="id" title="definition">OS</span></a> <a class="idref" href="Opens.html#A"><span class="id" title="variable">A</span></a>).<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>
