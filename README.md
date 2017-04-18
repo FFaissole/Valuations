@@ -13,7 +13,7 @@ You need the following dependencies:
 
 Install the dependencies and run the following commands:
 
-- cd Valuations
+- cd Valuations/ST
 - make
 
 # Organization
