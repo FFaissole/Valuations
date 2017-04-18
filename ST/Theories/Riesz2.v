@@ -386,7 +386,7 @@ Lemma Riesz_hom (A : hSet) :
    (forall (Mu:Val A) U, Riesz1 (Riesz2 Mu) U = Mu U) /\ 
    (forall (It:IntPos A) f, Riesz2 (Riesz1 It) f = It f).
 Proof.
-(* Admitted.  *)
+Admitted. 
 
   
 
