@@ -1,4 +1,3 @@
-
 Require Import HoTTClasses.interfaces.abstract_algebra
                HoTTClasses.interfaces.orders
                HoTTClasses.implementations.partiality
@@ -130,16 +129,6 @@ simpl; apply top_greatest.
 simpl; reflexivity. 
 Defined.
 
-Definition seq_sier'_mon : IncreasingSequence Sier.
-Proof.
-exists seq_sier'.
-intros n.
-induction n.
-simpl; reflexivity.
-induction n.
-simpl; apply top_greatest.
-simpl; reflexivity. 
-Defined.
 
 Lemma switch_compute : forall U : OS bool, 
               IsTop (switch (Utrue) false).
@@ -152,6 +141,3 @@ Lemma seq_compute : IsTop (sup Unit (seq_sier_mon)).
 Proof. 
 S_compute (S O).
 Qed. 
-
-
-
