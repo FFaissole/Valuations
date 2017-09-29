@@ -2108,6 +2108,69 @@ apply r.
 case (n Hr).  
 Qed. 
 
+
+Lemma Rlow_mult_q_distr : forall q r,
+    Rlow_mult_q (1/q) (Rlow_mult_q q r) = r.
+Proof.
+intros q r. 
+apply (antisymmetry le).
++ intros s Hs.
+  unfold Rlow_mult_q in Hs;
+  simpl in Hs; 
+  unfold pred_multQ in Hs.
+  rewrite mult_assoc in Hs.
+  rewrite mult_comm in Hs.
+  assert (Hq : (pos q * pos (1 / q)) = 1).
+  simpl. rewrite mult_comm. 
+  rewrite <- mult_assoc.
+  rewrite (mult_comm _ (pos q)).
+  rewrite mult_1_l.
+  transitivity (1/1).
+  transitivity ((pos q) / pos q).
+  reflexivity. 
+  apply dec_fields.equal_dec_quotients.
+  apply orders.not_le_ne.
+  intros HF.
+  apply le_iff_not_lt_flip in HF. 
+  assert (Hp : 0 < pos q).
+  apply q.
+  case (HF Hp).
+  generalize rational_1_neq_0.
+  apply apartness.apart_ne.
+  rewrite mult_comm; reflexivity.
+  rewrite dec_fields.dec_recip_1.
+  rewrite mult_1_r; reflexivity. 
+  rewrite Hq in Hs.
+  rewrite mult_1_r in Hs; trivial.
++ intros s Hs.
+  unfold Rlow_mult_q;
+  simpl; unfold pred_multQ.
+  rewrite mult_assoc.
+  rewrite mult_comm.
+  assert (Hq : (pos q * pos (1 / q)) = 1).
+  simpl. rewrite mult_comm. 
+  rewrite <- mult_assoc.
+  rewrite (mult_comm _ (pos q)).
+  rewrite mult_1_l.
+  transitivity (1/1).
+  transitivity ((pos q) / pos q).
+  reflexivity. 
+  apply dec_fields.equal_dec_quotients.
+  apply orders.not_le_ne.
+  intros HF.
+  apply le_iff_not_lt_flip in HF. 
+  assert (Hp : 0 < pos q).
+  apply q.
+  case (HF Hp).
+  generalize rational_1_neq_0.
+  apply apartness.apart_ne.
+  rewrite mult_comm; reflexivity.
+  rewrite dec_fields.dec_recip_1.
+  rewrite mult_1_r; reflexivity. 
+  rewrite Hq.
+  rewrite mult_1_r; trivial.  
+Qed.
+
 Definition QRlow_qpos (q : Q+)  : RlowPos. 
 Proof.
 assert (HP : Rlle ('0) (QRlow (rationals.pos q))).
