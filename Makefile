@@ -246,8 +246,6 @@ uninstall: uninstall_me.sh
 	@echo "B $(COQLIB)grammar" >> .merlin
 	@echo "B $(COQLIB)config" >> .merlin
 	@echo "B $(COQLIB)engine" >> .merlin
-	@echo "B /home/florianlocal/Documents/STHOTT/SynHoTT" >> .merlin
-	@echo "S /home/florianlocal/Documents/STHOTT/SynHoTT" >> .merlin
 
 clean::
 	rm -f $(OBJFILES) $(OBJFILES:.o=.native) $(NATIVEFILES)
