@@ -64,22 +64,22 @@ Notation "] p ; q [" := (os_open_int p q).
 
 Notation "f | U" := (OpenFun_meet_fun U f) (at level 50).
 
-Hypothesis RiemInt : IntPos U01.
+Hypothesis U01_Int : IntPos U01.
 
-Notation "∫_( a ; b ) f" := (RiemInt (OpenFun_meet_fun (os_open_int a b) f)) 
+Notation "∫_( a ; b ) f" := (U01_Int (OpenFun_meet_fun (os_open_int a b) f)) 
                                        (at level 80).
 
-Hypothesis RiemInt_add : forall (a b c : Q) {H : (a <= b /\ b <= c)%mc} f,  
+Hypothesis U01_Int_add : forall (a b c : Q) {H : (a <= b /\ b <= c)%mc} f,  
       ( ∫_( a ; b ) f ) ++ ( ∫_( b ; c ) f )  = ∫_( a ; c ) f.
 
-Hypothesis RiemInt_bounded_prim : 
+Hypothesis U01_Int_bounded_prim : 
          forall (a b mid :Q) (r : Q+) (f : mf U01) {H : (0 <= b - a)%mc}, 
               (forall x, ('a <= c x)%mc /\ (c x <= 'b)%mc -> 
                     ((f x) -- 'r <= 'mid /\ 'mid <= (f x) ++ ''r))%mc
          ->  ((∫_( a ; b ) f) -- ((b - a) * 'r) <=  '((b - a)*mid))%mc
          /\ ('((b - a)*mid) <=  (∫_( a ; b ) f) ++ '((b - a) * 'r))%mc.
 
-Definition Unif := Riesz1 U01 RiemInt.
+Definition Unif := Riesz1 U01 U01_Int.
 
 End Unit_int.
 
