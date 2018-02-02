@@ -19,6 +19,9 @@ Require Export Rlow Opens Functions
 Set Implicit Arguments.
 Close Scope nat. 
 
+(** A little tactic to compute with partial values *)
+
+
 Lemma inc_seq_dec_r_prop (m : nat) A {La : Le A}
            (f : IncreasingSequence A) : forall p, 
                La ((fun n => f (n + m)%nat) p)
