@@ -25,6 +25,8 @@ Require Export Rlow Opens Functions
               
 Set Implicit Arguments.
 
+(** Random Walk: an example of recursive probabilistic program *)
+
 Definition Fiter  : (nat -> IntPos nat) -> (nat -> IntPos nat)
     := (fun f x => Iif flip (f (S x)) (unit nat x)).
 
