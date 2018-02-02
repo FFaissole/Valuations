@@ -15,6 +15,7 @@ Require Import HoTTClasses.sierpinsky partiality dedekind.
 Require Export Rlow Opens Valuations LowerIntegrals Riesz1.
 
 Section Unit_int.
+(** Definition of [0,1] as an hSet *)
 
 Definition btw01 (c : Cut)  := 
               merely (CutLe CutZero c /\ CutLe c CutOne).
@@ -57,12 +58,17 @@ Notation "[ 0 ; 1 ]" := U01.
 Definition open_interval (p q : Q) : Cut -> Type := 
                                fun x => QCut p < x < QCut q.
 
+(** open intervals are opens of U01 *)
 Definition os_open_int (p q : Q) : OS U01 := 
               fun x => (semi_decide ((open_interval p q) x)).
 
 Notation "] p ; q [" := (os_open_int p q).
 
 Notation "f | U" := (OpenFun_meet_fun U f) (at level 50).
+
+
+(** Axiomatic treatment of the integral : thie ideas follows from 
+ the axiomatization of the Riemann Integral in www.cs.au.dk/~spitters/Picard.pdf *)
 
 Hypothesis U01_Int : IntPos U01.
 
@@ -79,6 +85,7 @@ Hypothesis U01_Int_bounded_prim :
          ->  ((∫_( a ; b ) f) -- ((b - a) * 'r) <=  '((b - a)*mid))%mc
          /\ ('((b - a)*mid) <=  (∫_( a ; b ) f) ++ '((b - a) * 'r))%mc.
 
+(** Uniform distribution on [0,1] *)
 Definition Unif := Riesz1 U01 U01_Int.
 
 End Unit_int.
